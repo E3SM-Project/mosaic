@@ -1,0 +1,30 @@
+[project]
+name = "mosaic"
+version = "0.0.1"
+authors = [
+  { name="E3SM Development Team", email="anolan@lanl.gov" },
+]
+description = "A visualization package for MPAS meshes
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+	"cartopy",
+	"cmocean",
+	"matplotlib",
+	"numpy",
+	"pyproj",
+    "requests",
+    'importlib-metadata; python_version<"3.10"',
+	"xarray"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
