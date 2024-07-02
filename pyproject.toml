@@ -4,7 +4,7 @@ version = "0.0.1"
 authors = [
   { name="E3SM Development Team", email="anolan@lanl.gov" },
 ]
-description = "A visualization package for MPAS meshes
+description = "A visualization package for MPAS meshes"
 license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.9"
