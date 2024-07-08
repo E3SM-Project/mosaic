@@ -1,86 +1,191 @@
 import numpy as np 
 
+from functools import cached_property
 from xarray.core.dataset import Dataset  
+
+renaming_dict = {"lonCell": "xCell",
+                 "latCell": "yCell",
+                 "lonEdge": "xEdge",
+                 "latEdge": "yEdge",
+                 "lonVertex": "xVertex",
+                 "latVertex": "yVertex"}
+
+connectivity_arrays = ["cellsOnEdge",
+                       "cellsOnVertex",
+                       "verticesOnEdge",
+                       "verticesOnCell"]
 
 class Descriptor:
     """
-    MPAS mesh descriptor
+    Class describing unstructured MPAS meshes in order to support plotting
+    within `matplotlib`. The class constains various methods to create 
+    `matplotlib.collections.PolyCollection` objects for variables defined at
+    cell centers, vertices, and edges.
+    
+
+    Attributes
+    ----------
+    latlon : boolean
+        Whethere to use the lat/lon coordinates in patch construction
+
+        NOTE: I don't think this is needed if the projection arg is
+              properly used at initilaization 
+
+    projection : cartopy.crs.CRS
+
+    transform : cartopy.crs.CRS
+
+    cell_patches : np.ndarray
+
+    edge_patches : np.ndarray
+
+    vertex_patches : np.ndarray
     """
     def __init__(self, ds, projection=None, transform=None, use_latlon=False): 
-
-        self.latlon = use_latlon
+        """
+        """
+        self.latlon     = use_latlon
+        self.projection = projection
+        self.transform  = transform
 
         # if mesh is on a sphere, force the use of lat lon coords
         if ds.attrs["on_a_sphere"].strip().upper() == 'YES':
             self.latlon = True
+        # also check if projection requires lat/lon coords
         
-        # if we have spherical data convert from radians to degrees
-        if self.latlon:
-            ds = self._rad2deg_coordinates(ds)
-        
-        # reproject the data, even for non-spherical meshes
+        # create a minimal dataset, stored as an attr, for patch creation
+        self.ds = self.create_minimal_dataset(ds) 
+
+        # reproject the minimal dataset, even for non-spherical meshes
         if projection and transform: 
-            ds = self._transform_coordinates(ds, projection, transform)
-
-        # create the patches for each location a variable can be defined
-        self.cell_patches = _compute_cell_patches(ds, latlon=self.latlon)
-        self.edge_patches = _compute_edge_patches(ds, latlon=self.latlon) 
-        self.vertex_patches = _compute_vertex_patches(ds, latlon=self.latlon)
-    
-        # temporary antimeridian fix
-        if projection: 
-            self.cell_patches = self._mask_antimeridian(ds, "Cell", projection)
-            self.edge_pathces = self._mask_antimeridian(ds, "Edge", projection)
-            self.vertex_patches = self._mask_antimeridian(ds, "Vertex", projection)
-
-    def _rad2deg_coordinates(self, ds): 
-        """If using the lat/lon coords convert them all from radian to degrees
+            self._transform_coordinates(projection, transform)
+        
+    def create_minimal_dataset(self, ds): 
         """
-        for loc in ["Cell", "Edge", "Vertex"]:
-            ds[f"lon{loc}"] = np.rad2deg(ds[f"lon{loc}"])
-            ds[f"lat{loc}"] = np.rad2deg(ds[f"lat{loc}"])
+        Create a xarray.Dataset that contains the minimal subset of 
+        coordinate / connectivity arrays needed to create pathces for plotting
+        """
+        
+        if self.latlon:
+            coordinate_arrays = list(renaming_dict.keys())
+        else:
+            coordinate_arrays = list(renaming_dict.values())
 
-        return ds
+        # list of coordinate / connectivity arrays needed to create patches
+        mesh_arrays = coordinate_arrays + connectivity_arrays
+        
+        # get the subset of arrays from the mesh dataset
+        minimal_ds = ds[mesh_arrays]
 
-    def _transform_coordinates(self, ds, projection, transform):
+        # delete the attributes in the minimal dataset to avoid confusion
+        minimal_ds.attrs.clear()
+    
+        # should zero index the connectivity arrays here. 
+
+        if self.latlon:
+
+            # convert lat/lon coordinates from radian to degrees
+            for loc in ["Cell", "Edge", "Vertex"]:
+                minimal_ds[f"lon{loc}"] = np.rad2deg(minimal_ds[f"lon{loc}"])
+                minimal_ds[f"lat{loc}"] = np.rad2deg(minimal_ds[f"lat{loc}"])
+            
+            # rename the coordinate arrays to all be named x.../y...
+            # irrespective of whether spherical or cartesian coords are used
+            minimal_ds = minimal_ds.rename(renaming_dict)
+
+        return minimal_ds
+
+    @cached_property
+    def cell_patches(self):
+        patches = _compute_cell_patches(self.ds)
+        patches = self._fix_antimeridian(patches, "Cell")
+        return patches
+
+    @cached_property
+    def edge_patches(self):
+        pathces = _compute_edge_patches(self.ds)
+        patches = self._fix_antimeridian(patches, "Edge")
+        return patches
+
+    @cached_property
+    def vertex_patches(self):
+        patches = _compute_vertex_patches(self.ds)
+        patches = self._fix_antimeridian(patches, "Vertex")
+        return patches
+
+    def _transform_coordinates(self, projection, transform):
         """
         """
 
         for loc in ["Cell", "Edge", "Vertex"]:
 
             transformed_coords = projection.transform_points(transform,
-                *_get_coordinates(ds, loc, self.latlon))
+                self.ds[f"x{loc}"], self.ds[f"y{loc}"])
            
             # transformed_coords is a np array so need to assign to the values
-            if self.latlon:
-                ds[f"lon{loc}"].values = transformed_coords[:, 0]
-                ds[f"lat{loc}"].values = transformed_coords[:, 1]
-            else:
-                ds[f"x{loc}"].values = transformed_coords[:, 0]
-                ds[f"y{loc}"].values = transformed_coords[:, 1]
-
-        return ds
+            self.ds[f"x{loc}"].values = transformed_coords[:, 0]
+            self.ds[f"y{loc}"].values = transformed_coords[:, 1]
     
-    def _mask_antimeridian(self, ds, loc, projection): 
-        
-        # convert to numpy array to that broadcasting below will work
-        x_center = np.array(_get_coordinates(ds, loc, self.latlon)[0])
-        
-        patches = self.__getattribute__(f"{loc.lower()}_patches")
-        
-        #
-        half_distance = x_center[:, np.newaxis] - patches[...,0]
-        # get the size limit of the projection; 
-        size_limit = np.abs(projection.x_limits[1] -
-                            projection.x_limits[0]) / (2 * np.sqrt(2))
-    
-        # left and right mask, with same number of dimensions as the patches
-        l_mask = (half_distance > size_limit)[..., np.newaxis]
-        r_mask = (half_distance < -size_limit)[..., np.newaxis]
-        
-        patches.mask |= l_mask
-        patches.mask |= r_mask
+    def _fix_antimeridian(self, patches, loc, transform=None): 
+        """Correct vertices of patches that cross the antimeridian. 
 
+        NOTE: Can this be a decorator? 
+        """
+        # coordinate arrays are transformed at initalization, so using the 
+        # transform size limit, not the projection 
+        if not transform: 
+            transform = self.transform
+
+        # should be able to come up with a default size limit here, or maybe
+        # it's already an attribute(?) Should also factor in a precomputed
+        # axis period, as set in the attributes of the input dataset
+        if transform: 
+            # convert to numpy array to that broadcasting below will work
+            x_center = np.array(self.ds[f"x{loc}"])
+
+            # get distance b/w the center and vertices of the patches
+            # NOTE: using data from masked patches array so that we compute
+            #       mask only corresponds to patches that cross the boundary, 
+            #       (i.e. NOT a mask of all invalid cells). May need to be 
+            #       carefull about the fillvalue depending on the transform
+            half_distance = x_center[:, np.newaxis] - patches[...,0].data
+
+            # get the size limit of the projection; 
+            size_limit = np.abs(transform.x_limits[1] -
+                                transform.x_limits[0]) / (2 * np.sqrt(2))
+    
+            # left and right mask, with same number of dims as the patches
+            l_mask = (half_distance > size_limit)[..., np.newaxis]
+            r_mask = (half_distance < -size_limit)[..., np.newaxis]
+
+            """ 
+            # Old approach masks out all patches that cross the antimeridian. 
+            # This is unnessarily restrictive. New approach corrects 
+            # the x-coordinates of vertices that lie outside the projections
+            # bounds, which isn't perfect either
+
+            patches.mask |= l_mask
+            patches.mask |= r_mask
+            """
+
+            # get valid half distances for the patches that cross boundary
+            l_offset = np.ma.MaskedArray(half_distance,
+                                         ~np.any(l_mask, axis=1) | l_mask[...,0])
+            r_offset = np.ma.MaskedArray(half_distance,
+                                         ~np.any(r_mask, axis=1) | r_mask[...,0])
+            
+            # For vertices that cross the antimeridian reset the x-coordinate
+            # of invalid vertex to be the center of the patch plus the
+            # mean valid half distance. 
+            # 
+            # NOTE: this only fixes patches on the side of plot where they
+            # cross the antimeridian, leaving an empty zipper like pattern 
+            # mirrored over the y-axis. 
+            patches[...,0] = np.ma.where(~l_mask[...,0], patches[...,0],
+                x_center[:, np.newaxis] + l_offset.mean(1)[...,np.newaxis])
+            patches[...,0] = np.ma.where(~r_mask[...,0], patches[...,0],
+                x_center[:, np.newaxis] + r_offset.mean(1)[...,np.newaxis])
+                                         
         return patches
 
     def transform_patches(self, patches, projection, transform):
@@ -97,24 +202,14 @@ class Descriptor:
 
         return patches
 
-def _get_coordinates(ds, location, latlon=False): 
-    
-    if latlon:
-        x = ds[f"lon{location}"]
-        y = ds[f"lat{location}"]
-    else:
-        x = ds[f"x{location}"]
-        y = ds[f"y{location}"]
-
-    return (x, y)
-
-def _compute_cell_patches(ds, latlon=False):
+def _compute_cell_patches(ds):
     
     # get a mask of the active vertices
     mask = ds.verticesOnCell == 0
     
     # get the coordinates needed to patch construction
-    xVertex, yVertex = _get_coordinates(ds, "Vertex", latlon)
+    xVertex = ds.xVertex
+    yVertex = ds.yVertex
     
     # account for zero indexing
     verticesOnCell = ds.verticesOnCell - 1
@@ -138,9 +233,10 @@ def _compute_edge_patches(ds, latlon=False):
     vertexMask = verticesOnEdge <= 0
 
     # get the coordinates needed to patch construction
-    xVertex, yVertex = _get_coordinates(ds, "Vertex", latlon)
-    # get the coordinates needed to patch construction
-    xCell, yCell = _get_coordinates(ds, "Cell", latlon)
+    xCell = ds.xCell
+    yCell = ds.yCell
+    xVertex = ds.xVertex
+    yVertex = ds.yVertex
 
     # get subset of cell coordinate arrays corresponding to edge patches
     xCell = np.ma.MaskedArray(xCell[cellsOnEdge], mask=cellMask)
@@ -166,7 +262,8 @@ def _compute_vertex_patches(ds, latlon=False):
     mask = ds.cellsOnVertex == 0
     
     # get the coordinates needed to patch construction
-    xCell, yCell = _get_coordinates(ds, "Cell", latlon)
+    xCell = ds.xCell
+    yCell = ds.yCell
     
     # account for zero indexing
     cellsOnVertex = ds.cellsOnVertex - 1

@@ -47,6 +47,8 @@ def pcolor(
 
     collection._scale_norm(norm, vmin, vmax)
     
+    # get the limits of the **data**, which could exceed the valid
+    # axis limits of the transform
     minx = verts[..., 0].min()
     maxx = verts[..., 0].max()
     miny = verts[..., 1].min()
@@ -56,5 +58,18 @@ def pcolor(
     ax.update_datalim(corners)
     ax._request_autoscale_view()
     ax.add_collection(collection)
+    
+    # if data has been transformed use the transforms x-limits.
+    # patches have vertices that exceed the transfors x-limits to visually
+    # correct the antimeridian problem
+    if descriptor.transform:
+        minx = descriptor.transform.x_limits[0]
+        maxx = descriptor.transform.x_limits[1]
+
+        miny = descriptor.transform.y_limits[0]
+        maxy = descriptor.transform.y_limits[1]
+     
+        ax.set_xbound(minx, maxx)
+        ax.set_ybound(miny, maxy)
 
     return collection
