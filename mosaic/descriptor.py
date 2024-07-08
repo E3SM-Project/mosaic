@@ -103,7 +103,7 @@ class Descriptor:
 
     @cached_property
     def edge_patches(self):
-        pathces = _compute_edge_patches(self.ds)
+        patches = _compute_edge_patches(self.ds)
         patches = self._fix_antimeridian(patches, "Edge")
         return patches
 
