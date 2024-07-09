@@ -126,20 +126,20 @@ class Descriptor:
             self.ds[f"x{loc}"].values = transformed_coords[:, 0]
             self.ds[f"y{loc}"].values = transformed_coords[:, 1]
     
-    def _fix_antimeridian(self, patches, loc, transform=None): 
+    def _fix_antimeridian(self, patches, loc, projection=None): 
         """Correct vertices of patches that cross the antimeridian. 
 
         NOTE: Can this be a decorator? 
         """
         # coordinate arrays are transformed at initalization, so using the 
         # transform size limit, not the projection 
-        if not transform: 
-            transform = self.transform
+        if not projection: 
+            projection = self.projection
 
         # should be able to come up with a default size limit here, or maybe
         # it's already an attribute(?) Should also factor in a precomputed
         # axis period, as set in the attributes of the input dataset
-        if transform: 
+        if projection: 
             # convert to numpy array to that broadcasting below will work
             x_center = np.array(self.ds[f"x{loc}"])
 
@@ -151,8 +151,8 @@ class Descriptor:
             half_distance = x_center[:, np.newaxis] - patches[...,0].data
 
             # get the size limit of the projection; 
-            size_limit = np.abs(transform.x_limits[1] -
-                                transform.x_limits[0]) / (2 * np.sqrt(2))
+            size_limit = np.abs(projection.x_limits[1] -
+                                projection.x_limits[0]) / (2 * np.sqrt(2))
     
             # left and right mask, with same number of dims as the patches
             l_mask = (half_distance > size_limit)[..., np.newaxis]

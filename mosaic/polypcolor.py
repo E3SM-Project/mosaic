@@ -62,12 +62,12 @@ def polypcolor(
     # if data has been transformed use the transforms x-limits.
     # patches have vertices that exceed the transfors x-limits to visually
     # correct the antimeridian problem
-    if descriptor.transform:
-        minx = descriptor.transform.x_limits[0]
-        maxx = descriptor.transform.x_limits[1]
+    if descriptor.projection:
+        minx = descriptor.projection.x_limits[0]
+        maxx = descriptor.projection.x_limits[1]
 
-        miny = descriptor.transform.y_limits[0]
-        maxy = descriptor.transform.y_limits[1]
+        miny = descriptor.projection.y_limits[0]
+        maxy = descriptor.projection.y_limits[1]
      
         ax.set_xbound(minx, maxx)
         ax.set_ybound(miny, maxy)
