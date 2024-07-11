@@ -1,0 +1,17 @@
+name: mosaic-dev
+channels: 
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python >= 3.9
+  - cartopy
+  - cmocean
+  - h5netcdf
+  - hdf5
+  - netcdf4
+  - matplotlib
+  - numpy
+  - pyproj
+  - requests
+  - scipy
+  - xarray
