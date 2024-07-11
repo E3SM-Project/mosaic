@@ -8,7 +8,7 @@ from numpy.typing import ArrayLike
 from xarray.core.dataarray import DataArray
 
 
-def pcolor(
+def polypcolor(
     ax: Axes,
     descriptor: Descriptor,
     c: ArrayLike,
@@ -25,8 +25,8 @@ def pcolor(
 
     Call signatures::
         
-        pcolor(ax, descriptor, c, *, ...)
-        pcolor(as, mesh_dataset, c, *, ....)
+        polypcolor(ax, descriptor, c, *, ...)
+        polypcolor(as, mesh_dataset, c, *, ....)
 
     The unstructued grid can be specified either by passing a `.Descriptor`
     object as the second parameter, or by passing the mesh datatset. See 
