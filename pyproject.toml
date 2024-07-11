@@ -1,6 +1,6 @@
 [project]
 name = "mosaic"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
   { name="E3SM Development Team", email="anolan@lanl.gov" },
 ]
