@@ -16,8 +16,46 @@ python -m pip install -e .
 ```
 
 If you have an existing `conda` environment you'd like install the development version of `mosaic` in, you can run: 
-```bash
+```
 conda install --file dev-environment.yml
 
 python -m pip install -e .
 ```
+
+## Example Usage
+
+First we need to download a valid MPAS mesh. To do so run:
+```
+curl https://web.lcrc.anl.gov/public/e3sm/inputdata/ocn/mpas-o/EC30to60E2r3/mpaso.EC30to60E2r3.230313.nc -o mpaso.EC30to60E2r3.230313.nc
+```
+
+Then we can use `mosaic` to plot on the native mesh using `matplotlib`. For example:
+```python
+
+import cartopy.crs as ccrs
+import mosaic
+import matplotlib.pyplot as plt
+import xarray as xr
+
+ds = xr.open_dataset("mpaso.EC30to60E2r3.230313.nc")
+
+projection = ccrs.InterruptedGoodeHomolosine()
+transform = ccrs.PlateCarree()
+
+fig, ax = plt.subplots(1, 1, figsize=(9,7), facecolor="w",
+                       constrained_layout=True,
+                       subplot_kw=dict(projection=projection))
+
+descriptor = mosaic.Descriptor(ds, projection, transform)
+
+patches = mosaic.polypcolor(ax, descriptor, ds.nCells, antialiaseds=False)
+
+ax.gridlines()
+ax.coastlines()
+
+fig.colorbar(patches, fraction=0.1, label="Cell Index")
+
+plt.show()
+```
+Which should produce: 
+![readme](https://github.com/andrewdnolan/mosaic/assets/32367657/5716e8b5-0ee0-4a03-9c48-9cdec5a650fa)
