@@ -9,9 +9,10 @@ Currently `mosaic` only supports MPAS meshes, but future work will add support f
 
 Assuming you have a working `conda` installation, you can install the latest development version of `mosaic` by running: 
 ```
-conda env create --file dev-environment.yml
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+conda create -y -n mosaic-dev --file dev-environment.txt
 conda activate mosaic-dev
-
 python -m pip install -e .
 ```
 
@@ -39,21 +40,27 @@ import xarray as xr
 
 ds = xr.open_dataset("mpaso.EC30to60E2r3.230313.nc")
 
+# define a map projection for our figure
 projection = ccrs.InterruptedGoodeHomolosine()
+# define the transform that describes our dataset
 transform = ccrs.PlateCarree()
 
+# create the figure and a GeoAxis 
 fig, ax = plt.subplots(1, 1, figsize=(9,7), facecolor="w",
                        constrained_layout=True,
                        subplot_kw=dict(projection=projection))
 
+# create a `Descriptor` object which takes the mesh information and creates 
+# the polygon coordinate arrays needed for `matplotlib.collections.PolyCollection`.
 descriptor = mosaic.Descriptor(ds, projection, transform)
 
-patches = mosaic.polypcolor(ax, descriptor, ds.indexToCellID, antialiaseds=False)
+# using the `Descriptor` object we just created, make a pseudocolor plot of
+# the "indexToCellID" variable, which is defined at cell centers.
+collection = mosaic.polypcolor(ax, descriptor, ds.indexToCellID, antialiaseds=False)
 
 ax.gridlines()
 ax.coastlines()
-
-fig.colorbar(patches, fraction=0.1, label="Cell Index")
+fig.colorbar(collection, fraction=0.1, label="Cell Index")
 
 plt.show()
 ```

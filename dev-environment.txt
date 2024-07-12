@@ -1,0 +1,11 @@
+python >= 3.9
+cartopy
+cmocean
+h5netcdf
+hdf5
+netcdf4
+matplotlib-base
+numpy
+pyproj
+scipy
+xarray

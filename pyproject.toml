@@ -16,11 +16,15 @@ classifiers = [
 
 dependencies = [
     "cartopy",
-    "cmocean",
-    "matplotlib",
+    "cmocean"
+    "h5netcdf",
+    "hdf5",
+    "netcdf4",
+    "matplotlib-base",
     "numpy",
     "pyproj",
-    "xarray"
+    "scipy",
+    "xarray",
 ]
 
 [build-system]
