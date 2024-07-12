@@ -17,7 +17,7 @@ python -m pip install -e .
 
 If you have an existing `conda` environment you'd like install the development version of `mosaic` in, you can run: 
 ```
-conda install --file dev-environment.yml
+conda install --file dev-environment.txt
 
 python -m pip install -e .
 ```
@@ -48,7 +48,7 @@ fig, ax = plt.subplots(1, 1, figsize=(9,7), facecolor="w",
 
 descriptor = mosaic.Descriptor(ds, projection, transform)
 
-patches = mosaic.polypcolor(ax, descriptor, ds.nCells, antialiaseds=False)
+patches = mosaic.polypcolor(ax, descriptor, ds.indexToCellID, antialiaseds=False)
 
 ax.gridlines()
 ax.coastlines()

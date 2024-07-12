@@ -9,7 +9,7 @@ dependencies:
   - h5netcdf
   - hdf5
   - netcdf4
-  - matplotlib
+  - matplotlib-base
   - numpy
   - pyproj
   - requests
