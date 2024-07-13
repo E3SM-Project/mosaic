@@ -8,3 +8,8 @@ numpy
 pyproj
 scipy
 xarray
+
+# Documentation
+sphinx
+myst-parser
+sphinx-book-theme
