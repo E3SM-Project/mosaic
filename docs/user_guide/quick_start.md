@@ -3,7 +3,7 @@
 
 ## User Installation
 
-Coming soon....
+You can install the latest version of `mosaic` from conda-forge by running:
 ```
 conda config --add channels conda-forge
 conda config --set channel_priority strict
