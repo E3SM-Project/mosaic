@@ -56,7 +56,7 @@ jobs:
           conda activate mosaic_dev
           pip check
           cd docs
-          make clean && make html
+          make html
       - name: Copy Docs and Commit
         run: |
           set -e
@@ -69,8 +69,8 @@ jobs:
           cd gh-pages
           # Create `.nojekyll` (if it doesn't already exist) for proper GH Pages configuration.
           touch .nojekyll
-          # don't clobber existing release versions (in case we retroactively fixed them)
-          cp -r -n ../_build/html/* .
+          # copy source files, clobbering any existing (i.e. no `-n`)
+          cp -r ../_build/html/* .
           # Configure git using GitHub Actions credentials.
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
