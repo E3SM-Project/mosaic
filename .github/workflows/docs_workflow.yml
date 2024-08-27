@@ -56,7 +56,7 @@ jobs:
           conda activate mosaic_dev
           pip check
           cd docs
-          make html
+          make clean && make html
       - name: Copy Docs and Commit
         run: |
           set -e
