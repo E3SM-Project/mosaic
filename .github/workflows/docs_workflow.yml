@@ -69,6 +69,8 @@ jobs:
           cd gh-pages
           # Create `.nojekyll` (if it doesn't already exist) for proper GH Pages configuration.
           touch .nojekyll
+          # Only replace `main` docs with latest changes. Docs for releases should be untouched.
+          rm -rf *
           # copy source files, clobbering any existing (i.e. no `-n`)
           cp -r ../_build/html/* .
           # Configure git using GitHub Actions credentials.
