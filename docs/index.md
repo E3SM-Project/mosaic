@@ -18,6 +18,7 @@ user_guide/quick_start
 :maxdepth: 2
 :caption: Developers Guide:
 
+developers_guide/quick_start
 developers_guide/api
 ```
 
