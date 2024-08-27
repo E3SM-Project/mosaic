@@ -42,7 +42,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - if: ${{ steps.skip_check.outputs.should_skip != 'true' }}
-        name: Install mache
+        name: Install mosaic
         run: |
           git config --global url."https://github.com/".insteadOf "git@github.com:"
           conda create -n mosaic_dev --file dev-environment.txt \
