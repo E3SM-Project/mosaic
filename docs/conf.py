@@ -20,6 +20,7 @@ extensions = [
     'myst_parser',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
+    'sphinx.ext.intersphinx',
 ]
 
 autosummary_generate = ['developers_guide/api.md']
@@ -27,6 +28,13 @@ autosummary_generate = ['developers_guide/api.md']
 templates_path = ['_templates']
 
 exclude_patterns = ["_build", ".DS_Store"]
+
+intersphinx_mapping = {
+        'cartopy': ('https://scitools.org.uk/cartopy/docs/latest/', None),
+        'matplotlib': ('https://matplotlib.org/stable', None),
+        'numpy': ('https://numpy.org/doc/stable', None),
+        'xarray': ('https://xarray.pydata.org/en/stable', None)
+        }
 
 # -- MyST settings -----------------------------------------------------------
 # copided from mache: https://github.com/E3SM-Project/mache
