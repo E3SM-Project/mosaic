@@ -5,6 +5,7 @@ h5netcdf
 netcdf4
 matplotlib-base
 numpy
+pooch
 pyproj
 scipy
 xarray
