@@ -18,7 +18,7 @@ connectivity_arrays = ["cellsOnEdge",
 class Descriptor:
     """
     Class describing unstructured MPAS meshes in order to support plotting
-    within `matplotlib`. The class constains various methods to create 
+    within ``matplotlib``. The class contains various methods to create 
     :py:class:`matplotlib.collections.PolyCollection` objects for
     variables defined at cell centers, vertices, and edges.
     
