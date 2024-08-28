@@ -18,9 +18,9 @@ connectivity_arrays = ["cellsOnEdge",
 class Descriptor:
     """
     Class describing unstructured MPAS meshes in order to support plotting
-    within `matplotlib`. The class constains various methods to create 
-    `matplotlib.collections.PolyCollection` objects for variables defined at
-    cell centers, vertices, and edges.
+    within ``matplotlib``. The class contains various methods to create 
+    :py:class:`matplotlib.collections.PolyCollection` objects for
+    variables defined at cell centers, vertices, and edges.
     
 
     Attributes
@@ -31,15 +31,15 @@ class Descriptor:
         NOTE: I don't think this is needed if the projection arg is
               properly used at initilaization 
 
-    projection : cartopy.crs.CRS
+    projection : :py:class:`cartopy.crs.CRS`
 
-    transform : cartopy.crs.CRS
+    transform : :py:class:`cartopy.crs.CRS`
 
-    cell_patches : np.ndarray
+    cell_patches : :py:class:`numpy.ndarray`
 
-    edge_patches : np.ndarray
+    edge_patches : :py:class:`numpy.ndarray`
 
-    vertex_patches : np.ndarray
+    vertex_patches : :py:class:`numpy.ndarray`
     """
     def __init__(self, ds, projection=None, transform=None, use_latlon=False): 
         """

@@ -27,25 +27,25 @@ def polypcolor(
         
         polypcolor(ax, descriptor, c, *, ...)
 
-    The unstructued grid can be specified either by passing a `.Descriptor`
-    object as the second parameter, or by passing the mesh datatset. See 
-    `.Descriptor` for an explination of what the mesh_dataset has to be. 
+    The unstructued grid can be specified either by passing a
+    :py:class:`mosaic.Descriptor` object as the second parameter, or by passing the
+    mesh datatset. See  :py:class:`mosaic.Descriptor` for an explanation of what
+    the ``mesh_dataset`` has to be. 
 
     Parameters:
         ax : 
             An Axes or GeoAxes where the pseduocolor plot will be added
 
-        descriptor : Descriptor
-            An already created `Descriptor` object
+        descriptor : :py:class:`Descriptor`
+            An already created ``Descriptor`` object
 
-        c : xarray.DataArray
+        c : :py:class:`xarray.DataArray`
             The color values to plot. Must have a dimension named either
-            `nCells`, `nEdges`, or `nVertices`.
+            ``nCells``, ``nEdges``, or ``nVertices``.
         
         other_parameters
-            All other parameters including the `kwargs` are the same as 
-            for `matplotlib`'s `pcolor`. See `pcolor`'s documentation for 
-            definitions
+            All other parameters including the ``kwargs`` are the same as 
+            for :py:func:`matplotlib.pyplot.pcolor`. 
     """
 
     if "nCells" in c.dims:
