@@ -351,7 +351,7 @@ document.write(`
 <span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">mosaic</span>
 </pre></div>
 </div>
-<p>For a developers installation guide, see the <a class="reference internal" href="../developers_guide/quick_start.html#dev-install-guide"><span class="std std-ref">section</span></a> developers quickstart.</p>
+<p>For a developers installation guide, see the <a class="reference internal" href="../developers_guide/quick_start.html#dev-install-guide"><span class="std std-ref">section</span></a> in the developers quickstart.</p>
 </section>
 <section id="example-usage">
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">#</a></h2>
@@ -403,11 +403,11 @@ document.write(`
 </pre></div>
 </div>
 <p>In this case the underlying coordinate arrays (i.e. <code class="docutils literal notranslate"><span class="pre">xCell/yCell</span></code>)
-correspond to a South Polar Stereographic, which is also the map projection we
+correspond to a South Polar Stereographic projection, which is also the map projection we
 want to us. Therefore, the <code class="docutils literal notranslate"><span class="pre">projection</span></code> and the <code class="docutils literal notranslate"><span class="pre">transform</span></code> will be equivalent
 for this example. When instantiating the <code class="docutils literal notranslate"><span class="pre">mosaic.Descriptor</span></code> object we have to
-careful to set <code class="docutils literal notranslate"><span class="pre">use_latlon=False</span></code>, which is the default, to ensure the
-<code class="docutils literal notranslate"><span class="pre">xCell</span></code>/<code class="docutils literal notranslate"><span class="pre">yCell</span></code> coordinate arrays are parsed (c.f. <code class="docutils literal notranslate"><span class="pre">lonCell</span></code>/<code class="docutils literal notranslate"><span class="pre">latCell</span></code>).</p>
+careful to set <code class="docutils literal notranslate"><span class="pre">use_latlon=False</span></code> to ensure the <code class="docutils literal notranslate"><span class="pre">xCell</span></code>/<code class="docutils literal notranslate"><span class="pre">yCell</span></code> coordinate
+arrays are parsed (c.f. <code class="docutils literal notranslate"><span class="pre">lonCell</span></code>/<code class="docutils literal notranslate"><span class="pre">latCell</span></code>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
 <span class="kn">import</span> <span class="nn">mosaic</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -427,7 +427,7 @@ careful to set <code class="docutils literal notranslate"><span class="pre">use_
 
 <span class="c1"># create a `Descriptor` object which takes the mesh information and creates </span>
 <span class="c1"># the polygon coordinate arrays needed for `matplotlib.collections.PolyCollection`.</span>
-<span class="n">descriptor</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">Descriptor</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">projection</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+<span class="n">descriptor</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">Descriptor</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">projection</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">use_latlon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># using the `Descriptor` object we just created, make a pseudocolor plot of</span>
 <span class="c1"># the &quot;indexToCellID&quot; variable, which is defined at cell centers.</span>
@@ -445,7 +445,7 @@ careful to set <code class="docutils literal notranslate"><span class="pre">use_
 <p>In the case where we do not know what projection the coordinate arrays of the
 mesh correspond to we can use the <code class="docutils literal notranslate"><span class="pre">lonCell</span></code>/<code class="docutils literal notranslate"><span class="pre">latCell</span></code> coordinates and <code class="docutils literal notranslate"><span class="pre">mosaic</span></code>
 will handle the transformation to the requested map projection under the hood.
-In this scenario the <code class="docutils literal notranslate"><span class="pre">transform</span></code> should correspond to <code class="docutils literal notranslate"><span class="pre">ccrs.SouthPolarStereo()</span></code>
+In this scenario the <code class="docutils literal notranslate"><span class="pre">transform</span></code> should correspond to <code class="docutils literal notranslate"><span class="pre">ccrs.PlateCarree()</span></code>
 and <code class="docutils literal notranslate"><span class="pre">use_latlon=True</span></code> must be set in the <code class="docutils literal notranslate"><span class="pre">mosaic.Descriptor</span></code> object
 instantiation. Nearly all the lines would be the same as the above example,
 with the exception of the transform definition:</p>

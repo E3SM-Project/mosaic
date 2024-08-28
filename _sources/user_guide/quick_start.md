@@ -10,7 +10,7 @@ conda config --set channel_priority strict
 conda install -y mosaic
 ```
 
-For a developers installation guide, see the [section](Dev_install_guide) developers quickstart.
+For a developers installation guide, see the [section](Dev_install_guide) in the developers quickstart.
 
 ## Example Usage 
 
@@ -65,11 +65,11 @@ curl https://web.lcrc.anl.gov/public/e3sm/inputdata/glc/mpasli/mpas.ais8to30km/a
 ```
 
 In this case the underlying coordinate arrays (i.e. `xCell/yCell`)
-correspond to a South Polar Stereographic, which is also the map projection we
+correspond to a South Polar Stereographic projection, which is also the map projection we
 want to us. Therefore, the `projection` and the `transform` will be equivalent
 for this example. When instantiating the `mosaic.Descriptor` object we have to 
-careful to set `use_latlon=False`, which is the default, to ensure the
-`xCell`/`yCell` coordinate arrays are parsed (c.f. `lonCell`/`latCell`). 
+careful to set `use_latlon=False` to ensure the `xCell`/`yCell` coordinate
+arrays are parsed (c.f. `lonCell`/`latCell`). 
 
 ```python
 import cartopy.crs as ccrs
@@ -91,7 +91,7 @@ fig, ax = plt.subplots(1, 1, figsize=(9,7), facecolor="w",
 
 # create a `Descriptor` object which takes the mesh information and creates 
 # the polygon coordinate arrays needed for `matplotlib.collections.PolyCollection`.
-descriptor = mosaic.Descriptor(ds, projection, transform)
+descriptor = mosaic.Descriptor(ds, projection, transform, use_latlon=False)
 
 # using the `Descriptor` object we just created, make a pseudocolor plot of
 # the "indexToCellID" variable, which is defined at cell centers.
@@ -109,7 +109,7 @@ fig.colorbar(collection, fraction=0.1, label="Thickness [m]")
 In the case where we do not know what projection the coordinate arrays of the
 mesh correspond to we can use the `lonCell`/`latCell` coordinates and `mosaic`
 will handle the transformation to the requested map projection under the hood.
-In this scenario the `transform` should correspond to `ccrs.SouthPolarStereo()`
+In this scenario the `transform` should correspond to `ccrs.PlateCarree()`
 and `use_latlon=True` must be set in the `mosaic.Descriptor` object
 instantiation. Nearly all the lines would be the same as the above example,
 with the exception of the transform definition: 
