@@ -24,5 +24,7 @@ pre-commit
 
 # Documentation
 sphinx
+myst-nb
 myst-parser
 sphinx-book-theme
+sphinx-copybutton

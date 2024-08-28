@@ -1,3 +1,9 @@
+---
+file_format: mystnb
+kernelspec:
+  name: python3
+---
+
 # Quick Start for Users
 
 ## Instaling `mosaic`
@@ -16,19 +22,14 @@ For a developers installation guide, see the [section](Dev_install_guide) in the
 
 ### Global Mesh
 
-First we need to download a valid MPAS mesh. To do so run:
-```
-curl https://web.lcrc.anl.gov/public/e3sm/inputdata/ocn/mpas-o/EC30to60E2r3/mpaso.EC30to60E2r3.230313.nc -o mpaso.EC30to60E2r3.230313.nc
-```
-
 Then we can use `mosaic` to plot on the native mesh using `matplotlib`. For example:
-```python
+```{code-cell} ipython3
 import cartopy.crs as ccrs
 import mosaic
 import matplotlib.pyplot as plt
 import xarray as xr
 
-ds = xr.open_dataset("mpaso.EC30to60E2r3.230313.nc")
+ds = mosaic.datasets.open_dataset("mpaso.EC30to60E2r3")
 
 # define a map projection for our figure
 projection = ccrs.InterruptedGoodeHomolosine()
@@ -50,19 +51,10 @@ collection = mosaic.polypcolor(ax, descriptor, ds.indexToCellID, antialiaseds=Fa
 
 ax.gridlines()
 ax.coastlines()
-fig.colorbar(collection, fraction=0.1, shrink=0.5, label="Cell Index")
-
-plt.show()
+fig.colorbar(collection, fraction=0.1, shrink=0.5, label="Cell Index");
 ```
-
-![mpaso.EC30to60E2r3](images/mpaso.EC30to60E2r3.png)
 
 ### Planar Non-Periodic 
-
-First we need to download a valid MPAS mesh. To do so run:
-```
-curl https://web.lcrc.anl.gov/public/e3sm/inputdata/glc/mpasli/mpas.ais8to30km/ais_8to30km.20231222.nc -o mpasli.ais8to30km.nc
-```
 
 In this case the underlying coordinate arrays (i.e. `xCell/yCell`)
 correspond to a South Polar Stereographic projection, which is also the map projection we
@@ -71,13 +63,13 @@ for this example. When instantiating the `mosaic.Descriptor` object we have to
 careful to set `use_latlon=False` to ensure the `xCell`/`yCell` coordinate
 arrays are parsed (c.f. `lonCell`/`latCell`). 
 
-```python
+```{code-cell} ipython3
 import cartopy.crs as ccrs
 import mosaic
 import matplotlib.pyplot as plt
 import xarray as xr
 
-ds = xr.open_dataset("mpasli.ais8to30km.nc").squeeze()
+ds = mosaic.datasets.open_dataset("mpasli.AIS8to30")
 
 # define a map projection for our figure
 projection = ccrs.SouthPolarStereo()
@@ -102,9 +94,8 @@ ax.set_extent([-180, 180, -90, -60], ccrs.PlateCarree())
 
 ax.gridlines()
 ax.coastlines()
-fig.colorbar(collection, fraction=0.1, label="Thickness [m]")
+fig.colorbar(collection, fraction=0.1, label="Thickness [m]");
 ```
-![mpasli.ais8to30km](images/mpasli.ais8to30km.png)
 
 In the case where we do not know what projection the coordinate arrays of the
 mesh correspond to we can use the `lonCell`/`latCell` coordinates and `mosaic`

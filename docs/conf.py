@@ -1,5 +1,4 @@
-# Configuration file for the Sphinx documentation builder.
-#
+# Configuration file for the Sphinx documentation builder.  
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
@@ -17,11 +16,19 @@ release = __version__
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'myst_parser',
+    'myst_nb',
+    #'myst_parser', # cannot use `myst_nb` and `myst_parser`, one or the other
+    'sphinx_copybutton',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
 ]
+
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.ipynb': 'myst-nb',
+    '.myst': 'myst-nb',
+}
 
 autosummary_generate = ['developers_guide/api.md']
 
