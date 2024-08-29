@@ -29,6 +29,7 @@ import mosaic
 import matplotlib.pyplot as plt
 import xarray as xr
 
+# download and read the mesh from lcrc
 ds = mosaic.datasets.open_dataset("QU.240km")
 
 # define a map projection for our figure
@@ -69,6 +70,7 @@ import mosaic
 import matplotlib.pyplot as plt
 import xarray as xr
 
+# download and read the mesh from lcrc
 ds = mosaic.datasets.open_dataset("mpasli.AIS8to30")
 
 # define a map projection for our figure
