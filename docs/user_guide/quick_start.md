@@ -29,7 +29,7 @@ import mosaic
 import matplotlib.pyplot as plt
 import xarray as xr
 
-ds = mosaic.datasets.open_dataset("mpaso.EC30to60E2r3")
+ds = mosaic.datasets.open_dataset("QU.240km")
 
 # define a map projection for our figure
 projection = ccrs.InterruptedGoodeHomolosine()
@@ -47,7 +47,7 @@ descriptor = mosaic.Descriptor(ds, projection, transform)
 
 # using the `Descriptor` object we just created, make a pseudocolor plot of
 # the "indexToCellID" variable, which is defined at cell centers.
-collection = mosaic.polypcolor(ax, descriptor, ds.indexToCellID, antialiaseds=False)
+collection = mosaic.polypcolor(ax, descriptor, ds.indexToCellID, antialiaseds=True)
 
 ax.gridlines()
 ax.coastlines()
