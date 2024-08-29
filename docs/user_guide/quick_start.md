@@ -50,7 +50,6 @@ descriptor = mosaic.Descriptor(ds, projection, transform)
 # the "indexToCellID" variable, which is defined at cell centers.
 collection = mosaic.polypcolor(ax, descriptor, ds.indexToCellID, antialiaseds=True)
 
-ax.gridlines()
 ax.coastlines()
 fig.colorbar(collection, fraction=0.1, shrink=0.5, label="Cell Index");
 ```
