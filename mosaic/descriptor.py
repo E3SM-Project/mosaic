@@ -1,4 +1,5 @@
 import numpy as np 
+import xarray as xr
 
 from functools import cached_property
 from xarray.core.dataset import Dataset  
@@ -66,6 +67,24 @@ class Descriptor:
         coordinate / connectivity arrays needed to create pathces for plotting
         """
         
+        def fix_outofbounds_indices(ds, array_name):
+            """
+            Some meshes (e.g. QU240km) don't do masking of ragged indices
+            with 0. Instead they use `nInidices+1` as the invalid value,
+            which can produce out of bounds errors. Check if that the case,
+            and if so set the out of bounds indices to (-1)
+
+            NOTE: Assumes connectivity arrays are zero indexed
+            """
+            # progamatically create the appropriate dimension name 
+            dim = "n" + array.split("On")[0].title() 
+            # get the maximum valid size for the array to be indexed too
+            maxSize = ds.sizes[dim]
+            # where index is out of bounds, set to invalid (i.e. -1) 
+            ds[array] = xr.where(ds[array] == maxSize, -1, ds[array])
+            
+            return ds 
+
         if self.latlon:
             coordinate_arrays = list(renaming_dict.keys())
         else:
@@ -80,8 +99,12 @@ class Descriptor:
         # delete the attributes in the minimal dataset to avoid confusion
         minimal_ds.attrs.clear()
     
-        # should zero index the connectivity arrays here. 
-
+        for array in connectivity_arrays:
+            # zero index all the connectivty arrays
+            minimal_ds[array] = minimal_ds[array] - 1
+            # fix any out of bounds indicies
+            minimal_ds = fix_outofbounds_indices(minimal_ds, array)
+            
         if self.latlon:
 
             # convert lat/lon coordinates from radian to degrees
@@ -204,16 +227,15 @@ class Descriptor:
 
 def _compute_cell_patches(ds):
     
+    # connectivity arrays have already been zero indexed
+    verticesOnCell = ds.verticesOnCell
     # get a mask of the active vertices
-    mask = ds.verticesOnCell == 0
+    mask = verticesOnCell == -1
     
     # get the coordinates needed to patch construction
     xVertex = ds.xVertex
     yVertex = ds.yVertex
     
-    # account for zero indexing
-    verticesOnCell = ds.verticesOnCell - 1
-
     # reshape/expand the vertices coordinate arrays
     x_vert = np.ma.MaskedArray(xVertex[verticesOnCell], mask=mask)
     y_vert = np.ma.MaskedArray(yVertex[verticesOnCell], mask=mask)
@@ -224,11 +246,11 @@ def _compute_cell_patches(ds):
 
 def _compute_edge_patches(ds, latlon=False):
     
-    # account for zeros indexing
-    cellsOnEdge = ds.cellsOnEdge - 1
-    verticesOnEdge = ds.verticesOnEdge - 1
+    # connectivity arrays have already been zero indexed
+    cellsOnEdge = ds.cellsOnEdge
+    verticesOnEdge = ds.verticesOnEdge
     
-    # is this masking sufficent ?
+    # is this masking correct ??
     cellMask = cellsOnEdge <= 0
     vertexMask = verticesOnEdge <= 0
 
@@ -257,16 +279,15 @@ def _compute_edge_patches(ds, latlon=False):
     return verts
 
 def _compute_vertex_patches(ds, latlon=False):
-    
+     
+    # connectivity arrays have already been zero indexed
+    cellsOnVertex = ds.cellsOnVertex
     # get a mask of the active vertices
-    mask = ds.cellsOnVertex == 0
+    mask = ds.cellsOnVertex == -1
     
     # get the coordinates needed to patch construction
     xCell = ds.xCell
     yCell = ds.yCell
-    
-    # account for zero indexing
-    cellsOnVertex = ds.cellsOnVertex - 1
 
     # reshape/expand the vertices coordinate arrays
     x_vert = np.ma.MaskedArray(xCell[cellsOnVertex], mask=mask)
