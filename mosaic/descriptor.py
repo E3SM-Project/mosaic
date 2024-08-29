@@ -77,11 +77,11 @@ class Descriptor:
             NOTE: Assumes connectivity arrays are zero indexed
             """
             # progamatically create the appropriate dimension name 
-            dim = "n" + array.split("On")[0].title() 
+            dim = "n" + array_name.split("On")[0].title() 
             # get the maximum valid size for the array to be indexed too
             maxSize = ds.sizes[dim]
             # where index is out of bounds, set to invalid (i.e. -1) 
-            ds[array] = xr.where(ds[array] == maxSize, -1, ds[array])
+            ds[array_name] = xr.where(ds[array_name] == maxSize, -1, ds[array_name])
             
             return ds 
 
@@ -251,8 +251,8 @@ def _compute_edge_patches(ds, latlon=False):
     verticesOnEdge = ds.verticesOnEdge
     
     # is this masking correct ??
-    cellMask = cellsOnEdge <= 0
-    vertexMask = verticesOnEdge <= 0
+    cellMask = cellsOnEdge < 0
+    vertexMask = verticesOnEdge < 0
 
     # get the coordinates needed to patch construction
     xCell = ds.xCell
