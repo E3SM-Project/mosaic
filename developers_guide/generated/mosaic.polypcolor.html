@@ -346,19 +346,19 @@ document.write(`
 </pre></div>
 </div>
 <p>The unstructued grid can be specified either by passing a
-<a class="reference internal" href="mosaic.Descriptor.html#mosaic.Descriptor" title="mosaic.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">mosaic.Descriptor</span></code></a> object as the second parameter, or by passing the
-mesh datatset. See  <a class="reference internal" href="mosaic.Descriptor.html#mosaic.Descriptor" title="mosaic.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">mosaic.Descriptor</span></code></a> for an explanation of what
-the <code class="docutils literal notranslate"><span class="pre">mesh_dataset</span></code> has to be.</p>
+<a class="reference internal" href="mosaic.Descriptor.html#mosaic.Descriptor" title="mosaic.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">mosaic.Descriptor</span></code></a> object as the second parameter, or by
+passing the mesh datatset. See  <a class="reference internal" href="mosaic.Descriptor.html#mosaic.Descriptor" title="mosaic.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">mosaic.Descriptor</span></code></a> for an
+explanation of what the <code class="docutils literal notranslate"><span class="pre">mesh_dataset</span></code> has to be.</p>
 <dl>
 <dt>Parameters:</dt><dd><dl>
-<dt>ax<span class="classifier"></span></dt><dd><p>An Axes or GeoAxes where the pseduocolor plot will be added</p>
+<dt>ax :</dt><dd><p>An Axes or GeoAxes where the pseduocolor plot will be added</p>
 </dd>
 <dt>descriptor<span class="classifier"><a class="reference internal" href="mosaic.Descriptor.html#mosaic.Descriptor" title="mosaic.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a></span></dt><dd><p>An already created <code class="docutils literal notranslate"><span class="pre">Descriptor</span></code> object</p>
 </dd>
 <dt>c<span class="classifier"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html#xarray.DataArray" title="(in xarray v2024.7.1.dev0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code></a></span></dt><dd><p>The color values to plot. Must have a dimension named either
 <code class="docutils literal notranslate"><span class="pre">nCells</span></code>, <code class="docutils literal notranslate"><span class="pre">nEdges</span></code>, or <code class="docutils literal notranslate"><span class="pre">nVertices</span></code>.</p>
 </dd>
-<dt>other_parameters</dt><dd><p>All other parameters including the <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are the same as 
+<dt>other_parameters</dt><dd><p>All other parameters including the <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> are the same as
 for <a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolor.html#matplotlib.pyplot.pcolor" title="(in Matplotlib v3.9.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.pcolor()</span></code></a>.</p>
 </dd>
 </dl>
