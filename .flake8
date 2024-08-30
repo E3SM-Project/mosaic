@@ -8,6 +8,7 @@ max-line-length = 79
 max-complexity = 18
 per-file-ignores =
     */__init__.py: F401
+   mosaic/datasets.py: E501
 exclude =
     .git,
     docs,
