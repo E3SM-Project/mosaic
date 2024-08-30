@@ -14,6 +14,11 @@ registry = {
             "sha256_hash": "sha256:524d2d5a93851395a3bdfafb30a5acb2a3dbbecd0db07cd29e5e3f87da6eb82f"
             },
 
+        "QU.240km": {
+            "lcrc_path": "inputdata/ocn/mpas-o/oQU240/ocean.QU.240km.151209.nc",
+            "sha256_hash": "sha256:a3758f88ceff3d91e86dba7922f6dd7d5672157b4793ef78214624ab8b2724ae"
+            },
+
         "mpaso.EC30to60E2r3": {
             "lcrc_path": "inputdata/ocn/mpas-o/EC30to60E2r3/mpaso.EC30to60E2r3.230313.nc",
             "sha256_hash": "sha256:55e7cc33c890f7b9f1188bcc07fd8218b57cb1cd5ba32ee66fe3162a36995a7c"
@@ -42,7 +47,7 @@ mesh_db = pooch.create(
 def open_dataset(
     name: str,
     cache: bool = True,
-    **kws,
+    **kwargs,
 ) -> Dataset:
     """
     Open a dataset from the lcrc database (requires internet), unless a local 
@@ -50,18 +55,18 @@ def open_dataset(
     
     Available datasets:
 
-    * ``"QU.960km"`` : ...
-    * ``"mpaso.EC30to60E2r3"`` : ...
-    * ``"mpasli.AIS8to30"`` : ...
+    * ``"QU.960km"`` : Quasi-uniform spherical mesh, with approximately 960km horizontal resolution
+    * ``"QU.240km"`` : Quasi-uniform spherical mesh, with approximately 240km horizontal resolution
+    * ``"mpaso.EC30to60E2r3"`` : (E)ddy-(C)losure 30 to 60 km MPAS-Ocean mesh
+    * ``"mpasli.AIS8to30"`` : 8-30 km resolution planar non-periodic MALI mesh of Antarctica
 
     Parameters
     ----------
     name : str
-        Name of the file containing the dataset.
-        e.g. 'air_temperature'
+        Name of the file containing the dataset. (e.g. ``"QU.960km"``)
     cache : bool, optional
         If True, then cache data locally for use on subsequent calls
-    **kws : dict, optional
+    kwargs : dict, optional
         Passed to xarray.open_dataset
     """
 
@@ -72,10 +77,10 @@ def open_dataset(
     # use human readable registry to find filepath on lcrc
     lcrc_path = registry[name]["lcrc_path"]
     # retrive the file using pooch
-    filepath = mesh_db.fetch(lcrc_path)
+    filepath = mesh_db.fetch(lcrc_path, progressbar=True)
     
-    # open dataset
-    ds = xr.open_dataset(filepath, **kws)
+    # open dataset, and squeeze time dimensions if present
+    ds = xr.open_dataset(filepath, **kwargs).squeeze()
 
     # if `cache==False` persist file in memory and delete the downloaded file
     if not cache: 

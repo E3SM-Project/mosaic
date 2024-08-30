@@ -8,6 +8,7 @@ numpy
 pooch
 pyproj
 scipy
+tqdm
 xarray
 
 # Building
