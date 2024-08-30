@@ -12,6 +12,14 @@ xarray
 # Building
 setuptools >=60
 
+# Linting and tesing
+pip
+pytest
+isort
+flake8
+mypy
+pre-commit
+
 # Documentation
 sphinx
 myst-parser
