@@ -9,6 +9,9 @@ pyproj
 scipy
 xarray
 
+# Building
+setuptools >=60
+
 # Documentation
 sphinx
 myst-parser
