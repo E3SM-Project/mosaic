@@ -83,7 +83,7 @@ class Descriptor:
             # get mask of where index is out bounds
             mask = ds[array_name] == maxSize
             # where index is out of bounds, set to invalid (i.e. -1)
-            ds[array_name] = xr.where(mask, 1, ds[array_name])
+            ds[array_name] = xr.where(mask, -1, ds[array_name])
 
             return ds
 
