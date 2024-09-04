@@ -20,9 +20,9 @@ registry = {
         "sha256_hash": "sha256:a3758f88ceff3d91e86dba7922f6dd7d5672157b4793ef78214624ab8b2724ae"
     },
 
-    "mpaso.EC30to60E2r3": {
-        "lcrc_path": "inputdata/ocn/mpas-o/EC30to60E2r3/mpaso.EC30to60E2r3.230313.nc",
-        "sha256_hash": "sha256:55e7cc33c890f7b9f1188bcc07fd8218b57cb1cd5ba32ee66fe3162a36995a7c"
+    "mpaso.IcoswISC30E3r5": {
+        "lcrc_path": "inputdata/share/meshes/mpas/ocean/IcoswISC30E3r5.20231120.nc",
+        "sha256_hash": "sha256:970afa546aa1e219b45234ae0bc8f5d4f41849cb42e6292abfd75ac89a561faf"
     },
 
     "mpasli.AIS8to30": {
@@ -60,7 +60,7 @@ def open_dataset(
 
     * ``"QU.960km"`` : Quasi-uniform spherical mesh, with approximately 960km horizontal resolution
     * ``"QU.240km"`` : Quasi-uniform spherical mesh, with approximately 240km horizontal resolution
-    * ``"mpaso.EC30to60E2r3"`` : (E)ddy-(C)losure 30 to 60 km MPAS-Ocean mesh
+    * ``"mpaso.IcoswISC30E3r5"`` : Icosahedral 30 km MPAS-Ocean mesh with ice shelf cavaties
     * ``"mpasli.AIS8to30"`` : 8-30 km resolution planar non-periodic MALI mesh of Antarctica
 
     Parameters
