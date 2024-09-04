@@ -1,8 +1,29 @@
-# Configuration file for the Sphinx documentation builder.  
+# Configuration file for the Sphinx documentation builder.
+#
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import mosaic
 from mosaic.version import __version__
+from cartopy.io.shapereader import natural_earth
+
+def download_meshes(app, env, docnames):
+    """ Function to download meshes prior to executing documentation, so
+        progress bars don't appear in the rendered docs
+    """
+    for mesh in ['QU.240km', 'mpasli.AIS8to30']:
+        mosaic.datasets.open_dataset(mesh)
+
+def download_coastlines(app, env, docnames):
+    """ Function to download coastlines prior to executing documentation, so
+        warnings don't appear in the rendered docs
+    """
+    for scale in ('110m', '50m'):
+        natural_earth(resolution=scale, category='physical', name='coastline')
+
+def setup(app):
+    app.connect('env-before-read-docs', download_meshes)
+    app.connect('env-before-read-docs', download_coastlines)
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
