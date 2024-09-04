@@ -85,7 +85,7 @@ def open_dataset(
     if cache_dir:
         # join the url paths together for the requested file
         url = os.path.join(mesh_db.base_url, lcrc_path)
-        # get the known has of the file
+        # get the known hash of the file
         known_hash = registry[name]["sha256_hash"]
         # retrive the file using pooch, and cache in custom location
         filepath = pooch.retrieve(
