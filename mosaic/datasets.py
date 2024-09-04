@@ -1,4 +1,5 @@
-import pathlib
+import os
+from pathlib import Path
 
 import pooch
 import xarray as xr
@@ -47,6 +48,7 @@ mesh_db = pooch.create(
 # idea borrowed/copied from xarray
 def open_dataset(
     name: str,
+    cache_dir: None | str | os.PathLike = None,
     cache: bool = True,
     **kwargs,
 ) -> Dataset:
@@ -65,6 +67,8 @@ def open_dataset(
     ----------
     name : str
         Name of the file containing the dataset. (e.g. ``"QU.960km"``)
+    cache_dir : path-like, optional
+        The directory in which to search for and write cached data
     cache : bool, optional
         If True, then cache data locally for use on subsequent calls
     kwargs : dict, optional
@@ -77,8 +81,19 @@ def open_dataset(
 
     # use human readable registry to find filepath on lcrc
     lcrc_path = registry[name]["lcrc_path"]
-    # retrive the file using pooch
-    filepath = mesh_db.fetch(lcrc_path, progressbar=True)
+
+    if cache_dir:
+        # join the url paths together for the requested file
+        url = os.path.join(mesh_db.base_url, lcrc_path)
+        # get the known has of the file
+        known_hash = registry[name]["sha256_hash"]
+        # retrive the file using pooch, and cache in custom location
+        filepath = pooch.retrieve(
+            url=url, known_hash=known_hash, path=cache_dir, progressbar=True)
+
+    else:
+        # retrive the file using pooch
+        filepath = mesh_db.fetch(lcrc_path, progressbar=True)
 
     # open dataset, and squeeze time dimensions if present
     ds = xr.open_dataset(filepath, **kwargs).squeeze()
@@ -86,6 +101,6 @@ def open_dataset(
     # if `cache==False` persist file in memory and delete the downloaded file
     if not cache:
         ds = ds.load()
-        pathlib.Path(filepath).unlink()
+        Path(filepath).unlink()
 
     return ds
