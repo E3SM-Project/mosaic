@@ -21,8 +21,10 @@ dependencies = [
     "netcdf4",
     "matplotlib",
     "numpy",
+    "pooch",
     "pyproj",
     "scipy",
+    "tqdm",
     "xarray",
 ]
 
