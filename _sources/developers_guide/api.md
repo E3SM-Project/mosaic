@@ -10,6 +10,7 @@
 
     polypcolor
     Descriptor
+    datasets.open_dataset
 ```
 
 

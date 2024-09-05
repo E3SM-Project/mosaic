@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>mosaic.Descriptor &#8212; mosaic 0.1.1 documentation</title>
+    <title>mosaic.datasets.open_dataset &#8212; mosaic 0.1.1 documentation</title>
   
   
   
@@ -40,11 +40,10 @@
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'developers_guide/generated/mosaic.Descriptor';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developers_guide/generated/mosaic.datasets.open_dataset';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="mosaic.datasets.open_dataset" href="mosaic.datasets.open_dataset.html" />
-    <link rel="prev" title="mosaic.polypcolor" href="mosaic.polypcolor.html" />
+    <link rel="prev" title="mosaic.Descriptor" href="mosaic.Descriptor.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -157,8 +156,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start for Developers</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../api.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="mosaic.polypcolor.html">mosaic.polypcolor</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">mosaic.Descriptor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mosaic.datasets.open_dataset.html">mosaic.datasets.open_dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mosaic.Descriptor.html">mosaic.Descriptor</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">mosaic.datasets.open_dataset</a></li>
 </ul>
 </details></li>
 </ul>
@@ -230,7 +229,7 @@
       
       
       
-      <li><a href="../../_sources/developers_guide/generated/mosaic.Descriptor.rst" target="_blank"
+      <li><a href="../../_sources/developers_guide/generated/mosaic.datasets.open_dataset.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -314,7 +313,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>mosaic.Descriptor</h1>
+    <h1>mosaic.datasets.open_dataset</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -324,10 +323,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.Descriptor"><code class="docutils literal notranslate"><span class="pre">Descriptor</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.Descriptor.__init__"><code class="docutils literal notranslate"><span class="pre">Descriptor.__init__()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.datasets.open_dataset"><code class="docutils literal notranslate"><span class="pre">open_dataset()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -339,65 +335,32 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="mosaic-descriptor">
-<h1>mosaic.Descriptor<a class="headerlink" href="#mosaic-descriptor" title="Link to this heading">#</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="mosaic.Descriptor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mosaic.</span></span><span class="sig-name descname"><span class="pre">Descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_latlon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mosaic.Descriptor" title="Link to this definition">#</a></dt>
-<dd><p>Class describing unstructured MPAS meshes in order to support plotting
-within <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>. The class contains various methods to create
-<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.9.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.collections.PolyCollection</span></code></a> objects for
-variables defined at cell centers, vertices, and edges.</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
-<dl>
-<dt>latlon<span class="classifier">boolean</span></dt><dd><p>Whethere to use the lat/lon coordinates in patch construction</p>
+  <section id="mosaic-datasets-open-dataset">
+<h1>mosaic.datasets.open_dataset<a class="headerlink" href="#mosaic-datasets-open-dataset" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mosaic.datasets.open_dataset">
+<span class="sig-prename descclassname"><span class="pre">mosaic.datasets.</span></span><span class="sig-name descname"><span class="pre">open_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2024.7.1.dev0)"><span class="pre">Dataset</span></a></span></span><a class="headerlink" href="#mosaic.datasets.open_dataset" title="Link to this definition">#</a></dt>
+<dd><p>Open a dataset from the lcrc database (requires internet), unless a local
+copy is found.</p>
+<p>Available datasets:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;QU.960km&quot;</span></code> : Quasi-uniform spherical mesh, with approximately 960km horizontal resolution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;QU.240km&quot;</span></code> : Quasi-uniform spherical mesh, with approximately 240km horizontal resolution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;mpaso.IcoswISC30E3r5&quot;</span></code> : Icosahedral 30 km MPAS-Ocean mesh with ice shelf cavaties</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;mpasli.AIS8to30&quot;</span></code> : 8-30 km resolution planar non-periodic MALI mesh of Antarctica</p></li>
+</ul>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <dl class="simple">
-<dt>NOTE: I don’t think this is needed if the projection arg is</dt><dd><p>properly used at initilaization</p>
+<dt>name<span class="classifier">str</span></dt><dd><p>Name of the file containing the dataset. (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;QU.960km&quot;</span></code>)</p>
+</dd>
+<dt>cache_dir<span class="classifier">path-like, optional</span></dt><dd><p>The directory in which to search for and write cached data</p>
+</dd>
+<dt>cache<span class="classifier">bool, optional</span></dt><dd><p>If True, then cache data locally for use on subsequent calls</p>
+</dd>
+<dt>kwargs<span class="classifier">dict, optional</span></dt><dd><p>Passed to xarray.open_dataset</p>
 </dd>
 </dl>
-</dd>
-</dl>
-<p>projection : <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/reference/generated/cartopy.crs.CRS.html#cartopy.crs.CRS" title="(in cartopy v0.23.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code></a></p>
-<p>transform : <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/reference/generated/cartopy.crs.CRS.html#cartopy.crs.CRS" title="(in cartopy v0.23.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code></a></p>
-<p>cell_patches : <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
-<p>edge_patches : <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
-<p>vertex_patches : <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="mosaic.Descriptor.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_latlon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mosaic.Descriptor.__init__" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<p class="rubric">Methods</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mosaic.Descriptor.__init__" title="mosaic.Descriptor.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(ds[, projection, transform, use_latlon])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_minimal_dataset</span></code>(ds)</p></td>
-<td><p>Create a xarray.Dataset that contains the minimal subset of coordinate / connectivity arrays needed to create pathces for plotting</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_patches</span></code>(patches, projection, transform)</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p class="rubric">Attributes</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_patches</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_patches</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertex_patches</span></code></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
 </section>
 </dd></dl>
 
@@ -415,22 +378,13 @@ variables defined at cell centers, vertices, and edges.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="mosaic.polypcolor.html"
+       href="mosaic.Descriptor.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">mosaic.polypcolor</p>
+        <p class="prev-next-title">mosaic.Descriptor</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="mosaic.datasets.open_dataset.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">mosaic.datasets.open_dataset</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -448,10 +402,7 @@ variables defined at cell centers, vertices, and edges.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.Descriptor"><code class="docutils literal notranslate"><span class="pre">Descriptor</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.Descriptor.__init__"><code class="docutils literal notranslate"><span class="pre">Descriptor.__init__()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.datasets.open_dataset"><code class="docutils literal notranslate"><span class="pre">open_dataset()</span></code></a></li>
 </ul>
   </nav></div>
 
