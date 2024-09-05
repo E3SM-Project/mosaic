@@ -5,8 +5,6 @@ import pooch
 import xarray as xr
 from xarray import Dataset
 
-from mosaic.version import __version__
-
 # this dictionary uses the short handed mesh names for convience,
 # but can not be parsed by pooch
 registry = {
@@ -39,9 +37,6 @@ mesh_db = pooch.create(
     path=pooch.os_cache("mosaic"),
     # The remote data is from LCRC
     base_url="https://web.lcrc.anl.gov/public/e3sm",
-    version=__version__,
-    # If this is a development version, get the data from the "main" branch
-    version_dev="main",
     registry=_registry)
 
 
