@@ -256,30 +256,31 @@ def _compute_edge_patches(ds, latlon=False):
     cellsOnEdge = ds.cellsOnEdge
     verticesOnEdge = ds.verticesOnEdge
 
-    # is this masking correct ??
-    cellMask = cellsOnEdge < 0
-    vertexMask = verticesOnEdge < 0
-
-    # get the coordinates needed to patch construction
-    xCell = ds.xCell
-    yCell = ds.yCell
-    xVertex = ds.xVertex
-    yVertex = ds.yVertex
+    # this mask will never be true along the first column
+    # otherwise it's not an edge it's just a point
+    # that isn't possible (right?)
+    cellMask = cellsOnEdge[:, 1] < 0
 
     # get subset of cell coordinate arrays corresponding to edge patches
-    xCell = np.ma.MaskedArray(xCell[cellsOnEdge], mask=cellMask)
-    yCell = np.ma.MaskedArray(yCell[cellsOnEdge], mask=cellMask)
+    xCell = ds.xCell.values[cellsOnEdge]
+    yCell = ds.yCell.values[cellsOnEdge]
     # get subset of vertex coordinate arrays corresponding to edge patches
-    xVertex = np.ma.MaskedArray(xVertex[verticesOnEdge], mask=vertexMask)
-    yVertex = np.ma.MaskedArray(yVertex[verticesOnEdge], mask=vertexMask)
+    xVertex = ds.xVertex.values[verticesOnEdge]
+    yVertex = ds.yVertex.values[verticesOnEdge]
 
-    x_vert = np.ma.stack((xCell[:, 0], xVertex[:, 0],
-                          xCell[:, 1], xVertex[:, 1]), axis=-1)
+    # if only one cell on edge, then collapse patch vertex point
+    # from what would be the missing cell center to the edge location
+    if np.any(cellMask):
+        xCell[:, 1] = np.where(cellMask, ds.xEdge.values, xCell[:, 1])
+        yCell[:, 1] = np.where(cellMask, ds.yEdge.values, yCell[:, 1])
 
-    y_vert = np.ma.stack((yCell[:, 0], yVertex[:, 0],
-                          yCell[:, 1], yVertex[:, 1]), axis=-1)
+    x_vert = np.stack((xCell[:, 0], xVertex[:, 0],
+                       xCell[:, 1], xVertex[:, 1]), axis=-1)
 
-    verts = np.ma.stack((x_vert, y_vert), axis=-1)
+    y_vert = np.stack((yCell[:, 0], yVertex[:, 0],
+                       yCell[:, 1], yVertex[:, 1]), axis=-1)
+
+    verts = np.stack((x_vert, y_vert), axis=-1)
 
     return verts
 
