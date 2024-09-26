@@ -13,7 +13,8 @@ renaming_dict = {"lonCell": "xCell",
 connectivity_arrays = ["cellsOnEdge",
                        "cellsOnVertex",
                        "verticesOnEdge",
-                       "verticesOnCell"]
+                       "verticesOnCell",
+                       "edgesOnVertex"]
 
 
 class Descriptor:
@@ -288,21 +289,53 @@ def _compute_edge_patches(ds, latlon=False):
     return verts
 
 
-def _compute_vertex_patches(ds, latlon=False):
+def _compute_vertex_patches(ds):
+    """Create vertex patches (i.e. Dual Cells) for an MPAS mesh.
 
+    Vertex patches have 6 nodes despite the typical dual cell only having
+    three nodes (i.e. the cell centers of three cells on the vertex) in order
+    ease the creation of vertex patches along culled mesh boundaries.
+    The typical vertex patch will be comprised of the edges and cell centers
+    of the `cellsOnVertex`. As the MPAS Mesh Specs (version 1.0: Section 5.3)
+    outlines: "Edges lead cells as they move around vertex". So, the first node
+    in a vertex patch will correspond to an edge (if present).
+
+    For patches along culled boundaries, if an edge and/or cell center is
+    missing the corresponding node will be collapsed to the patches vertex
+    position.
+    """
+    nVertices = ds.sizes["nVertices"]
+    vertexDegree = ds.sizes["vertexDegree"]
+
+    # TODO: rename to nodes
+    verts = np.zeros((nVertices, vertexDegree * 2, 2))
     # connectivity arrays have already been zero indexed
-    cellsOnVertex = ds.cellsOnVertex
-    # get a mask of the active vertices
-    mask = ds.cellsOnVertex == -1
+    cellsOnVertex = ds.cellsOnVertex.values
+    edgesOnVertex = ds.edgesOnVertex.values
+    # get a mask of active nodes
+    cellMask = cellsOnVertex == -1
+    edgeMask = edgesOnVertex == -1
+    unionMask = cellMask & edgeMask
 
     # get the coordinates needed to patch construction
-    xCell = ds.xCell
-    yCell = ds.yCell
+    xCell = ds.xCell.values
+    yCell = ds.yCell.values
+    xEdge = ds.xEdge.values
+    yEdge = ds.yEdge.values
+    # convert vertex coordinates to column vectors for broadcasting below
+    xVertex = ds.xVertex.values[:, np.newaxis]
+    yVertex = ds.yVertex.values[:, np.newaxis]
 
-    # reshape/expand the vertices coordinate arrays
-    x_vert = np.ma.MaskedArray(xCell[cellsOnVertex], mask=mask)
-    y_vert = np.ma.MaskedArray(yCell[cellsOnVertex], mask=mask)
+    # if edge is missing collapse node to vertex, otherwise node is at edge
+    verts[:, ::2, 0] = np.where(edgeMask, xVertex, xEdge[edgesOnVertex])
+    verts[:, ::2, 1] = np.where(edgeMask, yVertex, yEdge[edgesOnVertex])
 
-    verts = np.ma.stack((x_vert, y_vert), axis=-1)
+    # if cell is missing collapse node to vertex, otherwise node is at cell
+    verts[:, 1::2, 0] = np.where(cellMask, xVertex, xCell[cellsOnVertex])
+    verts[:, 1::2, 1] = np.where(cellMask, yVertex, yCell[cellsOnVertex])
+
+    # if cell and edge missing collapse node to vertex, otherwise leave at edge
+    verts[:, 1::2, 0] = np.where(unionMask, xVertex, verts[:, 1::2, 0])
+    verts[:, 1::2, 1] = np.where(unionMask, yVertex, verts[:, 1::2, 1])
 
     return verts
