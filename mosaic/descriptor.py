@@ -232,7 +232,14 @@ class Descriptor:
 
 
 def _compute_cell_patches(ds):
+    """Create cell patches (i.e. Primary cells) for an MPAS mesh.
 
+    All cell patches have `ds.sizes["maxEdges"]` nodes, even if `nEdgesOnCell`
+    for the given cell is less than maxEdges. We choosed to deal with ragged
+    indices (i.e. node indices greater than `nEdgesOnCell` for a given cell)
+    by repeating the first node of the patch. Nodes are ordered counter
+    clockwise aroudn the cell center.
+    """
     # get the maximum number of edges on a cell
     maxEdges = ds.sizes["maxEdges"]
     # connectivity arrays have already been zero indexed
@@ -267,9 +274,8 @@ def _compute_edge_patches(ds):
     # connectivity arrays have already been zero indexed
     cellsOnEdge = ds.cellsOnEdge
     verticesOnEdge = ds.verticesOnEdge
-    # condition can only be true once per row or else wouldn't be an edge,
-    # which is why we use `np.any` along the first axis
-    cellMask = np.any(cellsOnEdge < 0, axis=1)
+    # condition should only be true once per row or else wouldn't be an edge
+    cellMask = cellsOnEdge < 0
 
     # get subset of cell coordinate arrays corresponding to edge patches
     xCell = ds.xCell.values[cellsOnEdge]
@@ -278,11 +284,11 @@ def _compute_edge_patches(ds):
     xVertex = ds.xVertex.values[verticesOnEdge]
     yVertex = ds.yVertex.values[verticesOnEdge]
 
-    # if only one cell on edge, then collapse patch vertex point
-    # from what would be the missing cell center to the edge location
+    # if only one cell on edge (i.e. along a culled boundary), then collapse
+    # the node corresponding to the missing cell back the edge location
     if np.any(cellMask):
-        xCell[:, 1] = np.where(cellMask, ds.xEdge.values, xCell[:, 1])
-        yCell[:, 1] = np.where(cellMask, ds.yEdge.values, yCell[:, 1])
+        xCell = np.where(cellMask, ds.xEdge.values[:, np.newaxis], xCell)
+        yCell = np.where(cellMask, ds.yEdge.values[:, np.newaxis], yCell)
 
     x_vert = np.stack((xCell[:, 0], xVertex[:, 0],
                        xCell[:, 1], xVertex[:, 1]), axis=-1)
