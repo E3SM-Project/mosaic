@@ -232,20 +232,23 @@ class Descriptor:
 
 def _compute_cell_patches(ds):
 
+    # get the maximum number of edges on a cell
+    maxEdges = ds.sizes["maxEdges"]
     # connectivity arrays have already been zero indexed
     verticesOnCell = ds.verticesOnCell
     # get a mask of the active vertices
     mask = verticesOnCell == -1
 
-    # get the coordinates needed to patch construction
-    xVertex = ds.xVertex
-    yVertex = ds.yVertex
+    # tile the first vertices index
+    firstVertex = np.tile(verticesOnCell[:, 0], (maxEdges, 1)).T
+    # set masked vertices to the first vertex of the cell
+    verticesOnCell = np.where(mask, firstVertex, verticesOnCell)
 
     # reshape/expand the vertices coordinate arrays
-    x_vert = np.ma.MaskedArray(xVertex[verticesOnCell], mask=mask)
-    y_vert = np.ma.MaskedArray(yVertex[verticesOnCell], mask=mask)
+    x_vert = ds.xVertex.values[verticesOnCell]
+    y_vert = ds.yVertex.values[verticesOnCell]
 
-    verts = np.ma.stack((x_vert, y_vert), axis=-1)
+    verts = np.stack((x_vert, y_vert), axis=-1)
 
     return verts
 
