@@ -254,16 +254,22 @@ def _compute_cell_patches(ds):
     return verts
 
 
-def _compute_edge_patches(ds, latlon=False):
+def _compute_edge_patches(ds):
+    """Create edge patches for an MPAS mesh.
+
+    Edge patches have four nodes which typically correspond to the two cell
+    centers of the `cellsOnEdge` and the two vertices which make up the edge.
+    For an edge patch along a culled mesh boundary one of the cell centers
+    usually used to construct the patch will be missing, so the corresponding
+    node will be collapsed to the edge coordinate.
+    """
 
     # connectivity arrays have already been zero indexed
     cellsOnEdge = ds.cellsOnEdge
     verticesOnEdge = ds.verticesOnEdge
-
-    # this mask will never be true along the first column
-    # otherwise it's not an edge it's just a point
-    # that isn't possible (right?)
-    cellMask = cellsOnEdge[:, 1] < 0
+    # condition can only be true once per row or else wouldn't be an edge,
+    # which is why we use `np.any` along the first axis
+    cellMask = np.any(cellsOnEdge < 0, axis=1)
 
     # get subset of cell coordinate arrays corresponding to edge patches
     xCell = ds.xCell.values[cellsOnEdge]
