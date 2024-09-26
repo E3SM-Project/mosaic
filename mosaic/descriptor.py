@@ -253,12 +253,12 @@ def _compute_cell_patches(ds):
     verticesOnCell = np.where(mask, firstVertex, verticesOnCell)
 
     # reshape/expand the vertices coordinate arrays
-    x_vert = ds.xVertex.values[verticesOnCell]
-    y_vert = ds.yVertex.values[verticesOnCell]
+    x_nodes = ds.xVertex.values[verticesOnCell]
+    y_nodes = ds.yVertex.values[verticesOnCell]
 
-    verts = np.stack((x_vert, y_vert), axis=-1)
+    nodes = np.stack((x_nodes, y_nodes), axis=-1)
 
-    return verts
+    return nodes
 
 
 def _compute_edge_patches(ds):
@@ -290,15 +290,15 @@ def _compute_edge_patches(ds):
         xCell = np.where(cellMask, ds.xEdge.values[:, np.newaxis], xCell)
         yCell = np.where(cellMask, ds.yEdge.values[:, np.newaxis], yCell)
 
-    x_vert = np.stack((xCell[:, 0], xVertex[:, 0],
-                       xCell[:, 1], xVertex[:, 1]), axis=-1)
+    x_nodes = np.stack((xCell[:, 0], xVertex[:, 0],
+                        xCell[:, 1], xVertex[:, 1]), axis=-1)
 
-    y_vert = np.stack((yCell[:, 0], yVertex[:, 0],
-                       yCell[:, 1], yVertex[:, 1]), axis=-1)
+    y_nodes = np.stack((yCell[:, 0], yVertex[:, 0],
+                        yCell[:, 1], yVertex[:, 1]), axis=-1)
 
-    verts = np.stack((x_vert, y_vert), axis=-1)
+    nodes = np.stack((x_nodes, y_nodes), axis=-1)
 
-    return verts
+    return nodes
 
 
 def _compute_vertex_patches(ds):
@@ -319,8 +319,7 @@ def _compute_vertex_patches(ds):
     nVertices = ds.sizes["nVertices"]
     vertexDegree = ds.sizes["vertexDegree"]
 
-    # TODO: rename to nodes
-    verts = np.zeros((nVertices, vertexDegree * 2, 2))
+    nodes = np.zeros((nVertices, vertexDegree * 2, 2))
     # connectivity arrays have already been zero indexed
     cellsOnVertex = ds.cellsOnVertex.values
     edgesOnVertex = ds.edgesOnVertex.values
@@ -339,15 +338,15 @@ def _compute_vertex_patches(ds):
     yVertex = ds.yVertex.values[:, np.newaxis]
 
     # if edge is missing collapse node to vertex, otherwise node is at edge
-    verts[:, ::2, 0] = np.where(edgeMask, xVertex, xEdge[edgesOnVertex])
-    verts[:, ::2, 1] = np.where(edgeMask, yVertex, yEdge[edgesOnVertex])
+    nodes[:, ::2, 0] = np.where(edgeMask, xVertex, xEdge[edgesOnVertex])
+    nodes[:, ::2, 1] = np.where(edgeMask, yVertex, yEdge[edgesOnVertex])
 
     # if cell is missing collapse node to vertex, otherwise node is at cell
-    verts[:, 1::2, 0] = np.where(cellMask, xVertex, xCell[cellsOnVertex])
-    verts[:, 1::2, 1] = np.where(cellMask, yVertex, yCell[cellsOnVertex])
+    nodes[:, 1::2, 0] = np.where(cellMask, xVertex, xCell[cellsOnVertex])
+    nodes[:, 1::2, 1] = np.where(cellMask, yVertex, yCell[cellsOnVertex])
 
     # if cell and edge missing collapse node to vertex, otherwise leave at edge
-    verts[:, 1::2, 0] = np.where(unionMask, xVertex, verts[:, 1::2, 0])
-    verts[:, 1::2, 1] = np.where(unionMask, yVertex, verts[:, 1::2, 1])
+    nodes[:, 1::2, 0] = np.where(unionMask, xVertex, nodes[:, 1::2, 0])
+    nodes[:, 1::2, 1] = np.where(unionMask, yVertex, nodes[:, 1::2, 1])
 
-    return verts
+    return nodes
