@@ -337,16 +337,23 @@ def _compute_vertex_patches(ds):
     xVertex = ds.xVertex.values[:, np.newaxis]
     yVertex = ds.yVertex.values[:, np.newaxis]
 
-    # if edge is missing collapse node to vertex, otherwise node is at edge
+    # if edge is missing collapse edge node to vertex, else leave at edge
     nodes[:, ::2, 0] = np.where(edgeMask, xVertex, xEdge[edgesOnVertex])
     nodes[:, ::2, 1] = np.where(edgeMask, yVertex, yEdge[edgesOnVertex])
 
-    # if cell is missing collapse node to vertex, otherwise node is at cell
+    # if cell is missing collapse cell node to vertex, else leave at cell
     nodes[:, 1::2, 0] = np.where(cellMask, xVertex, xCell[cellsOnVertex])
     nodes[:, 1::2, 1] = np.where(cellMask, yVertex, yCell[cellsOnVertex])
 
-    # if cell and edge missing collapse node to vertex, otherwise leave at edge
-    nodes[:, 1::2, 0] = np.where(unionMask, xVertex, nodes[:, 1::2, 0])
-    nodes[:, 1::2, 1] = np.where(unionMask, yVertex, nodes[:, 1::2, 1])
+    # -------------------------------------------------------------------------
+    # NOTE: While the condition below probably only applies to the final edge
+    #       node we apply it to all, since the conditions above ensure the
+    #       patches will still be created correctly
+    # -------------------------------------------------------------------------
+    # if cell and edge missing collapse edge node to the first edge.
+    # Because edges lead the vertices this ensures the patch encompasses
+    # the full kite area and is propely closed.
+    nodes[:, ::2, 0] = np.where(unionMask, nodes[:, 0:1, 0], nodes[:, ::2, 0])
+    nodes[:, ::2, 1] = np.where(unionMask, nodes[:, 0:1, 1], nodes[:, ::2, 1])
 
     return nodes
