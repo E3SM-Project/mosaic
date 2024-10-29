@@ -96,8 +96,8 @@ class Descriptor:
         # list of coordinate / connectivity arrays needed to create patches
         mesh_arrays = coordinate_arrays + connectivity_arrays
 
-        # get the subset of arrays from the mesh dataset
-        minimal_ds = ds[mesh_arrays]
+        # get subset of arrays from mesh and load into memory if dask arrays
+        minimal_ds = ds[mesh_arrays].load()
 
         # delete the attributes in the minimal dataset to avoid confusion
         minimal_ds.attrs.clear()
