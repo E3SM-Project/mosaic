@@ -1,3 +1,4 @@
+from cartopy.mpl.geoaxes import GeoAxes
 from matplotlib.axes import Axes
 from matplotlib.collections import PolyCollection
 from matplotlib.colors import Normalize
@@ -56,34 +57,23 @@ def polypcolor(
     elif "nVertices" in c.dims:
         verts = descriptor.vertex_patches
 
+    transform = descriptor.get_transform()
+
     collection = PolyCollection(verts, alpha=alpha, array=c,
                                 cmap=cmap, norm=norm, **kwargs)
 
+    # only set the transform if GeoAxes
+    if isinstance(ax, GeoAxes):
+        collection.set_transform(transform)
+
     collection._scale_norm(norm, vmin, vmax)
-
-    # get the limits of the **data**, which could exceed the valid
-    # axis limits of the transform
-    minx = verts[..., 0].min()
-    maxx = verts[..., 0].max()
-    miny = verts[..., 1].min()
-    maxy = verts[..., 1].max()
-
-    corners = (minx, miny), (maxx, maxy)
-    ax.update_datalim(corners)
-    ax._request_autoscale_view()
     ax.add_collection(collection)
 
-    # if data has been transformed use the transforms x-limits.
-    # patches have vertices that exceed the transfors x-limits to visually
-    # correct the antimeridian problem
-    if descriptor.projection:
-        minx = descriptor.projection.x_limits[0]
-        maxx = descriptor.projection.x_limits[1]
-
-        miny = descriptor.projection.y_limits[0]
-        maxy = descriptor.projection.y_limits[1]
-
-        ax.set_xbound(minx, maxx)
-        ax.set_ybound(miny, maxy)
+    # Update the datalim for this polycollection
+    limits = collection.get_datalim(ax.transData)
+    # TODO: account for nodes of patches that lie outside of projection bounds
+    #       (i.e. as a result of patch wrapping at the antimeridian)
+    ax.update_datalim(limits)
+    ax.autoscale_view()
 
     return collection
