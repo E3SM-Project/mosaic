@@ -15,6 +15,7 @@
    
       ~Descriptor.__init__
       ~Descriptor.create_minimal_dataset
+      ~Descriptor.get_transform
       ~Descriptor.transform_patches
    
    
