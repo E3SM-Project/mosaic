@@ -49,6 +49,7 @@ class Descriptor:
         self.latlon = use_latlon
         self.projection = projection
         self.transform = transform
+        self._pre_projected = False
 
         # if mesh is on a sphere, force the use of lat lon coords
         if ds.attrs["on_a_sphere"].strip().upper() == 'YES':
@@ -61,6 +62,7 @@ class Descriptor:
         # reproject the minimal dataset, even for non-spherical meshes
         if projection and transform:
             self._transform_coordinates(projection, transform)
+            self._pre_projected = True
 
     def create_minimal_dataset(self, ds):
         """
@@ -138,6 +140,17 @@ class Descriptor:
         patches = _compute_vertex_patches(self.ds)
         patches = self._fix_antimeridian(patches, "Vertex")
         return patches
+
+    def get_transform(self):
+        """
+        """
+
+        if self._pre_projected:
+            transform = self.projection
+        else:
+            transform = self.transform
+
+        return transform
 
     def _transform_coordinates(self, projection, transform):
         """
