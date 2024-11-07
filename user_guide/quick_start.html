@@ -32,6 +32,8 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
@@ -42,6 +44,8 @@
     <script src="../_static/documentation_options.js?v=1a9ffd16"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/quick_start';</script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -339,17 +343,16 @@
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">#</a></h2>
 <section id="global-mesh">
 <h3>Global Mesh<a class="headerlink" href="#global-mesh" title="Link to this heading">#</a></h3>
-<p>First we need to download a valid MPAS mesh. To do so run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">web</span><span class="o">.</span><span class="n">lcrc</span><span class="o">.</span><span class="n">anl</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">public</span><span class="o">/</span><span class="n">e3sm</span><span class="o">/</span><span class="n">inputdata</span><span class="o">/</span><span class="n">ocn</span><span class="o">/</span><span class="n">mpas</span><span class="o">-</span><span class="n">o</span><span class="o">/</span><span class="n">EC30to60E2r3</span><span class="o">/</span><span class="n">mpaso</span><span class="o">.</span><span class="n">EC30to60E2r3</span><span class="mf">.230313</span><span class="o">.</span><span class="n">nc</span> <span class="o">-</span><span class="n">o</span> <span class="n">mpaso</span><span class="o">.</span><span class="n">EC30to60E2r3</span><span class="mf">.230313</span><span class="o">.</span><span class="n">nc</span>
-</pre></div>
-</div>
 <p>Then we can use <code class="docutils literal notranslate"><span class="pre">mosaic</span></code> to plot on the native mesh using <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
 <span class="kn">import</span> <span class="nn">mosaic</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
-<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;mpaso.EC30to60E2r3.230313.nc&quot;</span><span class="p">)</span>
+<span class="c1"># download and read the mesh from lcrc</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;QU.240km&quot;</span><span class="p">)</span>
 
 <span class="c1"># define a map projection for our figure</span>
 <span class="n">projection</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">InterruptedGoodeHomolosine</span><span class="p">()</span>
@@ -367,35 +370,35 @@
 
 <span class="c1"># using the `Descriptor` object we just created, make a pseudocolor plot of</span>
 <span class="c1"># the &quot;indexToCellID&quot; variable, which is defined at cell centers.</span>
-<span class="n">collection</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">indexToCellID</span><span class="p">,</span> <span class="n">antialiaseds</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">collection</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">indexToCellID</span><span class="p">,</span> <span class="n">antialiaseds</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">gridlines</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cell Index&quot;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cell Index&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p><img alt="mpaso.EC30to60E2r3" src="../_images/mpaso.EC30to60E2r3.png" /></p>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6710a25b88b3ec0c9a395b9e9365e78d4686e5e080cd993fad07caef2e094916.png" src="../_images/6710a25b88b3ec0c9a395b9e9365e78d4686e5e080cd993fad07caef2e094916.png" />
+</div>
+</div>
 </section>
 <section id="planar-non-periodic">
 <h3>Planar Non-Periodic<a class="headerlink" href="#planar-non-periodic" title="Link to this heading">#</a></h3>
-<p>First we need to download a valid MPAS mesh. To do so run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">web</span><span class="o">.</span><span class="n">lcrc</span><span class="o">.</span><span class="n">anl</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">public</span><span class="o">/</span><span class="n">e3sm</span><span class="o">/</span><span class="n">inputdata</span><span class="o">/</span><span class="n">glc</span><span class="o">/</span><span class="n">mpasli</span><span class="o">/</span><span class="n">mpas</span><span class="o">.</span><span class="n">ais8to30km</span><span class="o">/</span><span class="n">ais_8to30km</span><span class="mf">.20231222</span><span class="o">.</span><span class="n">nc</span> <span class="o">-</span><span class="n">o</span> <span class="n">mpasli</span><span class="o">.</span><span class="n">ais8to30km</span><span class="o">.</span><span class="n">nc</span>
-</pre></div>
-</div>
 <p>In this case the underlying coordinate arrays (i.e. <code class="docutils literal notranslate"><span class="pre">xCell/yCell</span></code>)
 correspond to a South Polar Stereographic projection, which is also the map projection we
 want to us. Therefore, the <code class="docutils literal notranslate"><span class="pre">projection</span></code> and the <code class="docutils literal notranslate"><span class="pre">transform</span></code> will be equivalent
 for this example. When instantiating the <code class="docutils literal notranslate"><span class="pre">mosaic.Descriptor</span></code> object we have to
 careful to set <code class="docutils literal notranslate"><span class="pre">use_latlon=False</span></code> to ensure the <code class="docutils literal notranslate"><span class="pre">xCell</span></code>/<code class="docutils literal notranslate"><span class="pre">yCell</span></code> coordinate
 arrays are parsed (c.f. <code class="docutils literal notranslate"><span class="pre">lonCell</span></code>/<code class="docutils literal notranslate"><span class="pre">latCell</span></code>).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
 <span class="kn">import</span> <span class="nn">mosaic</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
-<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;mpasli.ais8to30km.nc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="c1"># download and read the mesh from lcrc</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;mpasli.AIS8to30&quot;</span><span class="p">)</span>
 
 <span class="c1"># define a map projection for our figure</span>
 <span class="n">projection</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">SouthPolarStereo</span><span class="p">()</span>
@@ -420,10 +423,14 @@ arrays are parsed (c.f. <code class="docutils literal notranslate"><span class="
 
 <span class="n">ax</span><span class="o">.</span><span class="n">gridlines</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Thickness [m]&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Thickness [m]&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p><img alt="mpasli.ais8to30km" src="../_images/mpasli.ais8to30km.png" /></p>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/608d43063b29fa30984188fff3a6ad7e6ca16052fc58c1f5792ae9260cf35ce1.png" src="../_images/608d43063b29fa30984188fff3a6ad7e6ca16052fc58c1f5792ae9260cf35ce1.png" />
+</div>
+</div>
 <p>In the case where we do not know what projection the coordinate arrays of the
 mesh correspond to we can use the <code class="docutils literal notranslate"><span class="pre">lonCell</span></code>/<code class="docutils literal notranslate"><span class="pre">latCell</span></code> coordinates and <code class="docutils literal notranslate"><span class="pre">mosaic</span></code>
 will handle the transformation to the requested map projection under the hood.
