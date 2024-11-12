@@ -32,20 +32,22 @@ def polypcolor(
     passing the mesh datatset. See  :py:class:`mosaic.Descriptor` for an
     explanation of what the ``mesh_dataset`` has to be.
 
-    Parameters:
-        ax :
-            An Axes or GeoAxes where the pseduocolor plot will be added
+    Parameters
+    ----------
 
-        descriptor : :py:class:`Descriptor`
-            An already created ``Descriptor`` object
+    ax : matplotlib axes object
+        Axes, or GeoAxes, on which to plot
 
-        c : :py:class:`xarray.DataArray`
-            The color values to plot. Must have a dimension named either
-            ``nCells``, ``nEdges``, or ``nVertices``.
+    descriptor : :py:class:`Descriptor`
+        An already created ``Descriptor`` object
 
-        other_parameters
-            All other parameters including the ``kwargs`` are the same as
-            for :py:func:`matplotlib.pyplot.pcolor`.
+    c : DataArray
+        The color values to plot. Must have a dimension named either
+        ``nCells``, ``nEdges``, or ``nVertices``.
+
+    other_parameters
+        All other parameters including the ``kwargs`` are the same as
+        for :py:func:`matplotlib.pyplot.pcolor`.
     """
 
     if "nCells" in c.dims:

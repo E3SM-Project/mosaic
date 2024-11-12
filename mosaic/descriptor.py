@@ -21,28 +21,37 @@ class Descriptor:
     """
     Class describing unstructured MPAS meshes in order to support plotting
     within ``matplotlib``. The class contains various methods to create
-    :py:class:`matplotlib.collections.PolyCollection` objects for
+    :py:class:`~matplotlib.collections.PolyCollection` objects for
     variables defined at cell centers, vertices, and edges.
+
+    Parameters
+    ----------
+
+    ds : DataArray
+        A valid mpas mesh dataset...
+
+    projection : cartopy.crs.Projection
+        The coordinate system ....
+
+    transform : cartopy.crs.Projection
+        The coordinate system ....
+
+    use_latlon : bool
+        Whether to use the lat/lon coordinate arrays to construct the patches
 
 
     Attributes
     ----------
-    latlon : boolean
-        Whethere to use the lat/lon coordinates in patch construction
 
-        NOTE: I don't think this is needed if the projection arg is
-              properly used at initilaization
+    latlon : bool
+        pass
+    projection : cartopy.crs.Projection
+        pass
+    transform : cartopy.crs.Projection
+        pass
 
-    projection : :py:class:`cartopy.crs.CRS`
-
-    transform : :py:class:`cartopy.crs.CRS`
-
-    cell_patches : :py:class:`numpy.ndarray`
-
-    edge_patches : :py:class:`numpy.ndarray`
-
-    vertex_patches : :py:class:`numpy.ndarray`
     """
+
     def __init__(self, ds, projection=None, transform=None, use_latlon=False):
         """
         """
@@ -68,6 +77,12 @@ class Descriptor:
         """
         Create a xarray.Dataset that contains the minimal subset of
         coordinate / connectivity arrays needed to create pathces for plotting
+
+        Parameters
+        ----------
+
+        ds : DataArray
+            A valid mpas mesh dataset....
         """
 
         def fix_outofbounds_indices(ds, array_name):
@@ -125,6 +140,8 @@ class Descriptor:
 
     @cached_property
     def cell_patches(self):
+        """ Lazily loaded cell patches
+        """
         patches = _compute_cell_patches(self.ds)
         patches = self._fix_antimeridian(patches, "Cell")
         return patches
