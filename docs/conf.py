@@ -43,6 +43,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.napoleon',
+    'sphinx_remove_toctrees',
 ]
 
 source_suffix = {
@@ -61,7 +63,8 @@ intersphinx_mapping = {
         'cartopy': ('https://scitools.org.uk/cartopy/docs/latest/', None),
         'matplotlib': ('https://matplotlib.org/stable', None),
         'numpy': ('https://numpy.org/doc/stable', None),
-        'xarray': ('https://xarray.pydata.org/en/stable', None)
+        'python': ('https://docs.python.org/3/', None),
+        'xarray': ('https://xarray.pydata.org/en/stable', None),
         }
 
 # -- MyST settings -----------------------------------------------------------
@@ -87,4 +90,25 @@ html_theme_options = {
     "show_navbar_depth": 3
 }
 
-html_static_path = ['_static']
+remove_from_toctrees = ["developers_guide/generated/*"]
+
+autodoc_typehints = "none"
+
+copybutton_prompt_text = ">>> "
+
+# Napoleon configurations
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_preprocess_types = True
+napoleon_type_aliases = {
+    "cartopy.crs.Projection": ":class:`cartopy.crs.CRS`",
+    # objects without namespace: xarray
+    "DataArray": "~xarray.DataArray",
+    "Dataset": "~xarray.Dataset",
+    # matplotlib terms
+    "matplotlib axes object": ":py:class:`matplotlib axes object <matplotlib.axes.Axes>`",
+    # objects without namespace: numpy
+    "ndarray": "~numpy.ndarray",
+    "path-like": ":term:`path-like <path-like object>`",
+    "string": ":class:`string <str>`",
+}
