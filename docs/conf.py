@@ -44,6 +44,7 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'sphinx_remove_toctrees',
 ]
 
 source_suffix = {
@@ -89,15 +90,15 @@ html_theme_options = {
     "show_navbar_depth": 3
 }
 
-html_static_path = ['_static']
+remove_from_toctrees = ["developers_guide/generated/*"]
 
 autodoc_typehints = "none"
+
+copybutton_prompt_text = ">>> "
 
 # Napoleon configurations
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
-napoleon_use_param = False
-napoleon_use_rtype = False
 napoleon_preprocess_types = True
 napoleon_type_aliases = {
     "cartopy.crs.Projection": ":class:`cartopy.crs.CRS`",
