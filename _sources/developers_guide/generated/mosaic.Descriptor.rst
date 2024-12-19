@@ -14,9 +14,6 @@
    .. autosummary::
    
       ~Descriptor.__init__
-      ~Descriptor.create_minimal_dataset
-      ~Descriptor.get_transform
-      ~Descriptor.transform_patches
    
    
 
@@ -28,6 +25,11 @@
    
       ~Descriptor.cell_patches
       ~Descriptor.edge_patches
+      ~Descriptor.latlon
+      ~Descriptor.projection
       ~Descriptor.vertex_patches
+      ~Descriptor.transform
+      ~Descriptor.is_spherical
+      ~Descriptor.ds
    
    
