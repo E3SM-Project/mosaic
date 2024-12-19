@@ -21,8 +21,7 @@ connectivity_arrays = ["cellsOnEdge",
 
 
 def attr_to_bool(attr: str):
-    """Format attribute strings and return a boolean value
-    """
+    """ Format attribute strings and return a boolean value """
     match attr.strip().upper():
         case "YES":
             return True
@@ -186,8 +185,7 @@ class Descriptor:
 
     @property
     def projection(self) -> CRS:
-        """The target projection for plotting.
-        """
+        """ The target projection for plotting. """
         return self._projection
 
     @projection.setter
@@ -216,15 +214,15 @@ class Descriptor:
 
     @property
     def latlon(self) -> bool:
-        """Boolean whether the lat/lon coordinate arrays should be used for
+        """
+        Boolean whether the lat/lon coordinate arrays should be used for
         patch construction.
         """
         return self._latlon
 
     @latlon.setter
     def latlon(self, value) -> None:
-        """TODO: check that the passed value is consistent with transform
-        """
+        """ TODO: check that the passed value is consistent with transform """
         if self.is_spherical:
             value = True
 
