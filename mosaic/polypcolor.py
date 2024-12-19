@@ -59,7 +59,7 @@ def polypcolor(
     elif "nVertices" in c.dims:
         verts = descriptor.vertex_patches
 
-    transform = descriptor.get_transform()
+    transform = descriptor.transform
 
     collection = PolyCollection(verts, alpha=alpha, array=c,
                                 cmap=cmap, norm=norm, **kwargs)
