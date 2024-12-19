@@ -23,29 +23,27 @@ def polypcolor(
     """
     Create a pseudocolor plot of a unstructured MPAS grid.
 
-    Call signatures::
+    The unstructured grid is specified by passing a
+    :py:class:`~mosaic.Descriptor` object as the second parameter.
+    See :py:class:`mosaic.Descriptor` for an explanation of what the
+    ``Descriptor`` is and how to construct it.
 
-        polypcolor(ax, descriptor, c, *, ...)
+    Parameters
+    ----------
 
-    The unstructued grid can be specified either by passing a
-    :py:class:`mosaic.Descriptor` object as the second parameter, or by
-    passing the mesh datatset. See  :py:class:`mosaic.Descriptor` for an
-    explanation of what the ``mesh_dataset`` has to be.
+    ax : matplotlib axes object
+        Axes, or GeoAxes, on which to plot
 
-    Parameters:
-        ax :
-            An Axes or GeoAxes where the pseduocolor plot will be added
+    descriptor : :py:class:`Descriptor`
+        An already created ``Descriptor`` object
 
-        descriptor : :py:class:`Descriptor`
-            An already created ``Descriptor`` object
+    c : DataArray
+        The color values to plot. Must have a dimension named either
+        ``nCells``, ``nEdges``, or ``nVertices``.
 
-        c : :py:class:`xarray.DataArray`
-            The color values to plot. Must have a dimension named either
-            ``nCells``, ``nEdges``, or ``nVertices``.
-
-        other_parameters
-            All other parameters including the ``kwargs`` are the same as
-            for :py:func:`matplotlib.pyplot.pcolor`.
+    other_parameters
+        All other parameters are the same as for
+        :py:func:`~matplotlib.pyplot.pcolor`.
     """
 
     if "nCells" in c.dims:
@@ -57,7 +55,7 @@ def polypcolor(
     elif "nVertices" in c.dims:
         verts = descriptor.vertex_patches
 
-    transform = descriptor.get_transform()
+    transform = descriptor.transform
 
     collection = PolyCollection(verts, alpha=alpha, array=c,
                                 cmap=cmap, norm=norm, **kwargs)

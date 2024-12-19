@@ -43,7 +43,7 @@ mesh_db = pooch.create(
 # idea borrowed/copied from xarray
 def open_dataset(
     name: str,
-    cache_dir: None | str | os.PathLike = None,
+    cache_dir: str | os.PathLike | None = None,
     cache: bool = True,
     **kwargs,
 ) -> Dataset:
@@ -67,7 +67,8 @@ def open_dataset(
     cache : bool, optional
         If True, then cache data locally for use on subsequent calls
     kwargs : dict, optional
-        Passed to xarray.open_dataset
+        Additional arguments passed on to :py:func:`xarray.open_dataset`.
+
     """
 
     # invalid dataset name requested
