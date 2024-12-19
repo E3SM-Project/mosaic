@@ -31,6 +31,14 @@ def attr_to_bool(attr: str):
             raise ValueError("f{attr} was unable to be parsed as YES/NO")
 
 
+def parse_period(period):
+    """ Parse period attribute, return None if period is zero """
+    if float(period) == 0.0:
+        return None
+    else:
+        return float(period)
+
+
 class Descriptor:
     """Data structure describing unstructured MPAS meshes.
 
@@ -105,8 +113,14 @@ class Descriptor:
         #: ``projection`` kwargs are provided.
         self.transform = transform
 
+        #: Boolean whether parent mesh is (planar) periodic in at least one dim
+        self.is_periodic = attr_to_bool(mesh_ds.is_periodic)
         #: Boolean whether parent mesh is spherical
         self.is_spherical = attr_to_bool(mesh_ds.on_a_sphere)
+        #: Period along x-dimension, is ``None`` for non-periodic meshes
+        self.x_period = parse_period(mesh_ds.x_period)
+        #: Period along y-dimension, is ``None`` for non-periodic meshes
+        self.y_period = parse_period(mesh_ds.y_period)
 
         # calls attribute setter method
         self.latlon = use_latlon
