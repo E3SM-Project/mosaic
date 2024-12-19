@@ -23,14 +23,10 @@ def polypcolor(
     """
     Create a pseudocolor plot of a unstructured MPAS grid.
 
-    Call signatures::
-
-        polypcolor(ax, descriptor, c, *, ...)
-
-    The unstructued grid can be specified either by passing a
-    :py:class:`mosaic.Descriptor` object as the second parameter, or by
-    passing the mesh datatset. See  :py:class:`mosaic.Descriptor` for an
-    explanation of what the ``mesh_dataset`` has to be.
+    The unstructured grid is specified by passing a
+    :py:class:`~mosaic.Descriptor` object as the second parameter.
+    See :py:class:`mosaic.Descriptor` for an explanation of what the
+    ``Descriptor`` is and how to construct it.
 
     Parameters
     ----------
@@ -46,8 +42,8 @@ def polypcolor(
         ``nCells``, ``nEdges``, or ``nVertices``.
 
     other_parameters
-        All other parameters including the ``kwargs`` are the same as
-        for :py:func:`matplotlib.pyplot.pcolor`.
+        All other parameters are the same as for
+        :py:func:`~matplotlib.pyplot.pcolor`.
     """
 
     if "nCells" in c.dims:
