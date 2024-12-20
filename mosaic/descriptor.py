@@ -1,4 +1,5 @@
 from functools import cached_property
+from typing import Literal
 
 import numpy as np
 import xarray as xr
@@ -105,8 +106,14 @@ class Descriptor:
         #: ``projection`` kwargs are provided.
         self.transform = transform
 
+        #: Boolean whether parent mesh is (planar) periodic in at least one dim
+        self.is_periodic = attr_to_bool(mesh_ds.is_periodic)
         #: Boolean whether parent mesh is spherical
         self.is_spherical = attr_to_bool(mesh_ds.on_a_sphere)
+
+        # method ensures is periodic, avoiding AttributeErrors if non-periodic
+        self.x_period = self._parse_period(mesh_ds, "x")
+        self.y_period = self._parse_period(mesh_ds, "y")
 
         # calls attribute setter method
         self.latlon = use_latlon
@@ -228,6 +235,51 @@ class Descriptor:
 
         self._latlon = value
 
+    def _parse_period(self, ds, dim: Literal["x", "y"]):
+        """ Parse period attribute, return None for non-periodic meshes """
+
+        attr = f"{dim}_period"
+        try:
+            period = float(ds.attrs[attr])
+        except KeyError:
+            period = None
+
+        # in the off chance mesh is periodic but does not have period attribute
+        if self.is_periodic and attr not in ds.attrs:
+            raise AttributeError((f"Mesh file: \"{ds.encoding['source']}\""
+                                  f"does not have attribute `{attr}` despite"
+                                  f"being a planar periodic mesh."))
+        if period == 0.0:
+            return None
+        else:
+            return period
+
+    @property
+    def x_period(self) -> float | None:
+        """ Period along x-dimension, is ``None`` for non-periodic meshes """
+        return self._x_period
+
+    @x_period.setter
+    def x_period(self, value) -> None:
+        # needed to avoid AttributeError for non-periodic meshes
+        if not self.is_periodic:
+            self._x_period = None
+        else:
+            self._x_period = value
+
+    @property
+    def y_period(self) -> float | None:
+        """ Period along y-dimension, is ``None`` for non-periodic meshes """
+        return self._y_period
+
+    @y_period.setter
+    def y_period(self, value) -> None:
+        # needed to avoid AttributeError for non-periodic meshes
+        if not self.is_periodic:
+            self._y_period = None
+        else:
+            self._y_period = value
+
     @cached_property
     def cell_patches(self) -> ndarray:
         """:py:class:`~numpy.ndarray` of patch coordinates for cell centered
@@ -244,7 +296,7 @@ class Descriptor:
         patch. Nodes are ordered counter clockwise around the cell center.
         """
         patches = _compute_cell_patches(self.ds)
-        patches = self._fix_antimeridian(patches, "Cell")
+        patches = self._wrap_patches(patches, "Cell")
         return patches
 
     @cached_property
@@ -263,7 +315,7 @@ class Descriptor:
         corresponding node will be collapsed to the edge coordinate.
         """
         patches = _compute_edge_patches(self.ds)
-        patches = self._fix_antimeridian(patches, "Edge")
+        patches = self._wrap_patches(patches, "Edge")
         return patches
 
     @cached_property
@@ -289,7 +341,7 @@ class Descriptor:
         position.
         """
         patches = _compute_vertex_patches(self.ds)
-        patches = self._fix_antimeridian(patches, "Vertex")
+        patches = self._wrap_patches(patches, "Vertex")
         return patches
 
     def _transform_coordinates(self, projection, transform):
@@ -303,6 +355,56 @@ class Descriptor:
             # the values of the dataarray
             self.ds[f"x{loc}"].values = transformed_coords[:, 0]
             self.ds[f"y{loc}"].values = transformed_coords[:, 1]
+
+    def _wrap_patches(self, patches, loc):
+        """Wrap patches for spherical and planar-periodic meshes
+
+        """
+
+        def _find_boundary_patches(patches, loc, coord):
+            """
+            Find the patches that cross the periodic boundary and what
+            direction they cross the boundary (i.e. their ``sign``). This
+            method assumes the patch centroids are not periodic
+            """
+            # get axis index we are inquiring over
+            axis = 0 if coord == "x" else 1
+            # get requested coordinate of patch centroids
+            center = self.ds[f"{coord}{loc.title()}"].values.reshape(-1, 1)
+            # get difference b/w centroid and nodes of patches
+            diff = patches[..., axis] - center
+
+            #
+            if self.__getattribute__(f"{coord}_period"):
+                period = self.__getattribute__(f"{coord}_period")
+
+            mask = np.abs(diff) > np.abs(period) / (2. * np.sqrt(2.))
+            sign = np.sign(diff)
+
+            return mask, sign
+
+        def _wrap_1D(patches, mask, sign, axis, period):
+            """Correct patch periodicity along a single dimension"""
+            patches[..., axis][mask] -= np.sign(sign[mask]) * period
+            return patches
+
+        if self.x_period:
+            # find the patch that are periodic in x-direction
+            x_mask, x_sign = _find_boundary_patches(patches, loc, "x")
+            # using the sign of the difference correct patches x coordinate
+            patches = _wrap_1D(patches, x_mask, x_sign, 0, self.x_period)
+
+        if self.y_period:
+            # find the patch that are periodic in y-direction
+            y_mask, y_sign = _find_boundary_patches(patches, loc, "y")
+            # using the sign of the difference correct patches y coordinate
+            patches = _wrap_1D(patches, y_mask, y_sign, 1, self.y_period)
+
+        if self.is_spherical:
+            # call current spherical wrapping function for now
+            patches = self._fix_antimeridian(patches, loc)
+
+        return patches
 
     def _fix_antimeridian(self, patches, loc, projection=None):
         """Correct vertices of patches that cross the antimeridian.

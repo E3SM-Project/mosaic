@@ -26,7 +26,12 @@ registry = {
     "mpasli.AIS8to30": {
         "lcrc_path": "inputdata/glc/mpasli/mpas.ais8to30km/ais_8to30km.20221027.nc",
         "sha256_hash": "sha256:932a1989ff8e51223413ef3ff0056d6737a1fc7f53e440359884a567a93413d2"
-    }
+    },
+
+    "doubly_periodic_4x4": {
+        "lcrc_path": "mpas_standalonedata/mpas-ocean/mesh_database/doubly_periodic_1920km_7680x7680km.151124.nc",
+        "sha256_hash": "sha256:5409d760845fb682ec56e30d9c6aa6dfe16b5d0e0e74f5da989cdaddbf4303c7"
+    },
 }
 
 # create a parsable registry for pooch from human friendly one
@@ -55,8 +60,9 @@ def open_dataset(
 
     * ``"QU.960km"`` : Quasi-uniform spherical mesh, with approximately 960km horizontal resolution
     * ``"QU.240km"`` : Quasi-uniform spherical mesh, with approximately 240km horizontal resolution
-    * ``"mpaso.IcoswISC30E3r5"`` : Icosahedral 30 km MPAS-Ocean mesh with ice shelf cavaties
+    * ``"mpaso.IcoswISC30E3r5"`` : Icosahedral 30 km MPAS-Ocean mesh with ice shelf cavities
     * ``"mpasli.AIS8to30"`` : 8-30 km resolution planar non-periodic MALI mesh of Antarctica
+    * ``"doubly_periodic_4x4"``: Doubly periodic planar mesh that is four cells wide in both the x and y dimensions.
 
     Parameters
     ----------
