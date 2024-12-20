@@ -1,4 +1,5 @@
 from functools import cached_property
+from typing import Literal
 
 import numpy as np
 import xarray as xr
@@ -29,14 +30,6 @@ def attr_to_bool(attr: str):
             return False
         case _:
             raise ValueError("f{attr} was unable to be parsed as YES/NO")
-
-
-def parse_period(period):
-    """ Parse period attribute, return None if period is zero """
-    if float(period) == 0.0:
-        return None
-    else:
-        return float(period)
 
 
 class Descriptor:
@@ -117,10 +110,10 @@ class Descriptor:
         self.is_periodic = attr_to_bool(mesh_ds.is_periodic)
         #: Boolean whether parent mesh is spherical
         self.is_spherical = attr_to_bool(mesh_ds.on_a_sphere)
-        #: Period along x-dimension, is ``None`` for non-periodic meshes
-        self.x_period = parse_period(mesh_ds.x_period)
-        #: Period along y-dimension, is ``None`` for non-periodic meshes
-        self.y_period = parse_period(mesh_ds.y_period)
+
+        # method ensures is periodic, avoiding AttributeErrors if non-periodic
+        self.x_period = self._parse_period(mesh_ds, "x")
+        self.y_period = self._parse_period(mesh_ds, "y")
 
         # calls attribute setter method
         self.latlon = use_latlon
@@ -241,6 +234,51 @@ class Descriptor:
             value = True
 
         self._latlon = value
+
+    def _parse_period(self, ds, dim: Literal["x", "y"]):
+        """ Parse period attribute, return None for non-periodic meshes """
+
+        attr = f"{dim}_period"
+        try:
+            period = float(ds.attrs[attr])
+        except KeyError:
+            period = None
+
+        # in the off chance mesh is periodic but does not have period attribute
+        if self.is_periodic and attr not in ds.attrs:
+            raise AttributeError((f"Mesh file: \"{ds.encoding['source']}\""
+                                  f"does not have attribute `{attr}` despite"
+                                  f"being a planar periodic mesh."))
+        if period == 0.0:
+            return None
+        else:
+            return period
+
+    @property
+    def x_period(self) -> float | None:
+        """ Period along x-dimension, is ``None`` for non-periodic meshes """
+        return self._x_period
+
+    @x_period.setter
+    def x_period(self, value) -> None:
+        # needed to avoid AttributeError for non-periodic meshes
+        if not self.is_periodic:
+            self._x_period = None
+        else:
+            self._x_period = value
+
+    @property
+    def y_period(self) -> float | None:
+        """ Period along y-dimension, is ``None`` for non-periodic meshes """
+        return self._y_period
+
+    @y_period.setter
+    def y_period(self, value) -> None:
+        # needed to avoid AttributeError for non-periodic meshes
+        if not self.is_periodic:
+            self._y_period = None
+        else:
+            self._y_period = value
 
     @cached_property
     def cell_patches(self) -> ndarray:
