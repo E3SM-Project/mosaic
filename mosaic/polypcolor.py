@@ -1,3 +1,4 @@
+import numpy as np
 from cartopy.mpl.geoaxes import GeoAxes
 from matplotlib.axes import Axes
 from matplotlib.collections import PolyCollection
@@ -48,12 +49,18 @@ def polypcolor(
 
     if "nCells" in c.dims:
         verts = descriptor.cell_patches
+        if descriptor.projection and np.any(descriptor._cell_pole_mask):
+            c = c.where(~descriptor._cell_pole_mask, np.nan)
 
     elif "nEdges" in c.dims:
         verts = descriptor.edge_patches
+        if descriptor.projection and np.any(descriptor._edge_pole_mask):
+            c = c.where(~descriptor._edge_pole_mask, np.nan)
 
     elif "nVertices" in c.dims:
         verts = descriptor.vertex_patches
+        if descriptor.projection and np.any(descriptor._vertex_pole_mask):
+            c = c.where(~descriptor._vertex_pole_mask, np.nan)
 
     transform = descriptor.transform
 
