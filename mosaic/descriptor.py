@@ -429,7 +429,7 @@ class Descriptor:
             return patches
 
         if self.x_period:
-            # find the patch that are periodic in x-direction
+            # find the patches that are periodic in x-direction
             x_mask, x_sign = _find_boundary_patches(
                 patches, loc, "x", self.x_period
             )
@@ -439,7 +439,7 @@ class Descriptor:
                 patches = _wrap_1D(patches, x_mask, x_sign, 0, self.x_period)
 
         if self.y_period:
-            # find the patch that are periodic in y-direction
+            # find the patches that are periodic in y-direction
             y_mask, y_sign = _find_boundary_patches(
                 patches, loc, "y", self.y_period
             )
@@ -552,14 +552,14 @@ def _compute_vertex_patches(ds: Dataset) -> ndarray:
     nodes[:, 1::2, 1] = np.where(cellMask, yVertex, yCell[cellsOnVertex])
 
     # -------------------------------------------------------------------------
-    # NOTE: While the condition below probably only applies to the final edge
-    #       node we apply it to all, since the conditions above ensure the
-    #       patches will still be created correctly
+    # NOTE: The condition below will only be true for meshes run through the
+    #       MPAS mesh converter after culling. A bug in the converter alters
+    #       the ordering of edges, causing problems for vertex patches
     # -------------------------------------------------------------------------
-    # if cell and edge missing collapse edge node to the first edge.
+    # if cell and edge missing collapse final edge node to the first edge.
     # Because edges lead the vertices this ensures the patch encompasses
     # the full kite area and is properly closed.
-    nodes[:, ::2, 0] = np.where(unionMask, nodes[:, 0:1, 0], nodes[:, ::2, 0])
-    nodes[:, ::2, 1] = np.where(unionMask, nodes[:, 0:1, 1], nodes[:, ::2, 1])
+    nodes[:, 4, 0] = np.where(unionMask[:, -1], nodes[:, 0, 0], nodes[:, 4, 0])
+    nodes[:, 4, 1] = np.where(unionMask[:, -1], nodes[:, 0, 1], nodes[:, 4, 1])
 
     return nodes
