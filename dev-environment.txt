@@ -17,6 +17,7 @@ setuptools >=60
 # Linting and tesing
 pip
 pytest
+pytest-timeout
 isort
 flake8
 mypy
