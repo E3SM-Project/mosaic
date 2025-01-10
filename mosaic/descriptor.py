@@ -239,10 +239,11 @@ class Descriptor:
 
         # if periods are None (i.e. projection was not set at instantiation) or
         # the descriptor is being reprojected; update the periods
-        if (not self.x_period and not self.y_period) or reprojecting:
-            # dummy value b/c `self._projection` attr will be used by setters
-            self.x_period = None
-            self.y_period = None
+        if (hasattr(self, "_x_period") and hasattr(self, "_x_period")):
+            if (not self.x_period and not self.y_period) or reprojecting:
+                # dummy value b/c `_projection` attr will be used by setters
+                self.x_period = None
+                self.y_period = None
 
     @property
     def latlon(self) -> bool:
