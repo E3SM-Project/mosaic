@@ -213,10 +213,12 @@ class Descriptor:
                              f" is not supported - consider using "
                              f"a rectangular projection.")
 
+        reprojecting = False
         # Issue warning if changing the projection after initialization
         # TODO: Add heuristic size (i.e. ``self.ds.nbytes``) above which the
         #       warning is raised
         if hasattr(self, "_projection"):
+            reprojecting = True
             print(("Reprojecting the descriptor can be inefficient "
                    "for large meshes"))
 
@@ -234,6 +236,13 @@ class Descriptor:
                     del self.__dict__[attr]
 
         self._projection = projection
+
+        # if periods are None (i.e. projection was not set at instantiation) or
+        # the descriptor is being reprojected; update the periods
+        if (not self.x_period and not self.y_period) or reprojecting:
+            # dummy value b/c `self._projection` attr will be used by setters
+            self.x_period = None
+            self.y_period = None
 
     @property
     def latlon(self) -> bool:
@@ -280,7 +289,7 @@ class Descriptor:
         # needed to avoid AttributeError for non-periodic meshes
         if not (self.is_periodic and self.is_spherical):
             self._x_period = None
-        if not self.is_periodic and self.is_spherical:
+        if not self.is_periodic and self.is_spherical and self.projection:
             x_limits = self.projection.x_limits
             self._x_period = np.abs(x_limits[1] - x_limits[0])
         else:
@@ -296,7 +305,7 @@ class Descriptor:
         # needed to avoid AttributeError for non-periodic meshes
         if not (self.is_periodic and self.is_spherical):
             self._y_period = None
-        if not self.is_periodic and self.is_spherical:
+        if not self.is_periodic and self.is_spherical and self.projection:
             y_limits = self.projection.y_limits
             self._y_period = np.abs(y_limits[1] - y_limits[0])
         else:
