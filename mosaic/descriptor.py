@@ -21,12 +21,12 @@ connectivity_arrays = ["cellsOnEdge",
                        "verticesOnCell",
                        "edgesOnVertex"]
 
-SUPPORTED_PROJECTIONS = (ccrs._RectangularProjection,
-                         ccrs._WarpedRectangularProjection,
-                         ccrs.Stereographic,
-                         ccrs.Mercator,
-                         ccrs._CylindricalProjection,
-                         ccrs.InterruptedGoodeHomolosine)
+SUPPORTED_SPHERICAL_PROJECTIONS = (ccrs._RectangularProjection,
+                                   ccrs._WarpedRectangularProjection,
+                                   ccrs.Stereographic,
+                                   ccrs.Mercator,
+                                   ccrs._CylindricalProjection,
+                                   ccrs.InterruptedGoodeHomolosine)
 
 
 def attr_to_bool(attr: str):
@@ -207,11 +207,12 @@ class Descriptor:
     def projection(self, projection: CRS) -> None:
         # We don't support all map projections for spherical meshes, yet...
         if (projection is not None and self.is_spherical and
-                not isinstance(projection, SUPPORTED_PROJECTIONS)):
+                not isinstance(projection, SUPPORTED_SPHERICAL_PROJECTIONS)):
 
             raise ValueError(f"Invalid projection: {type(projection).__name__}"
                              f" is not supported - consider using "
                              f"a rectangular projection.")
+
         # Issue warning if changing the projection after initialization
         # TODO: Add heuristic size (i.e. ``self.ds.nbytes``) above which the
         #       warning is raised
@@ -444,7 +445,7 @@ class Descriptor:
                 patches, loc, "y", self.y_period
             )
 
-            if np.any(x_mask):
+            if np.any(y_mask):
                 # using the sign of the difference correct patches y coordinate
                 patches = _wrap_1D(patches, y_mask, y_sign, 1, self.y_period)
 
