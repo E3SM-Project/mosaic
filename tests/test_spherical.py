@@ -43,7 +43,7 @@ class TestSphericalWrapping:
         descriptor = mosaic.Descriptor(self.ds, request.param, ccrs.Geodetic())
         return descriptor
 
-    @pytest.mark.timeout(75)
+    @pytest.mark.timeout(30)
     @pytest.mark.parametrize("patch", ["Cell", "Edge", "Vertex"])
     @pytest.mark.filterwarnings("ignore:numpy.ndarray size changed")
     def test_timeout(self, setup_descriptor, tmp_path, patch):

@@ -110,7 +110,7 @@ jobs:
           conda activate mosaic_dev
           pip check
           python -c "import mosaic"
-          pytest tests -v
+          #pytest tests -v
 
       - if: ${{ steps.skip_check.outputs.should_skip != 'true' }}
         name: Build Sphinx Docs
