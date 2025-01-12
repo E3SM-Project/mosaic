@@ -35,7 +35,7 @@ ds = mosaic.datasets.open_dataset("QU.240km")
 # define a map projection for our figure
 projection = ccrs.InterruptedGoodeHomolosine()
 # define the transform that describes our dataset
-transform = ccrs.PlateCarree()
+transform = ccrs.Geodetic()
 
 # create the figure and a GeoAxis 
 fig, ax = plt.subplots(1, 1, figsize=(9,7), facecolor="w",
@@ -54,13 +54,16 @@ ax.coastlines()
 fig.colorbar(collection, fraction=0.1, shrink=0.5, label="Cell Index");
 ```
 
-### Planar Non-Periodic 
+For more information about how spherical meshes are handled and a list of supported
+map projections, see: <project:#wrapping>.
+
+### Planar Non-Periodic
 
 In this case the underlying coordinate arrays (i.e. `xCell/yCell`)
 correspond to a South Polar Stereographic projection, which is also the map projection we
 want to us. Therefore, the `projection` and the `transform` will be equivalent
 for this example. When instantiating the `mosaic.Descriptor` object we have to 
-careful to set `use_latlon=False` to ensure the `xCell`/`yCell` coordinate
+be careful to set `use_latlon=False` to ensure the `xCell`/`yCell` coordinate
 arrays are parsed (c.f. `lonCell`/`latCell`). 
 
 ```{code-cell} ipython3
@@ -101,13 +104,13 @@ fig.colorbar(collection, fraction=0.1, label="Thickness [m]");
 In the case where we do not know what projection the coordinate arrays of the
 mesh correspond to we can use the `lonCell`/`latCell` coordinates and `mosaic`
 will handle the transformation to the requested map projection under the hood.
-In this scenario the `transform` should correspond to `ccrs.PlateCarree()`
+In this scenario the `transform` should correspond to `ccrs.Geodetic()`
 and `use_latlon=True` must be set in the `mosaic.Descriptor` object
 instantiation. Nearly all the lines would be the same as the above example,
 with the exception of the transform definition: 
 ```python 
 # define the transform that describes our dataset
-transform = ccrs.PlateCarree()
+transform = ccrs.Geodetic()
 ```
 and the `mosaic.Descriptor` instantiation: 
 ```python
