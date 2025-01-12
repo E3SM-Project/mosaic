@@ -543,7 +543,6 @@ def _compute_vertex_patches(ds: Dataset) -> ndarray:
     # get a mask of active nodes
     cellMask = cellsOnVertex == -1
     edgeMask = edgesOnVertex == -1
-    unionMask = cellMask & edgeMask
 
     # get the coordinates needed to patch construction
     xCell = ds.xCell.values
@@ -566,11 +565,12 @@ def _compute_vertex_patches(ds: Dataset) -> ndarray:
     # NOTE: The condition below will only be true for meshes run through the
     #       MPAS mesh converter after culling. A bug in the converter alters
     #       the ordering of edges, causing problems for vertex patches
+    #
+    # If final cell and edge nodes are missing collapse both back to first edge
+    # Ensures patches encompasses the full kite area and are properly closed.
     # -------------------------------------------------------------------------
-    # if cell and edge missing collapse final edge node to the first edge.
-    # Because edges lead the vertices this ensures the patch encompasses
-    # the full kite area and is properly closed.
-    nodes[:, 4, 0] = np.where(unionMask[:, -1], nodes[:, 0, 0], nodes[:, 4, 0])
-    nodes[:, 4, 1] = np.where(unionMask[:, -1], nodes[:, 0, 1], nodes[:, 4, 1])
+    condition = (cellMask & edgeMask)[:, -1:]
+    nodes[:, 4:, 0] = np.where(condition, nodes[:, 0:1, 0], nodes[:, 4:, 0])
+    nodes[:, 4:, 1] = np.where(condition, nodes[:, 0:1, 1], nodes[:, 4:, 1])
 
     return nodes

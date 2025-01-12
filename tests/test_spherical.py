@@ -68,7 +68,7 @@ class TestSphericalWrapping:
         fig.savefig(f"{tmp_path}/{proj_name}-{patch}.png")
         plt.close()
 
-    @pytest.mark.parametrize("patch", ["Cell", "Edge"])
+    @pytest.mark.parametrize("patch", ["Cell", "Edge", "Vertex"])
     def test_valid_patches(self, setup_descriptor, patch):
         # do the test setup with the parameterized projection
         descriptor = setup_descriptor

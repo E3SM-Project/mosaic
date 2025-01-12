@@ -8,6 +8,7 @@ numpy
 pooch
 pyproj
 scipy
+shapely
 tqdm
 xarray
 
