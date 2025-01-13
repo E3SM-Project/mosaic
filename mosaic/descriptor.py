@@ -1,5 +1,7 @@
 from functools import cached_property
+from typing import Literal
 
+import cartopy.crs as ccrs
 import numpy as np
 import xarray as xr
 from cartopy.crs import CRS
@@ -18,6 +20,13 @@ connectivity_arrays = ["cellsOnEdge",
                        "verticesOnEdge",
                        "verticesOnCell",
                        "edgesOnVertex"]
+
+SUPPORTED_SPHERICAL_PROJECTIONS = (ccrs._RectangularProjection,
+                                   ccrs._WarpedRectangularProjection,
+                                   ccrs.Stereographic,
+                                   ccrs.Mercator,
+                                   ccrs._CylindricalProjection,
+                                   ccrs.InterruptedGoodeHomolosine)
 
 
 def attr_to_bool(attr: str):
@@ -105,6 +114,8 @@ class Descriptor:
         #: ``projection`` kwargs are provided.
         self.transform = transform
 
+        #: Boolean whether parent mesh is (planar) periodic in at least one dim
+        self.is_periodic = attr_to_bool(mesh_ds.is_periodic)
         #: Boolean whether parent mesh is spherical
         self.is_spherical = attr_to_bool(mesh_ds.on_a_sphere)
 
@@ -119,6 +130,10 @@ class Descriptor:
         # calls ``projection.setter`` method, which will transform coordinates
         # if both a projection and transform were provided to the constructor
         self.projection = projection
+
+        # method ensures is periodic, avoiding AttributeErrors if non-periodic
+        self.x_period = self._parse_period(mesh_ds, "x")
+        self.y_period = self._parse_period(mesh_ds, "y")
 
     def _create_minimal_dataset(self, ds: Dataset) -> Dataset:
         """
@@ -190,10 +205,20 @@ class Descriptor:
 
     @projection.setter
     def projection(self, projection: CRS) -> None:
+        # We don't support all map projections for spherical meshes, yet...
+        if (projection is not None and self.is_spherical and
+                not isinstance(projection, SUPPORTED_SPHERICAL_PROJECTIONS)):
+
+            raise ValueError(f"Invalid projection: {type(projection).__name__}"
+                             f" is not supported - consider using "
+                             f"a rectangular projection.")
+
+        reprojecting = False
         # Issue warning if changing the projection after initialization
         # TODO: Add heuristic size (i.e. ``self.ds.nbytes``) above which the
         #       warning is raised
         if hasattr(self, "_projection"):
+            reprojecting = True
             print(("Reprojecting the descriptor can be inefficient "
                    "for large meshes"))
 
@@ -212,6 +237,14 @@ class Descriptor:
 
         self._projection = projection
 
+        # if periods are None (i.e. projection was not set at instantiation) or
+        # the descriptor is being reprojected; update the periods
+        if (hasattr(self, "_x_period") and hasattr(self, "_x_period")):
+            if (not self.x_period and not self.y_period) or reprojecting:
+                # dummy value b/c `_projection` attr will be used by setters
+                self.x_period = None
+                self.y_period = None
+
     @property
     def latlon(self) -> bool:
         """
@@ -227,6 +260,57 @@ class Descriptor:
             value = True
 
         self._latlon = value
+
+    def _parse_period(self, ds, dim: Literal["x", "y"]):
+        """ Parse period attribute, return None for non-periodic meshes """
+
+        attr = f"{dim}_period"
+        try:
+            period = float(ds.attrs[attr])
+        except KeyError:
+            period = None
+
+        # in the off chance mesh is periodic but does not have period attribute
+        if self.is_periodic and attr not in ds.attrs:
+            raise AttributeError((f"Mesh file: \"{ds.encoding['source']}\""
+                                  f"does not have attribute `{attr}` despite"
+                                  f"being a planar periodic mesh."))
+        if period == 0.0:
+            return None
+        else:
+            return period
+
+    @property
+    def x_period(self) -> float | None:
+        """ Period along x-dimension, is ``None`` for non-periodic meshes """
+        return self._x_period
+
+    @x_period.setter
+    def x_period(self, value) -> None:
+        # needed to avoid AttributeError for non-periodic meshes
+        if not (self.is_periodic and self.is_spherical):
+            self._x_period = None
+        if not self.is_periodic and self.is_spherical and self.projection:
+            x_limits = self.projection.x_limits
+            self._x_period = np.abs(x_limits[1] - x_limits[0])
+        else:
+            self._x_period = value
+
+    @property
+    def y_period(self) -> float | None:
+        """ Period along y-dimension, is ``None`` for non-periodic meshes """
+        return self._y_period
+
+    @y_period.setter
+    def y_period(self, value) -> None:
+        # needed to avoid AttributeError for non-periodic meshes
+        if not (self.is_periodic and self.is_spherical):
+            self._y_period = None
+        if not self.is_periodic and self.is_spherical and self.projection:
+            y_limits = self.projection.y_limits
+            self._y_period = np.abs(y_limits[1] - y_limits[0])
+        else:
+            self._y_period = value
 
     @cached_property
     def cell_patches(self) -> ndarray:
@@ -244,7 +328,13 @@ class Descriptor:
         patch. Nodes are ordered counter clockwise around the cell center.
         """
         patches = _compute_cell_patches(self.ds)
-        patches = self._fix_antimeridian(patches, "Cell")
+        patches = self._wrap_patches(patches, "Cell")
+
+        # cartopy doesn't handle nans in patches, so store a mask of the
+        # invalid patches to set the dataarray at those locations to nan.
+        if self.projection:
+            self._cell_pole_mask = self._compute_pole_mask("Cell")
+
         return patches
 
     @cached_property
@@ -263,7 +353,13 @@ class Descriptor:
         corresponding node will be collapsed to the edge coordinate.
         """
         patches = _compute_edge_patches(self.ds)
-        patches = self._fix_antimeridian(patches, "Edge")
+        patches = self._wrap_patches(patches, "Edge")
+
+        # cartopy doesn't handle nans in patches, so store a mask of the
+        # invalid patches to set the dataarray at those locations to nan.
+        if self.projection:
+            self._edge_pole_mask = self._compute_pole_mask("Edge")
+
         return patches
 
     @cached_property
@@ -289,7 +385,13 @@ class Descriptor:
         position.
         """
         patches = _compute_vertex_patches(self.ds)
-        patches = self._fix_antimeridian(patches, "Vertex")
+        patches = self._wrap_patches(patches, "Vertex")
+
+        # cartopy doesn't handle nans in patches, so store a mask of the
+        # invalid patches to set the dataarray at those locations to nan.
+        if self.projection:
+            self._vertex_pole_mask = self._compute_pole_mask("Vertex")
+
         return patches
 
     def _transform_coordinates(self, projection, transform):
@@ -304,69 +406,73 @@ class Descriptor:
             self.ds[f"x{loc}"].values = transformed_coords[:, 0]
             self.ds[f"y{loc}"].values = transformed_coords[:, 1]
 
-    def _fix_antimeridian(self, patches, loc, projection=None):
-        """Correct vertices of patches that cross the antimeridian.
-
-        NOTE: Can this be a decorator?
+    def _wrap_patches(self, patches, loc):
+        """Wrap patches for spherical and planar-periodic meshes
         """
-        # coordinate arrays are transformed at initalization, so using the
-        # transform size limit, not the projection
-        if not projection:
-            projection = self.projection
 
-        # should be able to come up with a default size limit here, or maybe
-        # it's already an attribute(?) Should also factor in a precomputed
-        # axis period, as set in the attributes of the input dataset
-        if projection:
-            # convert to numpy array to that broadcasting below will work
-            x_center = np.array(self.ds[f"x{loc}"])
-
-            # get distance b/w the center and vertices of the patches
-            # NOTE: using data from masked patches array so that we compute
-            #       mask only corresponds to patches that cross the boundary,
-            #       (i.e. NOT a mask of all invalid cells). May need to be
-            #       carefull about the fillvalue depending on the transform
-            half_distance = x_center[:, np.newaxis] - patches[..., 0].data
-
-            # get the size limit of the projection;
-            size_limit = np.abs(projection.x_limits[1] -
-                                projection.x_limits[0]) / (2 * np.sqrt(2))
-
-            # left and right mask, with same number of dims as the patches
-            l_mask = (half_distance > size_limit)[..., np.newaxis]
-            r_mask = (half_distance < -size_limit)[..., np.newaxis]
-
+        def _find_boundary_patches(patches, loc, coord, period):
             """
-            # Old approach masks out all patches that cross the antimeridian.
-            # This is unnessarily restrictive. New approach corrects
-            # the x-coordinates of vertices that lie outside the projections
-            # bounds, which isn't perfect either
-
-            patches.mask |= l_mask
-            patches.mask |= r_mask
+            Find the patches that cross the periodic boundary and what
+            direction they cross the boundary (i.e. their ``sign``). This
+            method assumes the patch centroids are not periodic
             """
+            # get axis index we are inquiring over
+            axis = 0 if coord == "x" else 1
+            # get requested coordinate of patch centroids
+            center = self.ds[f"{coord}{loc.title()}"].values.reshape(-1, 1)
+            # get difference b/w centroid and nodes of patches
+            diff = patches[..., axis] - center
 
-            l_boundary_mask = ~np.any(l_mask, axis=1) | l_mask[..., 0]
-            r_boundary_mask = ~np.any(r_mask, axis=1) | r_mask[..., 0]
-            # get valid half distances for the patches that cross boundary
-            l_offset = np.ma.MaskedArray(half_distance, l_boundary_mask)
-            r_offset = np.ma.MaskedArray(half_distance, r_boundary_mask)
+            mask = np.abs(diff) > np.abs(period) / (2. * np.sqrt(2.))
+            sign = np.sign(diff)
 
-            # For vertices that cross the antimeridian reset the x-coordinate
-            # of invalid vertex to be the center of the patch plus the
-            # mean valid half distance.
-            #
-            # NOTE: this only fixes patches on the side of plot where they
-            # cross the antimeridian, leaving an empty zipper like pattern
-            # mirrored over the y-axis.
-            patches[..., 0] = np.ma.where(
-                ~l_mask[..., 0], patches[..., 0],
-                x_center[:, np.newaxis] + l_offset.mean(1)[..., np.newaxis])
-            patches[..., 0] = np.ma.where(
-                ~r_mask[..., 0], patches[..., 0],
-                x_center[:, np.newaxis] + r_offset.mean(1)[..., np.newaxis])
+            return mask, sign
+
+        def _wrap_1D(patches, mask, sign, axis, period):
+            """Correct patch periodicity along a single dimension"""
+            patches[..., axis][mask] -= np.sign(sign[mask]) * period
+
+            # TODO: clip spherical wrapped patches to projection limits
+            return patches
+
+        # Stereographic projections do not need wrapping, so exit early
+        if isinstance(self.projection, ccrs.Stereographic):
+            return patches
+
+        if self.x_period:
+            # find the patches that are periodic in x-direction
+            x_mask, x_sign = _find_boundary_patches(
+                patches, loc, "x", self.x_period
+            )
+
+            if np.any(x_mask):
+                # using the sign of the difference correct patches x coordinate
+                patches = _wrap_1D(patches, x_mask, x_sign, 0, self.x_period)
+
+        if self.y_period:
+            # find the patches that are periodic in y-direction
+            y_mask, y_sign = _find_boundary_patches(
+                patches, loc, "y", self.y_period
+            )
+
+            if np.any(y_mask):
+                # using the sign of the difference correct patches y coordinate
+                patches = _wrap_1D(patches, y_mask, y_sign, 1, self.y_period)
 
         return patches
+
+    def _compute_pole_mask(self, loc) -> ndarray:
+        """ """
+        limits = self.projection.y_limits
+        centers = self.ds[f"y{loc.title()}"].values
+
+        # TODO: determine threshold for ``isclose`` computation
+        at_pole = np.any(
+            np.isclose(centers.reshape(-1, 1), limits, rtol=1e-2), axis=1
+        )
+        past_pole = np.abs(centers) > np.abs(limits[1])
+
+        return (at_pole | past_pole)
 
 
 def _compute_cell_patches(ds: Dataset) -> ndarray:
@@ -437,7 +543,6 @@ def _compute_vertex_patches(ds: Dataset) -> ndarray:
     # get a mask of active nodes
     cellMask = cellsOnVertex == -1
     edgeMask = edgesOnVertex == -1
-    unionMask = cellMask & edgeMask
 
     # get the coordinates needed to patch construction
     xCell = ds.xCell.values
@@ -457,14 +562,15 @@ def _compute_vertex_patches(ds: Dataset) -> ndarray:
     nodes[:, 1::2, 1] = np.where(cellMask, yVertex, yCell[cellsOnVertex])
 
     # -------------------------------------------------------------------------
-    # NOTE: While the condition below probably only applies to the final edge
-    #       node we apply it to all, since the conditions above ensure the
-    #       patches will still be created correctly
+    # NOTE: The condition below will only be true for meshes run through the
+    #       MPAS mesh converter after culling. A bug in the converter alters
+    #       the ordering of edges, causing problems for vertex patches
+    #
+    # If final cell and edge nodes are missing collapse both back to first edge
+    # Ensures patches encompasses the full kite area and are properly closed.
     # -------------------------------------------------------------------------
-    # if cell and edge missing collapse edge node to the first edge.
-    # Because edges lead the vertices this ensures the patch encompasses
-    # the full kite area and is properly closed.
-    nodes[:, ::2, 0] = np.where(unionMask, nodes[:, 0:1, 0], nodes[:, ::2, 0])
-    nodes[:, ::2, 1] = np.where(unionMask, nodes[:, 0:1, 1], nodes[:, ::2, 1])
+    condition = (cellMask & edgeMask)[:, -1:]
+    nodes[:, 4:, 0] = np.where(condition, nodes[:, 0:1, 0], nodes[:, 4:, 0])
+    nodes[:, 4:, 1] = np.where(condition, nodes[:, 0:1, 1], nodes[:, 4:, 1])
 
     return nodes
