@@ -74,5 +74,5 @@ Currently, the only support map projection are:
 - <inv:#*.SouthPolarStereo>
 
 It is important to note that planer (non-periodic) meshes are not limited to
-this of map projections and can choose from the full list of `cartopy`
+this list of map projections and can choose from the full list of `cartopy`
 [projections](https://scitools.org.uk/cartopy/docs/latest/reference/projections.html).
