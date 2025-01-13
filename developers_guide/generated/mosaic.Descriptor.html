@@ -30,7 +30,7 @@
   <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -144,6 +144,7 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../user_guide/quick_start.html">Quick Start for Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/wrapping.html">Periodic Mesh Support</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="nav bd-sidenav">
@@ -332,9 +333,9 @@
 <dd><p>Data structure describing unstructured MPAS meshes.</p>
 <p>Enables visualization of fields defined at cell centers, vertices,
 and edges within <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> through the creation of
-<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.9.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> objects. Separate patch
+<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> objects. Separate patch
 arrays, which are subsequently passed to the
-<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.9.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> class by the
+<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> class by the
 <a class="reference internal" href="mosaic.polypcolor.html#mosaic.polypcolor" title="mosaic.polypcolor"><code class="xref py py-class docutils literal notranslate"><span class="pre">polypcolor</span></code></a> method,
 are lazily loaded for each variable location (i.e. cells, edges, and
 vertices) when attribute is first looked up. We use lazily loaded arrays
@@ -366,8 +367,8 @@ transforming the multi-dimensional patch arrays. This means the
 <a class="reference internal" href="mosaic.Descriptor.transform.html#mosaic.Descriptor.transform" title="mosaic.Descriptor.transform"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Descriptor.transform</span></code></a> will <strong>not</strong> be the values passed to the
 constructor, but instead will be equal to <code class="xref py py-attr docutils literal notranslate"><span class="pre">Descriptor.projection</span></code></p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mosaic</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">cartopy.crs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ccrs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">mosaic</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;QU.240km&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
@@ -412,14 +413,23 @@ constructor, but instead will be equal to <code class="xref py py-attr docutils 
 <tr class="row-odd"><td><p><a class="reference internal" href="mosaic.Descriptor.vertex_patches.html#mosaic.Descriptor.vertex_patches" title="mosaic.Descriptor.vertex_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertex_patches</span></code></a></p></td>
 <td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for vertex centered values</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x_period</span></code></p></td>
+<td><p>Period along x-dimension, is <code class="docutils literal notranslate"><span class="pre">None</span></code> for non-periodic meshes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">y_period</span></code></p></td>
+<td><p>Period along y-dimension, is <code class="docutils literal notranslate"><span class="pre">None</span></code> for non-periodic meshes</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="mosaic.Descriptor.transform.html#mosaic.Descriptor.transform" title="mosaic.Descriptor.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
 <td><p>The coordinate system in which patch coordinates are defined.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_spherical</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_periodic</span></code></p></td>
+<td><p>Boolean whether parent mesh is (planar) periodic in at least one dim</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_spherical</span></code></p></td>
 <td><p>Boolean whether parent mesh is spherical</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds</span></code></p></td>
-<td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2024.11.1.dev0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2025.1.2.dev0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
 </tr>
 </tbody>
 </table>

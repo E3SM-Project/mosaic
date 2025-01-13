@@ -12,6 +12,7 @@ Currently `mosaic` only supports [MPAS](https://mpas-dev.github.io/) meshes, but
 :caption: User Guide:
 
 user_guide/quick_start
+user_guide/wrapping
 ```
 
 ```{toctree}

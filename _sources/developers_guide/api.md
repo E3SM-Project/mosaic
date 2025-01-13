@@ -39,4 +39,10 @@ Properties
     Descriptor.vertex_patches
     Descriptor.transform
 
+Helper Functions
+----------------
+.. autosummary::
+    :toctree: generated/
+
+    utils.get_invalid_patches
 ```

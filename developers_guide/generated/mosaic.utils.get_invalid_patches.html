@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>mosaic.Descriptor.edge_patches &#8212; mosaic 0.2.0 documentation</title>
+    <title>mosaic.utils.get_invalid_patches &#8212; mosaic 0.2.0 documentation</title>
   
   
   
@@ -47,11 +47,10 @@
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'developers_guide/generated/mosaic.Descriptor.edge_patches';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developers_guide/generated/mosaic.utils.get_invalid_patches';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="mosaic.Descriptor.vertex_patches" href="mosaic.Descriptor.vertex_patches.html" />
-    <link rel="prev" title="mosaic.Descriptor.cell_patches" href="mosaic.Descriptor.cell_patches.html" />
+    <link rel="prev" title="mosaic.Descriptor.transform" href="mosaic.Descriptor.transform.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -224,7 +223,7 @@
       
       
       
-      <li><a href="../../_sources/developers_guide/generated/mosaic.Descriptor.edge_patches.rst" target="_blank"
+      <li><a href="../../_sources/developers_guide/generated/mosaic.utils.get_invalid_patches.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -300,7 +299,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>mosaic.Descriptor.edge_patches</h1>
+    <h1>mosaic.utils.get_invalid_patches</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -310,7 +309,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.Descriptor.edge_patches"><code class="docutils literal notranslate"><span class="pre">Descriptor.edge_patches</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.utils.get_invalid_patches"><code class="docutils literal notranslate"><span class="pre">get_invalid_patches()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -322,20 +321,28 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="mosaic-descriptor-edge-patches">
-<h1>mosaic.Descriptor.edge_patches<a class="headerlink" href="#mosaic-descriptor-edge-patches" title="Link to this heading">#</a></h1>
-<dl class="py property">
-<dt class="sig sig-object py" id="mosaic.Descriptor.edge_patches">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Descriptor.</span></span><span class="sig-name descname"><span class="pre">edge_patches</span></span><a class="headerlink" href="#mosaic.Descriptor.edge_patches" title="Link to this definition">#</a></dt>
-<dd><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for edge centered
-values</p>
-<p><strong>Dimensions</strong>: <code class="docutils literal notranslate"><span class="pre">(nEdges,</span> <span class="pre">4)</span></code></p>
-<p class="rubric">Notes</p>
-<p>Edge patches have four nodes which typically correspond to the two cell
-centers of the <code class="docutils literal notranslate"><span class="pre">cellsOnEdge</span></code> and the two vertices which make up the
-edge. For an edge patch along a culled mesh boundary one of the cell
-centers usually used to construct the patch will be missing, so the
-corresponding node will be collapsed to the edge coordinate.</p>
+  <section id="mosaic-utils-get-invalid-patches">
+<h1>mosaic.utils.get_invalid_patches<a class="headerlink" href="#mosaic-utils-get-invalid-patches" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mosaic.utils.get_invalid_patches">
+<span class="sig-prename descclassname"><span class="pre">mosaic.utils.</span></span><span class="sig-name descname"><span class="pre">get_invalid_patches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">descriptor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mosaic.utils.get_invalid_patches" title="Link to this definition">#</a></dt>
+<dd><p>Helper function to identify problematic patches.</p>
+<p>Returns the indices of the problematic patches as determined by
+<a class="reference external" href="https://shapely.readthedocs.io/en/stable/reference/shapely.is_valid.html#shapely.is_valid" title="(in Shapely)"><code class="xref py py-func docutils literal notranslate"><span class="pre">shapely.is_valid()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>descriptor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code>) – The <code class="docutils literal notranslate"><span class="pre">Descriptor</span></code> object you want to check the patches of</p></li>
+<li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">string</span></code></a>) – The patch location to check: “cell” or “edge” or “vertex”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Indices of invalid patches. If no patches are invalid then returns None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -352,22 +359,13 @@ corresponding node will be collapsed to the edge coordinate.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="mosaic.Descriptor.cell_patches.html"
+       href="mosaic.Descriptor.transform.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">mosaic.Descriptor.cell_patches</p>
+        <p class="prev-next-title">mosaic.Descriptor.transform</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="mosaic.Descriptor.vertex_patches.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">mosaic.Descriptor.vertex_patches</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -386,7 +384,7 @@ corresponding node will be collapsed to the edge coordinate.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.Descriptor.edge_patches"><code class="docutils literal notranslate"><span class="pre">Descriptor.edge_patches</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.utils.get_invalid_patches"><code class="docutils literal notranslate"><span class="pre">get_invalid_patches()</span></code></a></li>
 </ul>
   </nav></div>
 
