@@ -24,6 +24,7 @@ dependencies = [
     "pooch",
     "pyproj",
     "scipy",
+    "shapely",
     "tqdm",
     "xarray",
 ]
@@ -32,7 +33,7 @@ dependencies = [
 docs = [
     # building documentation
     "sphinx",
-    "myst-parser",
+    "myst-nb",
     "sphinx-book-theme",
     "sphinx-copybutton",
     "sphinx-remove-toctrees",
@@ -41,8 +42,9 @@ docs = [
 dev = [
     # linting and testing
     "pip",
+    "pytest",
+    "pytest-timeout",
     "isort",
-    "flynt",
     "flake8",
     "mypy",
     "pre-commit",
