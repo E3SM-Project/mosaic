@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Mosaic &#8212; mosaic 0.2.0 documentation</title>
+    <title>Mosaic &#8212; mosaic 1.0.0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=7f7c277e"></script>
+    <script src="_static/documentation_options.js?v=f9c1cefe"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -130,7 +130,7 @@
   
   
   
-    <p class="title logo__title">mosaic 0.2.0 documentation</p>
+    <p class="title logo__title">mosaic 1.0.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -151,6 +151,10 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="developers_guide/quick_start.html">Quick Start for Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers_guide/api.html">API Reference</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Community:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://github.com/E3SM-Project/mosaic/discussions">GitHub disscusions</a></li>
 </ul>
 
     </div>
@@ -315,11 +319,18 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="mosaic">
 <span id="id1"></span><h1>Mosaic<a class="headerlink" href="#mosaic" title="Link to this heading">#</a></h1>
-<blockquote>
-<div><p>⚠️  <strong>This package in under early development and not ready for production use, yet.</strong></p>
-</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">mosaic</span></code> provides the functionality to visualize unstructured mesh data on it’s native grid within <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>.
-Currently <code class="docutils literal notranslate"><span class="pre">mosaic</span></code> only supports <a class="reference external" href="https://mpas-dev.github.io/">MPAS</a> meshes, but future work will add support for other unstructured meshes used in <code class="docutils literal notranslate"><span class="pre">E3SM</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mosaic</span></code> provides the functionality to visualize unstructured <a class="reference external" href="https://mpas-dev.github.io/">MPAS</a>
+mesh data on it’s native grid within <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>. Currently MPAS meshes are the
+only unstructured meshes used in <code class="docutils literal notranslate"><span class="pre">E3SM</span></code> that <code class="docutils literal notranslate"><span class="pre">mosaic</span></code> supports, but future work
+will add support for others.</p>
+<div class="tip admonition">
+<p class="admonition-title">Please reach out with any problems!</p>
+<p>If you have any trouble with <code class="docutils literal notranslate"><span class="pre">mosaic</span></code>, especially problems plotting your <code class="docutils literal notranslate"><span class="pre">MPAS</span></code>
+mesh of choice, please reach out via <a class="reference external" href="https://github.com/E3SM-Project/mosaic/discussions">GitHub discussions</a>
+under the <a class="reference external" href="https://github.com/E3SM-Project/mosaic/discussions/categories/q-a">“Q&amp;A” category</a>.</p>
+<p>If you suspect you’ve found a bug in <code class="docutils literal notranslate"><span class="pre">mosaic</span></code> feel free to open an issue on
+<a class="reference external" href="https://github.com/E3SM-Project/mosaic/issues">GitHub</a>.</p>
+</div>
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul>
@@ -348,6 +359,8 @@ Currently <code class="docutils literal notranslate"><span class="pre">mosaic</s
 </ul>
 </li>
 </ul>
+</div>
+<div class="toctree-wrapper compound">
 </div>
 </section>
 
