@@ -76,9 +76,20 @@ def polypcolor(
 
     # Update the datalim for this polycollection
     limits = collection.get_datalim(ax.transData)
-    # TODO: account for nodes of patches that lie outside of projection bounds
-    #       (i.e. as a result of patch wrapping at the antimeridian)
     ax.update_datalim(limits)
     ax.autoscale_view()
+
+    # for planar periodic plot explicity set the axis limit
+    if not descriptor.is_spherical and descriptor.x_period:
+        xmin = float(descriptor.ds.xEdge.min())
+        xmax = xmin + descriptor.x_period
+
+        ax.set_xlim(xmin, xmax)
+
+    if not descriptor.is_spherical and descriptor.y_period:
+        ymin = float(descriptor.ds.yEdge.min())
+        ymax = ymin + descriptor.y_period
+
+        ax.set_ylim(ymin, ymax)
 
     return collection
