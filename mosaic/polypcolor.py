@@ -81,15 +81,30 @@ def polypcolor(
 
     # for planar periodic plot explicity set the axis limit
     if not descriptor.is_spherical and descriptor.x_period:
-        xmin = float(descriptor.ds.xEdge.min())
-        xmax = xmin + descriptor.x_period
-
+        xmin, xmax = _find_planar_periodic_axis_limits(descriptor, "x")
         ax.set_xlim(xmin, xmax)
 
     if not descriptor.is_spherical and descriptor.y_period:
-        ymin = float(descriptor.ds.yEdge.min())
-        ymax = ymin + descriptor.y_period
-
+        ymin, ymax = _find_planar_periodic_axis_limits(descriptor, "y")
         ax.set_ylim(ymin, ymax)
 
     return collection
+
+
+def _find_planar_periodic_axis_limits(descriptor, coord):
+    """Find the correct (tight) axis limits for planar periodic meshes.
+    """
+
+    edge_min = float(descriptor.ds[f"{coord}Edge"].min())
+    vertex_min = float(descriptor.ds[f"{coord}Vertex"].min())
+
+    # an edge connects two vertices, so a vertices most extreme position should
+    # always be more extended than an edge's
+    if vertex_min > edge_min:
+        max = float(descriptor.ds[f"{coord}Vertex"].max())
+        min = max - descriptor.__getattribute__(f"{coord}_period")
+    else:
+        min = float(descriptor.ds[f"{coord}Vertex"].min())
+        max = min + descriptor.__getattribute__(f"{coord}_period")
+
+    return min, max
