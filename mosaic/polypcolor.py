@@ -76,9 +76,35 @@ def polypcolor(
 
     # Update the datalim for this polycollection
     limits = collection.get_datalim(ax.transData)
-    # TODO: account for nodes of patches that lie outside of projection bounds
-    #       (i.e. as a result of patch wrapping at the antimeridian)
     ax.update_datalim(limits)
     ax.autoscale_view()
 
+    # for planar periodic plot explicity set the axis limit
+    if not descriptor.is_spherical and descriptor.x_period:
+        xmin, xmax = _find_planar_periodic_axis_limits(descriptor, "x")
+        ax.set_xlim(xmin, xmax)
+
+    if not descriptor.is_spherical and descriptor.y_period:
+        ymin, ymax = _find_planar_periodic_axis_limits(descriptor, "y")
+        ax.set_ylim(ymin, ymax)
+
     return collection
+
+
+def _find_planar_periodic_axis_limits(descriptor, coord):
+    """Find the correct (tight) axis limits for planar periodic meshes.
+    """
+
+    edge_min = float(descriptor.ds[f"{coord}Edge"].min())
+    vertex_min = float(descriptor.ds[f"{coord}Vertex"].min())
+
+    # an edge connects two vertices, so a vertices most extreme position should
+    # always be more extended than an edge's
+    if vertex_min > edge_min:
+        max = float(descriptor.ds[f"{coord}Vertex"].max())
+        min = max - descriptor.__getattribute__(f"{coord}_period")
+    else:
+        min = float(descriptor.ds[f"{coord}Vertex"].min())
+        max = min + descriptor.__getattribute__(f"{coord}_period")
+
+    return min, max
