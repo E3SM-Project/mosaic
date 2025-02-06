@@ -1,5 +1,5 @@
 from functools import cached_property
-from typing import Literal
+from typing import Literal, Tuple
 
 import cartopy.crs as ccrs
 import numpy as np
@@ -311,6 +311,30 @@ class Descriptor:
             self._y_period = np.abs(y_limits[1] - y_limits[0])
         else:
             self._y_period = value
+
+    @property
+    def origin(self) -> Tuple[float, float]:
+        """Coordinates of bottom left corner of plot"""
+
+        def get_axis_min(self, coord: Literal["x", "y"]) -> float:
+            """ """
+            edge_min = float(self.ds[f"{coord}Edge"].min())
+            vertex_min = float(self.ds[f"{coord}Vertex"].min())
+
+            # an edge connects two vertices, so a vertices most extreme
+            # position should always be more extended than an edge's
+            if vertex_min > edge_min:
+                max = float(self.ds[f"{coord}Vertex"].max())
+                min = max - self.__getattribute__(f"{coord}_period")
+            else:
+                min = float(self.ds[f"{coord}Vertex"].min())
+
+            return min
+
+        xmin = get_axis_min(self, "x")
+        ymin = get_axis_min(self, "y")
+
+        return (xmin, ymin)
 
     @cached_property
     def cell_patches(self) -> ndarray:

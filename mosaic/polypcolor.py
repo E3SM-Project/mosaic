@@ -95,16 +95,12 @@ def _find_planar_periodic_axis_limits(descriptor, coord):
     """Find the correct (tight) axis limits for planar periodic meshes.
     """
 
-    edge_min = float(descriptor.ds[f"{coord}Edge"].min())
-    vertex_min = float(descriptor.ds[f"{coord}Vertex"].min())
+    # get the axis period
+    period = descriptor.__getattribute__(f"{coord}_period")
+    # get axis index we are inquiring over
+    axis = 0 if coord == "x" else 1
 
-    # an edge connects two vertices, so a vertices most extreme position should
-    # always be more extended than an edge's
-    if vertex_min > edge_min:
-        max = float(descriptor.ds[f"{coord}Vertex"].max())
-        min = max - descriptor.__getattribute__(f"{coord}_period")
-    else:
-        min = float(descriptor.ds[f"{coord}Vertex"].min())
-        max = min + descriptor.__getattribute__(f"{coord}_period")
+    min = descriptor.origin[axis]
+    max = min + period
 
     return min, max
