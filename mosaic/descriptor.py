@@ -498,6 +498,121 @@ class Descriptor:
 
         return (at_pole | past_pole)
 
+    def _mirror_patches(self, patches, loc):
+        """Mirror patches across periodic boundary for planar-periodic meshes
+
+        Instead of correcting the periodic nodes of a patch (i.e. like
+        ``_wrap_patches`` above), this method treats **all** nodes of a patch
+        equivalently. Therefore, it assumes the patches have already had their
+        periodicity corrected
+        """
+
+        idx_list = []
+        mirrored_list = []
+
+        def check_signs(array):
+            """Get the sign along an axis (i.e. a single sign per patch)
+
+            If patch has more than one sign will raise an error
+            """
+            if np.all(array == 0):
+                return np.array([0])
+            else:
+                return np.unique(array[array != 0])
+
+        def _find_mirrored(pathces, coord, period):
+            """Find the patches that need to be mirrored across periodic axis
+
+            Also return the direction the patch cross the boundary (i.e.
+            their ``sign``). This method assumes each patch has a unique sign.
+            """
+            # get axis index we are inquiring over
+            axis = 0 if coord == "x" else 1
+
+            # get the minimum for a given axis
+            min = self.origin[axis]
+            # subtract axis origin to get int number of periods (i.e. -1, 0, 1)
+            n_periods = (patches[..., axis] - min // period).astype(int)
+
+            # get the sign along axis
+            try:
+                mirror_sign = np.apply_along_axis(check_signs, 1, n_periods)
+            except ValueError as exc:
+                error_str = ("A patch is periodic across multiple periods "
+                             "(i.e. a patch has a non-unqiue sign). "
+                             "Therefore patches cannot bed mirrored")
+                raise ValueError(error_str) from exc
+
+            # make a 1D array so broadcasting below will work
+            mirror_sign = mirror_sign.squeeze()
+            # convert sign into boolean mask
+            mirror_mask = mirror_sign.astype(bool)
+
+            return mirror_mask, mirror_sign
+
+        def _mirror_1D(pathces, mask, sign, coord, period):
+            """Duplicate and mirror patches across a periodic axis
+
+            Also returns the indices of the mirrored patches.
+            """
+            # get axis index we are inquiring over
+            axis = 0 if coord == "x" else 1
+
+            # get subset of patches to be mirrored
+            mirrored = patches[mask]
+            # correct coordinate so that patches are mirror across axis
+            mirrored[..., axis] -= sign[mask, np.newaxis] * period
+            # return the indices of the mirror patches for plotting
+            idx = np.where(mask)[0]
+
+            return mirrored, idx
+
+        if self.x_period:
+            # find the patches that need to be mirrored in x-direction
+            x_mask, x_sign = _find_mirrored(patches, "x", self.x_period)
+
+            if np.any(x_mask):
+                # using the sign of the difference correct patches x coordinate
+                x_mirrored, x_idxs = _mirror_1D(
+                    patches, x_mask, x_sign, "x", self.x_period
+                )
+
+                # add values to list to concatenated
+                idx_list.append(x_idxs)
+                mirrored_list.append(x_mirrored)
+
+        if self.y_period:
+            # find the patches that need to be mirrored in y-direction
+            y_mask, y_sign = _find_mirrored(patches, "y", self.y_period)
+
+            if np.any(y_mask):
+                # using the sign of the difference correct patches y coordinate
+                y_mirrored, y_idxs = _mirror_1D(
+                    patches, y_mask, y_sign, "y", self.y_period
+                )
+
+                # add values to list to concatenated
+                idx_list.append(y_idxs)
+                mirrored_list.append(y_mirrored)
+
+        # doubly periodic mesh
+        if self.x_period and self.y_period:
+            # find the (single) doubly periodic index
+            both_idx = x_idxs[np.isin(x_idxs, y_idxs)]
+
+            if both_idx.size > 0:
+                both_x = x_mirrored[np.isin(x_idxs, both_idx), :, 0]
+                both_y = y_mirrored[np.isin(y_idxs, both_idx), :, 1]
+                both_mirrored = np.dstack([both_x, both_y])
+
+                idx_list.append(both_idx)
+                mirrored_list.append(both_mirrored)
+
+        idxs = np.concat(idx_list)
+        mirrored = np.vstack(mirrored_list)
+
+        return mirrored, idxs
+
 
 def _compute_cell_patches(ds: Dataset) -> ndarray:
     """Create cell patches (i.e. Primary cells) for an MPAS mesh."""
