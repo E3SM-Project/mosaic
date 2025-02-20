@@ -354,6 +354,14 @@ class Descriptor:
         patches = _compute_cell_patches(self.ds)
         patches = self._wrap_patches(patches, "Cell")
 
+        # mirror periodic patches, if needed
+        mirrored, mirrored_idxs = self._mirror_patches(patches, "Cell")
+
+        # if mirrored patches were returned above store as attributes
+        if mirrored is not None:
+            self._cell_mirrored = mirrored
+            self._cell_mirrored_idxs = mirrored_idxs
+
         # cartopy doesn't handle nans in patches, so store a mask of the
         # invalid patches to set the dataarray at those locations to nan.
         if self.projection:
@@ -378,6 +386,14 @@ class Descriptor:
         """
         patches = _compute_edge_patches(self.ds)
         patches = self._wrap_patches(patches, "Edge")
+
+        # mirror periodic patches, if needed
+        mirrored, mirrored_idxs = self._mirror_patches(patches, "Edge")
+
+        # if mirrored patches were returned above store as attributes
+        if mirrored is not None:
+            self._edge_mirrored = mirrored
+            self._edge_mirrored_idxs = mirrored_idxs
 
         # cartopy doesn't handle nans in patches, so store a mask of the
         # invalid patches to set the dataarray at those locations to nan.
@@ -410,6 +426,14 @@ class Descriptor:
         """
         patches = _compute_vertex_patches(self.ds)
         patches = self._wrap_patches(patches, "Vertex")
+
+        # mirror periodic patches, if needed
+        mirrored, mirrored_idxs = self._mirror_patches(patches, "Vertex")
+
+        # if mirrored patches were returned above store as attributes
+        if mirrored is not None:
+            self._vertex_mirrored = mirrored
+            self._vertex_mirrored_idxs = mirrored_idxs
 
         # cartopy doesn't handle nans in patches, so store a mask of the
         # invalid patches to set the dataarray at those locations to nan.
@@ -532,7 +556,7 @@ class Descriptor:
             # get the minimum for a given axis
             min = self.origin[axis]
             # subtract axis origin to get int number of periods (i.e. -1, 0, 1)
-            n_periods = (patches[..., axis] - min // period).astype(int)
+            n_periods = ((patches[..., axis] - min) // period).astype(int)
 
             # get the sign along axis
             try:
@@ -608,8 +632,12 @@ class Descriptor:
                 idx_list.append(both_idx)
                 mirrored_list.append(both_mirrored)
 
-        idxs = np.concat(idx_list)
-        mirrored = np.vstack(mirrored_list)
+        if mirrored_list:
+            idxs = np.concat(idx_list)
+            mirrored = np.vstack(mirrored_list)
+        else:
+            idxs = None
+            mirrored = None
 
         return mirrored, idxs
 
