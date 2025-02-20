@@ -5,6 +5,7 @@ from matplotlib.collections import PolyCollection
 from xarray.core.dataarray import DataArray
 
 from mosaic.descriptor import Descriptor
+from mosaic.mpas_collection import MPASCollection
 
 
 def _get_array_location(descriptor, array):
@@ -136,6 +137,9 @@ def polypcolor(
     collection = _mirror_polycollection(
         ax, collection, descriptor, array, **kwargs
     )
+
+    # Re-cast the PolyCollection as MPASCollection for mirrored patch handeling
+    collection.__class__ = MPASCollection
 
     # for planar periodic plot explicity set the axis limit
     if not descriptor.is_spherical and descriptor.x_period:
