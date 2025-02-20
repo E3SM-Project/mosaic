@@ -354,13 +354,14 @@ class Descriptor:
         patches = _compute_cell_patches(self.ds)
         patches = self._wrap_patches(patches, "Cell")
 
-        # mirror periodic patches, if needed
-        mirrored, mirrored_idxs = self._mirror_patches(patches, "Cell")
+        # do not try to mirror patches for spherical meshes (yet...)
+        if not self.is_spherical:
+            mirrored, mirrored_idxs = self._mirror_patches(patches, "Cell")
 
-        # if mirrored patches were returned above store as attributes
-        if mirrored is not None:
-            self._cell_mirrored = mirrored
-            self._cell_mirrored_idxs = mirrored_idxs
+            # if mirrored patches were returned above store as attributes
+            if mirrored is not None:
+                self._cell_mirrored = mirrored
+                self._cell_mirrored_idxs = mirrored_idxs
 
         # cartopy doesn't handle nans in patches, so store a mask of the
         # invalid patches to set the dataarray at those locations to nan.
@@ -387,13 +388,14 @@ class Descriptor:
         patches = _compute_edge_patches(self.ds)
         patches = self._wrap_patches(patches, "Edge")
 
-        # mirror periodic patches, if needed
-        mirrored, mirrored_idxs = self._mirror_patches(patches, "Edge")
+        # do not try to mirror patches for spherical meshes (yet...)
+        if not self.is_spherical:
+            mirrored, mirrored_idxs = self._mirror_patches(patches, "Edge")
 
-        # if mirrored patches were returned above store as attributes
-        if mirrored is not None:
-            self._edge_mirrored = mirrored
-            self._edge_mirrored_idxs = mirrored_idxs
+            # if mirrored patches were returned above store as attributes
+            if mirrored is not None:
+                self._edge_mirrored = mirrored
+                self._edge_mirrored_idxs = mirrored_idxs
 
         # cartopy doesn't handle nans in patches, so store a mask of the
         # invalid patches to set the dataarray at those locations to nan.
@@ -427,13 +429,14 @@ class Descriptor:
         patches = _compute_vertex_patches(self.ds)
         patches = self._wrap_patches(patches, "Vertex")
 
-        # mirror periodic patches, if needed
-        mirrored, mirrored_idxs = self._mirror_patches(patches, "Vertex")
+        # do not try to mirror patches for spherical meshes (yet...)
+        if not self.is_spherical:
+            mirrored, mirrored_idxs = self._mirror_patches(patches, "Vertex")
 
-        # if mirrored patches were returned above store as attributes
-        if mirrored is not None:
-            self._vertex_mirrored = mirrored
-            self._vertex_mirrored_idxs = mirrored_idxs
+            # if mirrored patches were returned above store as attributes
+            if mirrored is not None:
+                self._vertex_mirrored = mirrored
+                self._vertex_mirrored_idxs = mirrored_idxs
 
         # cartopy doesn't handle nans in patches, so store a mask of the
         # invalid patches to set the dataarray at those locations to nan.
