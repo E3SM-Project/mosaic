@@ -32,4 +32,4 @@ class MPASCollection(PolyCollection):
         # TODO: Return corners that were calculated in the polypcolor routine
         # (i.e.: return self._corners). In for the datalims to ignore the
         # extent of mirrored patches.
-        return super().get_datalime(transData)
+        return super().get_datalim(transData)
