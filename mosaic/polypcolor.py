@@ -9,7 +9,7 @@ from mosaic.mpas_collection import MPASCollection
 
 
 def _get_array_location(descriptor, array):
-    """Helper function to find at what mesh location the dataarray is defined
+    """Helper function to find mesh location where dataarray is defined
     """
 
     if "nCells" in array.dims:
@@ -87,7 +87,7 @@ def polypcolor(
     descriptor: Descriptor,
     array: DataArray,
     **kwargs
-) -> PolyCollection:
+) -> MPASCollection:
     """
     Create a pseudocolor plot of a unstructured MPAS grid.
 
@@ -110,8 +110,8 @@ def polypcolor(
         ``nCells``, ``nEdges``, or ``nVertices``.
 
     other_parameters
-        All other parameters are the same as for
-        :py:func:`~matplotlib.pyplot.pcolor`.
+        All other parameters are the forwarded to the
+        :py:func:`~matplotlib.collection.PolyCollection`.
     """
 
     verts, array = _parse_args(descriptor, array)
@@ -142,6 +142,7 @@ def polypcolor(
     collection.__class__ = MPASCollection
 
     # for planar periodic plot explicity set the axis limit
+    # TODO: use ``ax.update_datalims`` instead of explicity setting axis limits
     if not descriptor.is_spherical and descriptor.x_period:
         xmin, xmax = _find_planar_periodic_axis_limits(descriptor, "x")
         ax.set_xlim(xmin, xmax)

@@ -29,5 +29,7 @@ class MPASCollection(PolyCollection):
         super().set_clim(vmin, vmax)
 
     def get_datalim(self, transData):
-        # Return the corners that were calculated in the polypcolor routine
-        return self._corners
+        # TODO: Return corners that were calculated in the polypcolor routine
+        # (i.e.: return self._corners). In for the datalims to ignore the
+        # extent of mirrored patches.
+        return super().get_datalime(transData)
