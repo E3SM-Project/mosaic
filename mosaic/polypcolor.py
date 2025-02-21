@@ -111,7 +111,7 @@ def polypcolor(
 
     other_parameters
         All other parameters are the forwarded to the
-        :py:func:`~matplotlib.collection.PolyCollection`.
+        :py:class:`~matplotlib.collections.PolyCollection` creation.
     """
 
     verts, array = _parse_args(descriptor, array)
