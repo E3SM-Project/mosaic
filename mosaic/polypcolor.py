@@ -116,15 +116,15 @@ def polypcolor(
 
     verts, array = _parse_args(descriptor, array)
 
+    vmin = kwargs.pop('vmin', None)
+    vmax = kwargs.pop('vmax', None)
+    norm = kwargs.pop('norm', None)
+
     collection = PolyCollection(verts, array=array, **kwargs)
 
     # only set the transform if GeoAxes
     if isinstance(ax, GeoAxes):
         collection.set_transform(descriptor.transform)
-
-    vmin = kwargs.pop('vmin', None)
-    vmax = kwargs.pop('vmax', None)
-    norm = kwargs.pop('norm', None)
 
     collection._scale_norm(norm, vmin, vmax)
     ax.add_collection(collection)
