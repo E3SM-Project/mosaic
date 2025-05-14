@@ -31,8 +31,8 @@
       ~Descriptor.x_period
       ~Descriptor.y_period
       ~Descriptor.transform
-      ~Descriptor.is_periodic
       ~Descriptor.is_spherical
+      ~Descriptor.is_periodic
       ~Descriptor.ds
    
    
