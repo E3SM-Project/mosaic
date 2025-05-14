@@ -114,10 +114,16 @@ class Descriptor:
         #: ``projection`` kwargs are provided.
         self.transform = transform
 
-        #: Boolean whether parent mesh is (planar) periodic in at least one dim
-        self.is_periodic = attr_to_bool(mesh_ds.is_periodic)
         #: Boolean whether parent mesh is spherical
         self.is_spherical = attr_to_bool(mesh_ds.on_a_sphere)
+
+        if not self.is_spherical:
+            is_periodic = attr_to_bool(mesh_ds.is_periodic)
+        else:
+            is_periodic = False
+
+        #: Boolean whether parent mesh is (planar) periodic in at least one dim
+        self.is_periodic = is_periodic
 
         # calls attribute setter method
         self.latlon = use_latlon
