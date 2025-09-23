@@ -30,7 +30,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -351,9 +351,9 @@ document.write(`
 <dd><p>Data structure describing unstructured MPAS meshes.</p>
 <p>Enables visualization of fields defined at cell centers, vertices,
 and edges within <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> through the creation of
-<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> objects. Separate patch
+<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> objects. Separate patch
 arrays, which are subsequently passed to the
-<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> class by the
+<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> class by the
 <a class="reference internal" href="mosaic.polypcolor.html#mosaic.polypcolor" title="mosaic.polypcolor"><code class="xref py py-class docutils literal notranslate"><span class="pre">polypcolor</span></code></a> method,
 are lazily loaded for each variable location (i.e. cells, edges, and
 vertices) when attribute is first looked up. We use lazily loaded arrays
@@ -370,8 +370,8 @@ the antimeridian for projected spherical meshes.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mesh_ds</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataSet</span></code>) – A valid MPAS mesh dataset that contains the basic mesh variables (i.e.
 coordinate and connectivity arrays) needed for creating patch arrays.</p></li>
-<li><p><strong>projection</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/reference/generated/cartopy.crs.CRS.html#cartopy.crs.CRS" title="(in cartopy v0.24.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code></a>, <em>optional</em>) – The target projection for plotting.</p></li>
-<li><p><strong>transform</strong> (<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/reference/generated/cartopy.crs.CRS.html#cartopy.crs.CRS" title="(in cartopy v0.24.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code></a>, <em>optional</em>) – The coordinate system in which the parent mesh coordinates are defined.</p></li>
+<li><p><strong>projection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code>, <em>optional</em>) – The target projection for plotting.</p></li>
+<li><p><strong>transform</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code>, <em>optional</em>) – The coordinate system in which the parent mesh coordinates are defined.</p></li>
 <li><p><strong>use_latlon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to use the lat/lon coordinate arrays to construct the patches.</p></li>
 </ul>
 </dd>
@@ -417,10 +417,10 @@ constructor, but instead will be equal to <code class="xref py py-attr docutils 
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="mosaic.Descriptor.cell_patches.html#mosaic.Descriptor.cell_patches" title="mosaic.Descriptor.cell_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_patches</span></code></a></p></td>
-<td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for cell centered values</p></td>
+<td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for cell centered values</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="mosaic.Descriptor.edge_patches.html#mosaic.Descriptor.edge_patches" title="mosaic.Descriptor.edge_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_patches</span></code></a></p></td>
-<td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for edge centered values</p></td>
+<td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for edge centered values</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">latlon</span></code></p></td>
 <td><p>Boolean whether the lat/lon coordinate arrays should be used for patch construction.</p></td>
@@ -429,7 +429,7 @@ constructor, but instead will be equal to <code class="xref py py-attr docutils 
 <td><p>The target projection for plotting.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="mosaic.Descriptor.vertex_patches.html#mosaic.Descriptor.vertex_patches" title="mosaic.Descriptor.vertex_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertex_patches</span></code></a></p></td>
-<td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for vertex centered values</p></td>
+<td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for vertex centered values</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x_period</span></code></p></td>
 <td><p>Period along x-dimension, is <code class="docutils literal notranslate"><span class="pre">None</span></code> for non-periodic meshes</p></td>
@@ -447,7 +447,7 @@ constructor, but instead will be equal to <code class="xref py py-attr docutils 
 <td><p>Boolean whether parent mesh is (planar) periodic in at least one dim</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds</span></code></p></td>
-<td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2025.4.1.dev0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
+<td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2025.9.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
 </tr>
 </tbody>
 </table>
