@@ -116,6 +116,7 @@ def polypcolor(
 
     verts, array = _parse_args(descriptor, array)
 
+    # need to pop b/c PolyCollection does not accept these
     vmin = kwargs.pop('vmin', None)
     vmax = kwargs.pop('vmax', None)
     norm = kwargs.pop('norm', None)
@@ -132,6 +133,9 @@ def polypcolor(
     # Update the datalim for this polycollection
     limits = collection.get_datalim(ax.transData)
     ax.update_datalim(limits)
+
+    # repack so mirrored collection has consistent color limits
+    kwargs.update({'vmin': vmin, 'vmax': vmax, 'norm': norm})
 
     # Mirror patches that cross periodic boundaries
     collection = _mirror_polycollection(
