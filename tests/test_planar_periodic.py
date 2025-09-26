@@ -1,13 +1,41 @@
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from shapely import LinearRing, is_valid
 
 import mosaic
 
+mpl.use("Agg", force=True)
+
+
+def set_clim(case, dim_size):
+    match case:
+        case None:
+            return None
+        case "mid":
+            return dim_size // 2
+        case "over":
+            return dim_size + dim_size // 2
+        case "under":
+            return -dim_size // 2
+
 
 class TestPlanarPeriodicMirroring:
 
     ds = mosaic.datasets.open_dataset("doubly_periodic_4x4")
+    descriptor = mosaic.Descriptor(ds)
+
+    def get_dim_size(self, patch):
+        match patch:
+            case "Cell":
+                plural = "Cells"
+            case "Edge":
+                plural = "Edges"
+            case "Vertex":
+                plural = "Vertices"
+
+        return self.ds.sizes[f"n{plural}"]
 
     def test_offset_coordinates(self):
         """Only testing for cell patches currently"""
@@ -83,3 +111,28 @@ class TestPlanarPeriodicMirroring:
 
         # assert that all the patches are valid
         assert np.all(is_valid(geoms))
+
+    @pytest.mark.parametrize("patch", ["Cell", "Edge", "Vertex"])
+    @pytest.mark.parametrize("vmin", [None, "mid", "over", "under"])
+    @pytest.mark.parametrize("vmax", [None, "mid", "over", "under"])
+    def test_clims(self, patch, vmin, vmax):
+
+        dim_size = self.get_dim_size(patch)
+
+        kwargs = {
+            "vmin": set_clim(vmin, dim_size),
+            "vmax": set_clim(vmax, dim_size)
+        }
+
+        fig, ax = plt.subplots()
+
+        collection = mosaic.polypcolor(
+            ax, self.descriptor, self.ds[f"indexTo{patch}ID"], **kwargs
+        )
+
+        original_clim = collection.get_clim()
+        mirrored_clim = collection._mirrored_collection_fix.get_clim()
+
+        plt.close()
+
+        assert original_clim == mirrored_clim
