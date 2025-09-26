@@ -60,7 +60,7 @@ templates_path = ['_templates']
 exclude_patterns = ["_build", ".DS_Store"]
 
 intersphinx_mapping = {
-        'cartopy': ('https://scitools.org.uk/cartopy/docs/latest/', None),
+        'cartopy': ('https://cartopy.readthedocs.io/stable/', None),
         'matplotlib': ('https://matplotlib.org/stable', None),
         'numpy': ('https://numpy.org/doc/stable', None),
         'python': ('https://docs.python.org/3/', None),
