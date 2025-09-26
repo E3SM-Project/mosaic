@@ -58,7 +58,7 @@ Future work will extend the patch mirroring functionality to spherical meshes.
 
 ## Supported Map Projections for Spherical Meshes
 
-Currently, the only support map projection are:
+Currently, the only support map projection for spherical meshes are:
 - <inv:#*.PlateCarree>
 - <inv:#*.LambertCylindrical>
 - <inv:#*.Mercator>
@@ -77,6 +77,12 @@ Currently, the only support map projection are:
 - <inv:#*.NorthPolarStereo>
 - <inv:#*.SouthPolarStereo>
 
-It is important to note that planar (non-periodic) meshes are not limited to
-this list of map projections and can choose from the full list of `cartopy`
+:::{Note}
+:class: myclass1 myclass2
+:name: planar-non-periodic-note
+
+This subset of supported project only applies to spherical meshes.
+Planar (non-periodic) meshes are not limited to this list and can choose from
+the full range of `cartopy`
 [projections](https://scitools.org.uk/cartopy/docs/latest/reference/projections.html).
+:::
