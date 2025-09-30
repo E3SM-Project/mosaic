@@ -17,44 +17,48 @@ subset of `cartopy` projections, which are listed below. Future work will
 develop a more elaborate method of dealing with spherical mesh periodicity,
 which in turn will expand the list supported map projections.
 
-For patches that cross a periodic boundary we simply correct the coordinates to
-remove the periodicity, which enables plotting. Future work will mirror the
-patches across the periodic boundary, so as to more accurately demonstrate the
-periodic nature of the mesh.
-
-<!-- 
 ## Planar Periodic Meshes
 
+For patches of a planar periodic mesh that cross a periodic boundary we correct
+the patch coordinates to remove the periodicity **and** mirror the patches
+across the periodic boundary. The end product of both correcting and mirroring
+periodic patches is a fully periodic plot as demonstrated below:
+
 ```{code-cell} ipython3
----
-mystnb:
-    remove_code_source: true
----
+:tags: [hide-input]
+:mystnb:
+:  code_prompt_show: "Source code to generate figure below"
+:  code_prompt_hide: "Source code to generate figure below"
+:  figure: {figure : center}
+
 import mosaic
 import matplotlib.pyplot as plt
 
 # download and read the mesh from lcrc
 ds = mosaic.datasets.open_dataset("doubly_periodic_4x4")
 
-# create the figure and a GeoAxis 
-fig, ax = plt.subplots(constrained_layout=True,)
+# create the figure 
+fig, ax = plt.subplots(figsize=(4.5, 4.5), constrained_layout=True,)
 
 descriptor = mosaic.Descriptor(ds)
 
 pc = mosaic.polypcolor(
-    ax, descriptor, ds.indexToCellID, alpha=0.8, antialiaseds=True, ec="k"
+    ax, descriptor, ds.indexToCellID, alpha=0.6, antialiaseds=True, ec="k"
 )
 
-ax.scatter(descriptor.ds.xCell, descriptor.ds.yCell, c='k')
-ax.scatter(*descriptor.cell_patches.T, c='tab:blue', marker='^')
-ax.scatter(ds.xVertex, ds.yVertex, ec='tab:orange', fc='none', marker='o', s=5.)
+ax.scatter(descriptor.ds.xCell, descriptor.ds.yCell, c='k', marker='x')
 ax.set_aspect('equal')
 ```
--->
+Periodic plotting (i.e. correcting and mirroring) of `Edge` and `Vertex` fields
+is also supported. All planar periodic patches will have the same "tight" axis
+limits, as defined by periods of the underlying mesh.
+
+
+Future work will extend the patch mirroring functionality to spherical meshes.
 
 ## Supported Map Projections for Spherical Meshes
 
-Currently, the only support map projection are:
+Currently, the only support map projection for spherical meshes are:
 - <inv:#*.PlateCarree>
 - <inv:#*.LambertCylindrical>
 - <inv:#*.Mercator>
@@ -73,6 +77,12 @@ Currently, the only support map projection are:
 - <inv:#*.NorthPolarStereo>
 - <inv:#*.SouthPolarStereo>
 
-It is important to note that planer (non-periodic) meshes are not limited to
-this list of map projections and can choose from the full list of `cartopy`
+:::{Note}
+:class: myclass1 myclass2
+:name: planar-non-periodic-note
+
+This subset of supported project only applies to spherical meshes.
+Planar (non-periodic) meshes are not limited to this list and can choose from
+the full range of `cartopy`
 [projections](https://scitools.org.uk/cartopy/docs/latest/reference/projections.html).
+:::

@@ -2,25 +2,92 @@ import numpy as np
 from cartopy.mpl.geoaxes import GeoAxes
 from matplotlib.axes import Axes
 from matplotlib.collections import PolyCollection
-from matplotlib.colors import Normalize
-from numpy.typing import ArrayLike
 from xarray.core.dataarray import DataArray
 
 from mosaic.descriptor import Descriptor
+from mosaic.mpas_collection import MPASCollection
+
+
+def _get_array_location(descriptor, array):
+    """Helper function to find mesh location where dataarray is defined
+    """
+
+    if "nCells" in array.dims:
+        return "cell"
+    elif "nEdges" in array.dims:
+        return "edge"
+    elif "nVertices" in array.dims:
+        return "vertex"
+
+
+def _parse_args(descriptor, array):
+    """Helper function to get patch array corresponding to dataarray
+    """
+
+    loc = _get_array_location(descriptor, array)
+
+    verts = getattr(descriptor, f"{loc}_patches")
+    pole_mask = getattr(descriptor, f"_{loc}_pole_mask", None)
+
+    if descriptor.projection and pole_mask is not None:
+        array = array.where(~pole_mask, np.nan)
+
+    return verts, array
+
+
+def _mirror_polycollection(ax, collection, descriptor, array, **kwargs):
+    """Handle patches that need to be mirrored.
+
+    Following ``cartopy.mpl.geoaxes._wrap_quadmesh``
+    """
+
+    loc = _get_array_location(descriptor, array)
+
+    mirrored_verts = getattr(descriptor, f"_{loc}_mirrored", None)
+    mirrored_idxs = getattr(descriptor, f"_{loc}_mirrored_idxs", None)
+
+    # if no patches to mirror then break here
+    if mirrored_verts is None:
+        return collection
+
+    zorder = collection.zorder - .1
+    kwargs.pop('zorder', None)
+    vmin = kwargs.pop('vmin', None)
+    vmax = kwargs.pop('vmax', None)
+    norm = kwargs.pop('norm', None)
+    cmap = kwargs.pop('cmap', None)
+
+    # create a second PolyCollection for the mirrored patches
+    mirrored_collection = PolyCollection(
+        mirrored_verts, array=array[mirrored_idxs], zorder=zorder, **kwargs
+    )
+
+    mirrored_collection.set_cmap(cmap)
+    mirrored_collection.set_norm(norm)
+    mirrored_collection.set_clim(vmin, vmax)
+    # if vmin or vmax is None, use min/max from *orig* data to scale mirrored
+    mirrored_collection.norm.autoscale_None(array)
+
+    # TODO: support wrapping for spherical meshes
+    if isinstance(ax, GeoAxes):
+        mirrored_collection.set_transform(descriptor.transform)
+
+    # add the mirrored collection to the axes
+    ax.add_collection(mirrored_collection)
+
+    # store the mirrored_collection and associated indices
+    collection._mirrored_idxs = mirrored_idxs
+    collection._mirrored_collection_fix = mirrored_collection
+
+    return collection
 
 
 def polypcolor(
     ax: Axes,
     descriptor: Descriptor,
-    c: DataArray,
-    alpha: float = 1.0,
-    norm: str | Normalize | None = None,
-    cmap: str | Normalize | None = None,
-    vmin: float | None = None,
-    vmax: float | None = None,
-    facecolors: ArrayLike | None = None,
+    array: DataArray,
     **kwargs
-) -> PolyCollection:
+) -> MPASCollection:
     """
     Create a pseudocolor plot of a unstructured MPAS grid.
 
@@ -38,38 +105,27 @@ def polypcolor(
     descriptor : :py:class:`Descriptor`
         An already created ``Descriptor`` object
 
-    c : DataArray
+    array : DataArray
         The color values to plot. Must have a dimension named either
         ``nCells``, ``nEdges``, or ``nVertices``.
 
     other_parameters
-        All other parameters are the same as for
-        :py:func:`~matplotlib.pyplot.pcolor`.
+        All other parameters are the forwarded to the
+        :py:class:`~matplotlib.collections.PolyCollection` creation.
     """
 
-    if "nCells" in c.dims:
-        verts = descriptor.cell_patches
-        if descriptor.projection and np.any(descriptor._cell_pole_mask):
-            c = c.where(~descriptor._cell_pole_mask, np.nan)
+    verts, array = _parse_args(descriptor, array)
 
-    elif "nEdges" in c.dims:
-        verts = descriptor.edge_patches
-        if descriptor.projection and np.any(descriptor._edge_pole_mask):
-            c = c.where(~descriptor._edge_pole_mask, np.nan)
+    # need to pop b/c PolyCollection does not accept these
+    vmin = kwargs.pop('vmin', None)
+    vmax = kwargs.pop('vmax', None)
+    norm = kwargs.pop('norm', None)
 
-    elif "nVertices" in c.dims:
-        verts = descriptor.vertex_patches
-        if descriptor.projection and np.any(descriptor._vertex_pole_mask):
-            c = c.where(~descriptor._vertex_pole_mask, np.nan)
-
-    transform = descriptor.transform
-
-    collection = PolyCollection(verts, alpha=alpha, array=c,
-                                cmap=cmap, norm=norm, **kwargs)
+    collection = PolyCollection(verts, array=array, **kwargs)
 
     # only set the transform if GeoAxes
     if isinstance(ax, GeoAxes):
-        collection.set_transform(transform)
+        collection.set_transform(descriptor.transform)
 
     collection._scale_norm(norm, vmin, vmax)
     ax.add_collection(collection)
@@ -77,9 +133,20 @@ def polypcolor(
     # Update the datalim for this polycollection
     limits = collection.get_datalim(ax.transData)
     ax.update_datalim(limits)
-    ax.autoscale_view()
+
+    # repack so mirrored collection has consistent color limits
+    kwargs.update({'vmin': vmin, 'vmax': vmax, 'norm': norm})
+
+    # Mirror patches that cross periodic boundaries
+    collection = _mirror_polycollection(
+        ax, collection, descriptor, array, **kwargs
+    )
+
+    # Re-cast the PolyCollection as MPASCollection for mirrored patch handeling
+    collection.__class__ = MPASCollection
 
     # for planar periodic plot explicity set the axis limit
+    # TODO: use ``ax.update_datalims`` instead of explicity setting axis limits
     if not descriptor.is_spherical and descriptor.x_period:
         xmin, xmax = _find_planar_periodic_axis_limits(descriptor, "x")
         ax.set_xlim(xmin, xmax)
@@ -88,6 +155,7 @@ def polypcolor(
         ymin, ymax = _find_planar_periodic_axis_limits(descriptor, "y")
         ax.set_ylim(ymin, ymax)
 
+    ax.autoscale_view()
     return collection
 
 
@@ -95,16 +163,12 @@ def _find_planar_periodic_axis_limits(descriptor, coord):
     """Find the correct (tight) axis limits for planar periodic meshes.
     """
 
-    edge_min = float(descriptor.ds[f"{coord}Edge"].min())
-    vertex_min = float(descriptor.ds[f"{coord}Vertex"].min())
+    # get the axis period
+    period = descriptor.__getattribute__(f"{coord}_period")
+    # get axis index we are inquiring over
+    axis = 0 if coord == "x" else 1
 
-    # an edge connects two vertices, so a vertices most extreme position should
-    # always be more extended than an edge's
-    if vertex_min > edge_min:
-        max = float(descriptor.ds[f"{coord}Vertex"].max())
-        min = max - descriptor.__getattribute__(f"{coord}_period")
-    else:
-        min = float(descriptor.ds[f"{coord}Vertex"].min())
-        max = min + descriptor.__getattribute__(f"{coord}_period")
+    min = descriptor.origin[axis]
+    max = min + period
 
     return min, max
