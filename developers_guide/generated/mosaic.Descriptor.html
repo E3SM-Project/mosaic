@@ -370,8 +370,8 @@ the antimeridian for projected spherical meshes.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mesh_ds</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataSet</span></code>) – A valid MPAS mesh dataset that contains the basic mesh variables (i.e.
 coordinate and connectivity arrays) needed for creating patch arrays.</p></li>
-<li><p><strong>projection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code>, <em>optional</em>) – The target projection for plotting.</p></li>
-<li><p><strong>transform</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code>, <em>optional</em>) – The coordinate system in which the parent mesh coordinates are defined.</p></li>
+<li><p><strong>projection</strong> (<a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/generated/cartopy.crs.CRS.html#cartopy.crs.CRS" title="(in cartopy v0.25.0.post2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code></a>, <em>optional</em>) – The target projection for plotting.</p></li>
+<li><p><strong>transform</strong> (<a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/generated/cartopy.crs.CRS.html#cartopy.crs.CRS" title="(in cartopy v0.25.0.post2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code></a>, <em>optional</em>) – The coordinate system in which the parent mesh coordinates are defined.</p></li>
 <li><p><strong>use_latlon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to use the lat/lon coordinate arrays to construct the patches.</p></li>
 </ul>
 </dd>
@@ -425,29 +425,32 @@ constructor, but instead will be equal to <code class="xref py py-attr docutils 
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">latlon</span></code></p></td>
 <td><p>Boolean whether the lat/lon coordinate arrays should be used for patch construction.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">projection</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">origin</span></code></p></td>
+<td><p>Coordinates of bottom left corner of plot</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">projection</span></code></p></td>
 <td><p>The target projection for plotting.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="mosaic.Descriptor.vertex_patches.html#mosaic.Descriptor.vertex_patches" title="mosaic.Descriptor.vertex_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertex_patches</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="mosaic.Descriptor.vertex_patches.html#mosaic.Descriptor.vertex_patches" title="mosaic.Descriptor.vertex_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertex_patches</span></code></a></p></td>
 <td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for vertex centered values</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x_period</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x_period</span></code></p></td>
 <td><p>Period along x-dimension, is <code class="docutils literal notranslate"><span class="pre">None</span></code> for non-periodic meshes</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">y_period</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">y_period</span></code></p></td>
 <td><p>Period along y-dimension, is <code class="docutils literal notranslate"><span class="pre">None</span></code> for non-periodic meshes</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="mosaic.Descriptor.transform.html#mosaic.Descriptor.transform" title="mosaic.Descriptor.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="mosaic.Descriptor.transform.html#mosaic.Descriptor.transform" title="mosaic.Descriptor.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
 <td><p>The coordinate system in which patch coordinates are defined.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_spherical</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_spherical</span></code></p></td>
 <td><p>Boolean whether parent mesh is spherical</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_periodic</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_periodic</span></code></p></td>
 <td><p>Boolean whether parent mesh is (planar) periodic in at least one dim</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds</span></code></p></td>
-<td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2025.9.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2025.9.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
 </tr>
 </tbody>
 </table>

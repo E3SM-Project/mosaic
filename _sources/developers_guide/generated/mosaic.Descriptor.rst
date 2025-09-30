@@ -26,6 +26,7 @@
       ~Descriptor.cell_patches
       ~Descriptor.edge_patches
       ~Descriptor.latlon
+      ~Descriptor.origin
       ~Descriptor.projection
       ~Descriptor.vertex_patches
       ~Descriptor.x_period
