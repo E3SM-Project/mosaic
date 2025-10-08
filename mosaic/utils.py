@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Literal
 
 import numpy as np
@@ -38,7 +40,6 @@ def get_invalid_patches(
     if np.all(valid):
         # no invalid patches, so return None
         return None
-    else:
-        # return the indices of the invalid patches
-        index_array = np.arange(patches.shape[0])
-        return index_array[~pole_mask][~valid]
+    # return the indices of the invalid patches
+    index_array = np.arange(patches.shape[0])
+    return index_array[~pole_mask][~valid]

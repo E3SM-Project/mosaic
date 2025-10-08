@@ -10,7 +10,7 @@ will add support for others.
 :::{admonition} Please reach out with any problems!
 :class: tip
 
-If you have any trouble with `mosaic`, especially problems plotting your `MPAS` 
+If you have any trouble with `mosaic`, especially problems plotting your `MPAS`
 mesh of choice, please reach out via [GitHub discussions](https://github.com/E3SM-Project/mosaic/discussions)
 under the ["Q&A" category](https://github.com/E3SM-Project/mosaic/discussions/categories/q-a).
 

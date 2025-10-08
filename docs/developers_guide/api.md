@@ -3,9 +3,9 @@
 ```{eval-rst}
 .. currentmodule:: mosaic
 
-.. _api: 
+.. _api:
 
-API Reference 
+API Reference
 =============
 
 This page provides an auto-generated summary of mosaic's API.
