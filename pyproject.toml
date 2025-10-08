@@ -7,7 +7,7 @@ authors = [
 description = "A visualization package for MPAS meshes"
 license = {file = "LICENSE"}
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: BSD License",
@@ -64,7 +64,7 @@ testpaths = ["tests"]
 
 [tool.mypy]
 files = ["src", "test"]
-python_version = "3.10"
+python_version = "3.14"
 strict = false
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 ignore_missing_imports = true
