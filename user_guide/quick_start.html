@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Quick Start for Users &#8212; mosaic 1.1.0 documentation</title>
+    <title>file_format: mystnb kernelspec: name: python3 &#8212; mosaic 1.1.0 documentation</title>
   
   
   
@@ -47,7 +47,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/quick_start';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Periodic Mesh Support" href="wrapping.html" />
+    <link rel="next" title="file_format: mystnb kernelspec: name: python3" href="wrapping.html" />
     <link rel="prev" title="Mosaic" href="../index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -154,8 +154,10 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Quick Start for Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wrapping.html">Periodic Mesh Support</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">file_format: mystnb kernelspec: name: python3</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="wrapping.html">file_format: mystnb kernelspec: name: python3</a></li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="nav bd-sidenav">
@@ -318,7 +320,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Quick Start for Users</h1>
+    <h1>file_format: mystnb kernelspec: name: python3</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -328,13 +330,18 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instaling-mosaic">Instaling <code class="docutils literal notranslate"><span class="pre">mosaic</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">file_format: mystnb kernelspec: name: python3</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start-for-users">Quick Start for Users</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-mosaic">Installing <code class="docutils literal notranslate"><span class="pre">mosaic</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-usage">Example Usage</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#global-mesh">Global Mesh</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planar-non-periodic">Planar Non-Periodic</a></li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+
             </nav>
         </div>
     </div>
@@ -345,10 +352,14 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="quick-start-for-users">
+  <hr class="docutils" />
+<section id="file-format-mystnb-kernelspec-name-python3">
+<h1>file_format: mystnb kernelspec: name: python3<a class="headerlink" href="#file-format-mystnb-kernelspec-name-python3" title="Link to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="quick-start-for-users">
 <h1>Quick Start for Users<a class="headerlink" href="#quick-start-for-users" title="Link to this heading">#</a></h1>
-<section id="instaling-mosaic">
-<h2>Instaling <code class="docutils literal notranslate"><span class="pre">mosaic</span></code><a class="headerlink" href="#instaling-mosaic" title="Link to this heading">#</a></h2>
+<section id="installing-mosaic">
+<h2>Installing <code class="docutils literal notranslate"><span class="pre">mosaic</span></code><a class="headerlink" href="#installing-mosaic" title="Link to this heading">#</a></h2>
 <p>You can install the latest version of <code class="docutils literal notranslate"><span class="pre">mosaic</span></code> from conda-forge by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="n">add</span> <span class="n">channels</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span>
 <span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="nb">set</span> <span class="n">channel_priority</span> <span class="n">strict</span>
@@ -363,45 +374,8 @@ document.write(`
 <section id="global-mesh">
 <h3>Global Mesh<a class="headerlink" href="#global-mesh" title="Link to this heading">#</a></h3>
 <p>Then we can use <code class="docutils literal notranslate"><span class="pre">mosaic</span></code> to plot on the native mesh using <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>. For example:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cartopy.crs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ccrs</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">mosaic</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
-
-<span class="c1"># download and read the mesh from lcrc</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;QU.240km&quot;</span><span class="p">)</span>
-
-<span class="c1"># define a map projection for our figure</span>
-<span class="n">projection</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">InterruptedGoodeHomolosine</span><span class="p">()</span>
-<span class="c1"># define the transform that describes our dataset</span>
-<span class="n">transform</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">Geodetic</span><span class="p">()</span>
-
-<span class="c1"># create the figure and a GeoAxis </span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
-                       <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                       <span class="n">subplot_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">projection</span><span class="p">))</span>
-
-<span class="c1"># create a `Descriptor` object which takes the mesh information and creates </span>
-<span class="c1"># the polygon coordinate arrays needed for `matplotlib.collections.PolyCollection`.</span>
-<span class="n">descriptor</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">Descriptor</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">projection</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
-
-<span class="c1"># using the `Descriptor` object we just created, make a pseudocolor plot of</span>
-<span class="c1"># the &quot;indexToCellID&quot; variable, which is defined at cell centers.</span>
-<span class="n">collection</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">indexToCellID</span><span class="p">,</span> <span class="n">antialiaseds</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cell Index&quot;</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/9ecf1e3c3887c56c7e48f8673f2e12751c1e97dfd4c7c7b3541fec43fc47c3a4.png" src="../_images/9ecf1e3c3887c56c7e48f8673f2e12751c1e97dfd4c7c7b3541fec43fc47c3a4.png" />
-</div>
-</div>
 <p>For more information about how spherical meshes are handled and a list of supported
-map projections, see: <a class="reference internal" href="wrapping.html"><span class="doc std std-doc">Periodic Mesh Support</span></a>.</p>
+map projections, see: <a class="reference internal" href="wrapping.html"><span class="doc std std-doc">file_format: mystnb kernelspec: name: python3</span></a>.</p>
 </section>
 <section id="planar-non-periodic">
 <h3>Planar Non-Periodic<a class="headerlink" href="#planar-non-periodic" title="Link to this heading">#</a></h3>
@@ -411,47 +385,6 @@ want to us. Therefore, the <code class="docutils literal notranslate"><span clas
 for this example. When instantiating the <code class="docutils literal notranslate"><span class="pre">mosaic.Descriptor</span></code> object we have to
 be careful to set <code class="docutils literal notranslate"><span class="pre">use_latlon=False</span></code> to ensure the <code class="docutils literal notranslate"><span class="pre">xCell</span></code>/<code class="docutils literal notranslate"><span class="pre">yCell</span></code> coordinate
 arrays are parsed (c.f. <code class="docutils literal notranslate"><span class="pre">lonCell</span></code>/<code class="docutils literal notranslate"><span class="pre">latCell</span></code>).</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cartopy.crs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ccrs</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">mosaic</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
-
-<span class="c1"># download and read the mesh from lcrc</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;mpasli.AIS8to30&quot;</span><span class="p">)</span>
-
-<span class="c1"># define a map projection for our figure</span>
-<span class="n">projection</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">SouthPolarStereo</span><span class="p">()</span>
-<span class="c1"># define the transform that describes our dataset</span>
-<span class="n">transform</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">SouthPolarStereo</span><span class="p">()</span>
-
-<span class="c1"># create the figure and a GeoAxis </span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
-                       <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                       <span class="n">subplot_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">projection</span><span class="p">))</span>
-
-<span class="c1"># create a `Descriptor` object which takes the mesh information and creates </span>
-<span class="c1"># the polygon coordinate arrays needed for `matplotlib.collections.PolyCollection`.</span>
-<span class="n">descriptor</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">Descriptor</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">projection</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">use_latlon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1"># using the `Descriptor` object we just created, make a pseudocolor plot of</span>
-<span class="c1"># the &quot;indexToCellID&quot; variable, which is defined at cell centers.</span>
-<span class="n">collection</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">thickness</span><span class="p">,</span> <span class="n">antialiaseds</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1"># Because this is not a global mesh, it&#39;s neccessary to explicitly set it&#39;s extent. </span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">([</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">],</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">gridlines</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Thickness [m]&quot;</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/e206441976be9559d15de4be9e74641d04877d3880c7ae86fa26da8e7acf561f.png" src="../_images/e206441976be9559d15de4be9e74641d04877d3880c7ae86fa26da8e7acf561f.png" />
-</div>
-</div>
 <p>In the case where we do not know what projection the coordinate arrays of the
 mesh correspond to we can use the <code class="docutils literal notranslate"><span class="pre">lonCell</span></code>/<code class="docutils literal notranslate"><span class="pre">latCell</span></code> coordinates and <code class="docutils literal notranslate"><span class="pre">mosaic</span></code>
 will handle the transformation to the requested map projection under the hood.
@@ -497,7 +430,7 @@ with the exception of the transform definition:</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Periodic Mesh Support</p>
+        <p class="prev-next-title">file_format: mystnb kernelspec: name: python3</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -517,13 +450,18 @@ with the exception of the transform definition:</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instaling-mosaic">Instaling <code class="docutils literal notranslate"><span class="pre">mosaic</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">file_format: mystnb kernelspec: name: python3</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start-for-users">Quick Start for Users</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-mosaic">Installing <code class="docutils literal notranslate"><span class="pre">mosaic</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-usage">Example Usage</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#global-mesh">Global Mesh</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planar-non-periodic">Planar Non-Periodic</a></li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+
   </nav></div>
 
 </div></div>

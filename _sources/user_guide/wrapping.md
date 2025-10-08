@@ -1,8 +1,6 @@
----
-file_format: mystnb
-kernelspec:
-  name: python3
----
+______________________________________________________________________
+
+## file_format: mystnb kernelspec: name: python3
 
 # Periodic Mesh Support
 
@@ -37,7 +35,7 @@ import matplotlib.pyplot as plt
 # download and read the mesh from lcrc
 ds = mosaic.datasets.open_dataset("doubly_periodic_4x4")
 
-# create the figure 
+# create the figure
 fig, ax = plt.subplots(figsize=(4.5, 4.5), constrained_layout=True,)
 
 descriptor = mosaic.Descriptor(ds)
@@ -49,16 +47,17 @@ pc = mosaic.polypcolor(
 ax.scatter(descriptor.ds.xCell, descriptor.ds.yCell, c='k', marker='x')
 ax.set_aspect('equal')
 ```
+
 Periodic plotting (i.e. correcting and mirroring) of `Edge` and `Vertex` fields
 is also supported. All planar periodic patches will have the same "tight" axis
 limits, as defined by periods of the underlying mesh.
-
 
 Future work will extend the patch mirroring functionality to spherical meshes.
 
 ## Supported Map Projections for Spherical Meshes
 
 Currently, the only support map projection for spherical meshes are:
+
 - <inv:#*.PlateCarree>
 - <inv:#*.LambertCylindrical>
 - <inv:#*.Mercator>

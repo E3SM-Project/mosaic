@@ -154,8 +154,10 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../user_guide/quick_start.html">Quick Start for Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../user_guide/wrapping.html">Periodic Mesh Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/quick_start.html">file_format: mystnb kernelspec: name: python3</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/wrapping.html">file_format: mystnb kernelspec: name: python3</a></li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="nav bd-sidenav">
@@ -372,7 +374,7 @@ the antimeridian for projected spherical meshes.</p>
 coordinate and connectivity arrays) needed for creating patch arrays.</p></li>
 <li><p><strong>projection</strong> (<a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/generated/cartopy.crs.CRS.html#cartopy.crs.CRS" title="(in cartopy v0.25.0.post2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code></a>, <em>optional</em>) – The target projection for plotting.</p></li>
 <li><p><strong>transform</strong> (<a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/generated/cartopy.crs.CRS.html#cartopy.crs.CRS" title="(in cartopy v0.25.0.post2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cartopy.crs.CRS</span></code></a>, <em>optional</em>) – The coordinate system in which the parent mesh coordinates are defined.</p></li>
-<li><p><strong>use_latlon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to use the lat/lon coordinate arrays to construct the patches.</p></li>
+<li><p><strong>use_latlon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to use the lat/lon coordinate arrays to construct the patches.</p></li>
 </ul>
 </dd>
 </dl>
@@ -450,7 +452,7 @@ constructor, but instead will be equal to <code class="xref py py-attr docutils 
 <td><p>Boolean whether parent mesh is (planar) periodic in at least one dim</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds</span></code></p></td>
-<td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2025.9.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
+<td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2025.10.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
 </tr>
 </tbody>
 </table>
