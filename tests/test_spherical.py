@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import cartopy.crs as ccrs
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -7,7 +9,7 @@ from shapely import LinearRing, is_valid
 
 import mosaic
 
-matplotlib.use('Agg', force=True)
+mpl.use("Agg", force=True)
 
 SUPPORTED_PROJECTIONS = [
     ccrs.PlateCarree(),
@@ -35,13 +37,11 @@ def id_func(projection):
 
 
 class TestSphericalWrapping:
-
     ds = mosaic.datasets.open_dataset("QU.240km")
 
     @pytest.fixture(scope="module", params=SUPPORTED_PROJECTIONS, ids=id_func)
     def setup_descriptor(self, request):
-        descriptor = mosaic.Descriptor(self.ds, request.param, ccrs.Geodetic())
-        return descriptor
+        return mosaic.Descriptor(self.ds, request.param, ccrs.Geodetic())
 
     @pytest.mark.timeout(30)
     @pytest.mark.parametrize("patch", ["Cell", "Edge", "Vertex"])
@@ -56,7 +56,7 @@ class TestSphericalWrapping:
         proj_name = type(projection).__name__
 
         # setup with figure with the parameterized projection
-        fig, ax = plt.subplots(subplot_kw=dict(projection=projection))
+        fig, ax = plt.subplots(subplot_kw={"projection": projection})
 
         # get the appropriate dataarray for the parameterized patch location
         da = self.ds[f"indexTo{patch}ID"]

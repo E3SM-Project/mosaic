@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from functools import cached_property
-from typing import Literal, Tuple
+from typing import Literal
 
 import cartopy.crs as ccrs
 import numpy as np
@@ -8,36 +10,43 @@ from cartopy.crs import CRS
 from numpy import ndarray
 from xarray.core.dataset import Dataset
 
-renaming_dict = {"lonCell": "xCell",
-                 "latCell": "yCell",
-                 "lonEdge": "xEdge",
-                 "latEdge": "yEdge",
-                 "lonVertex": "xVertex",
-                 "latVertex": "yVertex"}
+renaming_dict = {
+    "lonCell": "xCell",
+    "latCell": "yCell",
+    "lonEdge": "xEdge",
+    "latEdge": "yEdge",
+    "lonVertex": "xVertex",
+    "latVertex": "yVertex",
+}
 
-connectivity_arrays = ["cellsOnEdge",
-                       "cellsOnVertex",
-                       "verticesOnEdge",
-                       "verticesOnCell",
-                       "edgesOnVertex"]
+connectivity_arrays = [
+    "cellsOnEdge",
+    "cellsOnVertex",
+    "verticesOnEdge",
+    "verticesOnCell",
+    "edgesOnVertex",
+]
 
-SUPPORTED_SPHERICAL_PROJECTIONS = (ccrs._RectangularProjection,
-                                   ccrs._WarpedRectangularProjection,
-                                   ccrs.Stereographic,
-                                   ccrs.Mercator,
-                                   ccrs._CylindricalProjection,
-                                   ccrs.InterruptedGoodeHomolosine)
+SUPPORTED_SPHERICAL_PROJECTIONS = (
+    ccrs._RectangularProjection,
+    ccrs._WarpedRectangularProjection,
+    ccrs.Stereographic,
+    ccrs.Mercator,
+    ccrs._CylindricalProjection,
+    ccrs.InterruptedGoodeHomolosine,
+)
 
 
 def attr_to_bool(attr: str):
-    """ Format attribute strings and return a boolean value """
+    """Format attribute strings and return a boolean value"""
     match attr.strip().upper():
         case "YES":
             return True
         case "NO":
             return False
         case _:
-            raise ValueError("f{attr} was unable to be parsed as YES/NO")
+            msg = "f{attr} was unable to be parsed as YES/NO"
+            raise ValueError(msg)
 
 
 class Descriptor:
@@ -104,7 +113,7 @@ class Descriptor:
         mesh_ds: Dataset,
         projection: CRS | None = None,
         transform: CRS | None = None,
-        use_latlon: bool = False
+        use_latlon: bool = False,
     ) -> None:
         #: The coordinate system in which patch coordinates are defined.
         #:
@@ -206,18 +215,22 @@ class Descriptor:
 
     @property
     def projection(self) -> CRS:
-        """ The target projection for plotting. """
+        """The target projection for plotting."""
         return self._projection
 
     @projection.setter
     def projection(self, projection: CRS) -> None:
         # We don't support all map projections for spherical meshes, yet...
-        if (projection is not None and self.is_spherical and
-                not isinstance(projection, SUPPORTED_SPHERICAL_PROJECTIONS)):
-
-            raise ValueError(f"Invalid projection: {type(projection).__name__}"
-                             f" is not supported - consider using "
-                             f"a rectangular projection.")
+        if (
+            projection is not None
+            and self.is_spherical
+            and not isinstance(projection, SUPPORTED_SPHERICAL_PROJECTIONS)
+        ):
+            msg = (
+                f"Invalid projection: {type(projection).__name__} is not "
+                f"supported - consider using a rectangular projection."
+            )
+            raise ValueError(msg)
 
         reprojecting = False
         # Issue warning if changing the projection after initialization
@@ -225,8 +238,10 @@ class Descriptor:
         #       warning is raised
         if hasattr(self, "_projection"):
             reprojecting = True
-            print(("Reprojecting the descriptor can be inefficient "
-                   "for large meshes"))
+            print(
+                "Reprojecting the descriptor can be inefficient "
+                "for large meshes"
+            )
 
         # If both a projection and a transform are provided then
         if projection and self.transform:
@@ -243,13 +258,16 @@ class Descriptor:
 
         self._projection = projection
 
-        # if periods are None (i.e. projection was not set at instantiation) or
-        # the descriptor is being reprojected; update the periods
-        if (hasattr(self, "_x_period") and hasattr(self, "_x_period")):
-            if (not self.x_period and not self.y_period) or reprojecting:
-                # dummy value b/c `_projection` attr will be used by setters
-                self.x_period = None
-                self.y_period = None
+        # if projection was not set at instantiation) or the descriptor is
+        # being reprojected; update the periods
+        if (
+            getattr(self, "x_period", False) is None
+            and getattr(self, "y_period", False) is None
+        ) or reprojecting:
+            # set to dummy values b/c projection limits will be parsed by the
+            # period setter methods
+            self.x_period = None
+            self.y_period = None
 
     @property
     def latlon(self) -> bool:
@@ -261,14 +279,14 @@ class Descriptor:
 
     @latlon.setter
     def latlon(self, value) -> None:
-        """ TODO: check that the passed value is consistent with transform """
+        """TODO: check that the passed value is consistent with transform"""
         if self.is_spherical:
             value = True
 
         self._latlon = value
 
     def _parse_period(self, ds, dim: Literal["x", "y"]):
-        """ Parse period attribute, return None for non-periodic meshes """
+        """Parse period attribute, return None for non-periodic meshes"""
 
         attr = f"{dim}_period"
         try:
@@ -278,17 +296,18 @@ class Descriptor:
 
         # in the off chance mesh is periodic but does not have period attribute
         if self.is_periodic and attr not in ds.attrs:
-            raise AttributeError((f"Mesh file: \"{ds.encoding['source']}\""
-                                  f"does not have attribute `{attr}` despite"
-                                  f"being a planar periodic mesh."))
+            msg = (
+                f'Mesh file: "{ds.encoding["source"]}" does not have '
+                f"attribute `{attr}` despite being a planar periodic mesh."
+            )
+            raise AttributeError(msg)
         if period == 0.0:
             return None
-        else:
-            return period
+        return period
 
     @property
     def x_period(self) -> float | None:
-        """ Period along x-dimension, is ``None`` for non-periodic meshes """
+        """Period along x-dimension, is ``None`` for non-periodic meshes"""
         return self._x_period
 
     @x_period.setter
@@ -304,7 +323,7 @@ class Descriptor:
 
     @property
     def y_period(self) -> float | None:
-        """ Period along y-dimension, is ``None`` for non-periodic meshes """
+        """Period along y-dimension, is ``None`` for non-periodic meshes"""
         return self._y_period
 
     @y_period.setter
@@ -319,7 +338,7 @@ class Descriptor:
             self._y_period = value
 
     @property
-    def origin(self) -> Tuple[float, float]:
+    def origin(self) -> tuple[float, float]:
         """Coordinates of bottom left corner of plot"""
 
         def get_axis_min(self, coord: Literal["x", "y"]) -> float:
@@ -362,7 +381,7 @@ class Descriptor:
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
-            mirrored, mirrored_idxs = self._mirror_patches(patches, "Cell")
+            mirrored, mirrored_idxs = self._mirror_patches(patches)
 
             # if mirrored patches were returned above store as attributes
             if mirrored is not None:
@@ -396,7 +415,7 @@ class Descriptor:
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
-            mirrored, mirrored_idxs = self._mirror_patches(patches, "Edge")
+            mirrored, mirrored_idxs = self._mirror_patches(patches)
 
             # if mirrored patches were returned above store as attributes
             if mirrored is not None:
@@ -437,7 +456,7 @@ class Descriptor:
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
-            mirrored, mirrored_idxs = self._mirror_patches(patches, "Vertex")
+            mirrored, mirrored_idxs = self._mirror_patches(patches)
 
             # if mirrored patches were returned above store as attributes
             if mirrored is not None:
@@ -452,11 +471,10 @@ class Descriptor:
         return patches
 
     def _transform_coordinates(self, projection, transform):
-
         for loc in ["Cell", "Edge", "Vertex"]:
-
             transformed_coords = projection.transform_points(
-                transform, self.ds[f"x{loc}"], self.ds[f"y{loc}"])
+                transform, self.ds[f"x{loc}"], self.ds[f"y{loc}"]
+            )
 
             # ``transformed_coords`` is a numpy array so needs to assigned to
             # the values of the dataarray
@@ -464,8 +482,7 @@ class Descriptor:
             self.ds[f"y{loc}"].values = transformed_coords[:, 1]
 
     def _wrap_patches(self, patches, loc):
-        """Wrap patches for spherical and planar-periodic meshes
-        """
+        """Wrap patches for spherical and planar-periodic meshes"""
 
         def _find_boundary_patches(patches, loc, coord, period):
             """
@@ -480,7 +497,7 @@ class Descriptor:
             # get difference b/w centroid and nodes of patches
             diff = patches[..., axis] - center
 
-            mask = np.abs(diff) > np.abs(period) / (2. * np.sqrt(2.))
+            mask = np.abs(diff) > np.abs(period) / (2.0 * np.sqrt(2.0))
             sign = np.sign(diff)
 
             return mask, sign
@@ -529,9 +546,9 @@ class Descriptor:
         )
         past_pole = np.abs(centers) > np.abs(limits[1])
 
-        return (at_pole | past_pole)
+        return at_pole | past_pole
 
-    def _mirror_patches(self, patches, loc):
+    def _mirror_patches(self, patches):
         """Mirror patches across periodic boundary for planar-periodic meshes
 
         Instead of correcting the periodic nodes of a patch (i.e. like
@@ -550,10 +567,9 @@ class Descriptor:
             """
             if np.all(array == 0):
                 return np.array([0])
-            else:
-                return np.unique(array[array != 0])
+            return np.unique(array[array != 0])
 
-        def _find_mirrored(pathces, coord, period):
+        def _find_mirrored(patches, coord, period):
             """Find the patches that need to be mirrored across periodic axis
 
             Also return the direction the patch cross the boundary (i.e.
@@ -571,9 +587,11 @@ class Descriptor:
             try:
                 mirror_sign = np.apply_along_axis(check_signs, 1, n_periods)
             except ValueError as exc:
-                error_str = ("A patch is periodic across multiple periods "
-                             "(i.e. a patch has a non-unqiue sign). "
-                             "Therefore patches cannot bed mirrored")
+                error_str = (
+                    "A patch is periodic across multiple periods "
+                    "(i.e. a patch has a non-unqiue sign). "
+                    "Therefore patches cannot bed mirrored"
+                )
                 raise ValueError(error_str) from exc
 
             # make a 1D array so broadcasting below will work
@@ -583,7 +601,7 @@ class Descriptor:
 
             return mirror_mask, mirror_sign
 
-        def _mirror_1D(pathces, mask, sign, coord, period):
+        def _mirror_1D(patches, mask, sign, coord, period):
             """Duplicate and mirror patches across a periodic axis
 
             Also returns the indices of the mirrored patches.
@@ -669,9 +687,7 @@ def _compute_cell_patches(ds: Dataset) -> ndarray:
     x_nodes = ds.xVertex.values[verticesOnCell]
     y_nodes = ds.yVertex.values[verticesOnCell]
 
-    nodes = np.stack((x_nodes, y_nodes), axis=-1)
-
-    return nodes
+    return np.stack((x_nodes, y_nodes), axis=-1)
 
 
 def _compute_edge_patches(ds: Dataset) -> ndarray:
@@ -696,15 +712,15 @@ def _compute_edge_patches(ds: Dataset) -> ndarray:
         xCell = np.where(cellMask, ds.xEdge.values[:, np.newaxis], xCell)
         yCell = np.where(cellMask, ds.yEdge.values[:, np.newaxis], yCell)
 
-    x_nodes = np.stack((xCell[:, 0], xVertex[:, 0],
-                        xCell[:, 1], xVertex[:, 1]), axis=-1)
+    x_nodes = np.stack(
+        (xCell[:, 0], xVertex[:, 0], xCell[:, 1], xVertex[:, 1]), axis=-1
+    )
 
-    y_nodes = np.stack((yCell[:, 0], yVertex[:, 0],
-                        yCell[:, 1], yVertex[:, 1]), axis=-1)
+    y_nodes = np.stack(
+        (yCell[:, 0], yVertex[:, 0], yCell[:, 1], yVertex[:, 1]), axis=-1
+    )
 
-    nodes = np.stack((x_nodes, y_nodes), axis=-1)
-
-    return nodes
+    return np.stack((x_nodes, y_nodes), axis=-1)
 
 
 def _compute_vertex_patches(ds: Dataset) -> ndarray:

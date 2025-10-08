@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,6 +9,8 @@ from shapely import LinearRing, is_valid
 import mosaic
 
 mpl.use("Agg", force=True)
+
+rng = np.random.default_rng()
 
 
 def set_clim(case, dim_size):
@@ -22,7 +26,6 @@ def set_clim(case, dim_size):
 
 
 class TestPlanarPeriodicMirroring:
-
     ds = mosaic.datasets.open_dataset("doubly_periodic_4x4")
     descriptor = mosaic.Descriptor(ds)
 
@@ -44,8 +47,8 @@ class TestPlanarPeriodicMirroring:
         ds = self.ds.copy()
 
         # create random offsets, for x and y direction independently
-        delta_x = np.random.randint(1, 100) * np.random.randn()
-        delta_y = np.random.randint(1, 100) * np.random.randn()
+        delta_x = rng.integers(1, 100) * rng.standard_normal()
+        delta_y = rng.integers(1, 100) * rng.standard_normal()
 
         for loc in ["Cell", "Edge", "Vertex"]:
             ds[f"x{loc}"] = ds[f"x{loc}"] + delta_x
@@ -57,19 +60,23 @@ class TestPlanarPeriodicMirroring:
         y_period = descriptor.y_period
 
         # extract the interior (i.e. original and un-mirrored) patches
-        interior_patches = getattr(descriptor, "cell_patches")
+        interior_patches = descriptor.cell_patches
         # extract the mirrored patches
-        mirrored_patches = getattr(descriptor, "_cell_mirrored")
+        mirrored_patches = descriptor._cell_mirrored
 
         # get the extent of the patches, including the mirrored patches
-        minx = min(np.min(interior_patches[..., 0]),
-                   np.min(mirrored_patches[..., 0]))
-        maxx = max(np.max(interior_patches[..., 0]),
-                   np.max(mirrored_patches[..., 0]))
-        miny = min(np.min(interior_patches[..., 1]),
-                   np.min(mirrored_patches[..., 1]))
-        maxy = max(np.max(interior_patches[..., 1]),
-                   np.max(mirrored_patches[..., 1]))
+        minx = min(
+            np.min(interior_patches[..., 0]), np.min(mirrored_patches[..., 0])
+        )
+        maxx = max(
+            np.max(interior_patches[..., 0]), np.max(mirrored_patches[..., 0])
+        )
+        miny = min(
+            np.min(interior_patches[..., 1]), np.min(mirrored_patches[..., 1])
+        )
+        maxy = max(
+            np.max(interior_patches[..., 1]), np.max(mirrored_patches[..., 1])
+        )
 
         range_x = maxx - minx
         range_y = maxy - miny
@@ -82,9 +89,9 @@ class TestPlanarPeriodicMirroring:
         dv = float(self.ds.dvEdge[0])
 
         # need to add an extra half cell spacing because of ragged rows
-        true_range_x = x_period + 1.5 * dc  # type: ignore
+        true_range_x = x_period + 1.5 * dc
         # circumradius of hexagon is equal edge length
-        true_range_y = y_period + 2.0 * dv  # type: ignore
+        true_range_y = y_period + 2.0 * dv
 
         assert np.isclose(range_x, true_range_x, atol=dc * 0.05, rtol=0), (
             f"failed for a x-offset of {delta_x: .3f}"
@@ -96,7 +103,6 @@ class TestPlanarPeriodicMirroring:
 
     @pytest.mark.parametrize("patch", ["Cell", "Edge", "Vertex"])
     def test_valid_patches(self, patch):
-
         descriptor = mosaic.Descriptor(self.ds)
 
         # extract the interior (i.e. original and un-mirrored) patches
@@ -116,15 +122,14 @@ class TestPlanarPeriodicMirroring:
     @pytest.mark.parametrize("vmin", [None, "mid", "over", "under"])
     @pytest.mark.parametrize("vmax", [None, "mid", "over", "under"])
     def test_clims(self, patch, vmin, vmax):
-
         dim_size = self.get_dim_size(patch)
 
         kwargs = {
             "vmin": set_clim(vmin, dim_size),
-            "vmax": set_clim(vmax, dim_size)
+            "vmax": set_clim(vmax, dim_size),
         }
 
-        fig, ax = plt.subplots()
+        _fig, ax = plt.subplots()
 
         collection = mosaic.polypcolor(
             ax, self.descriptor, self.ds[f"indexTo{patch}ID"], **kwargs
