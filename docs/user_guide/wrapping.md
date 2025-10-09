@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## file_format: mystnb kernelspec: name: python3
+---
+file_format: mystnb
+kernelspec:
+  name: python3
+---
 
 # Periodic Mesh Support
 
@@ -23,12 +25,13 @@ across the periodic boundary. The end product of both correcting and mirroring
 periodic patches is a fully periodic plot as demonstrated below:
 
 ```{code-cell} ipython3
-:tags: [hide-input]
-:mystnb:
-:  code_prompt_show: "Source code to generate figure below"
-:  code_prompt_hide: "Source code to generate figure below"
-:  figure: {figure : center}
-
+---
+tags: [hide-input]
+mystnb:
+  code_prompt_show: Source code to generate figure below
+  code_prompt_hide: Source code to generate figure below
+  figure: {figure: center}
+---
 import mosaic
 import matplotlib.pyplot as plt
 
@@ -76,12 +79,9 @@ Currently, the only support map projection for spherical meshes are:
 - <inv:#*.NorthPolarStereo>
 - <inv:#*.SouthPolarStereo>
 
-:::{Note}
-:class: myclass1 myclass2
-:name: planar-non-periodic-note
-
+```{Note}
 This subset of supported project only applies to spherical meshes.
 Planar (non-periodic) meshes are not limited to this list and can choose from
 the full range of `cartopy`
 [projections](https://scitools.org.uk/cartopy/docs/latest/reference/projections.html).
-:::
+```
