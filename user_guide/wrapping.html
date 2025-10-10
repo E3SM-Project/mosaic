@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>file_format: mystnb kernelspec: name: python3 &#8212; mosaic 1.1.0 documentation</title>
+    <title>Periodic Mesh Support &#8212; mosaic 1.1.0 documentation</title>
   
   
   
@@ -48,7 +48,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Quick Start for Developers" href="../developers_guide/quick_start.html" />
-    <link rel="prev" title="file_format: mystnb kernelspec: name: python3" href="quick_start.html" />
+    <link rel="prev" title="Quick Start for Users" href="quick_start.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -154,10 +154,8 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">file_format: mystnb kernelspec: name: python3</a></li>
-
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">file_format: mystnb kernelspec: name: python3</a></li>
-
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start for Users</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Periodic Mesh Support</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="nav bd-sidenav">
@@ -320,7 +318,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>file_format: mystnb kernelspec: name: python3</h1>
+    <h1>Periodic Mesh Support</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -330,14 +328,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">file_format: mystnb kernelspec: name: python3</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#periodic-mesh-support">Periodic Mesh Support</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#planar-periodic-meshes">Planar Periodic Meshes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-map-projections-for-spherical-meshes">Supported Map Projections for Spherical Meshes</a></li>
 </ul>
-</li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -348,11 +341,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <hr class="docutils" />
-<section id="file-format-mystnb-kernelspec-name-python3">
-<h1>file_format: mystnb kernelspec: name: python3<a class="headerlink" href="#file-format-mystnb-kernelspec-name-python3" title="Link to this heading">#</a></h1>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="periodic-mesh-support">
+  <section class="tex2jax_ignore mathjax_ignore" id="periodic-mesh-support">
 <h1>Periodic Mesh Support<a class="headerlink" href="#periodic-mesh-support" title="Link to this heading">#</a></h1>
 <p>We currently make the simplifying assumption that spherical meshes are a
 special instance of periodic meshes, which are periodic across the antimeridian.
@@ -370,6 +359,55 @@ which in turn will expand the list supported map projections.</p>
 the patch coordinates to remove the periodicity <strong>and</strong> mirror the patches
 across the periodic boundary. The end product of both correcting and mirroring
 periodic patches is a fully periodic plot as demonstrated below:</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Source code to generate figure below</p>
+<p class="expanded admonition-title">Source code to generate figure below</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">mosaic</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># download and read the mesh from lcrc</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;doubly_periodic_4x4&quot;</span><span class="p">)</span>
+
+<span class="c1"># create the figure</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+
+<span class="n">descriptor</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">Descriptor</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+
+<span class="n">pc</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span>
+    <span class="n">ax</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">indexToCellID</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">antialiaseds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;k&quot;</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">descriptor</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">xCell</span><span class="p">,</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">yCell</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading file &#39;mpas_standalonedata/mpas-ocean/mesh_database/doubly_periodic_1920km_7680x7680km.151124.nc&#39; from &#39;https://web.lcrc.anl.gov/public/e3sm/mpas_standalonedata/mpas-ocean/mesh_database/doubly_periodic_1920km_7680x7680km.151124.nc&#39; to &#39;/home/runner/.cache/mosaic&#39;.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|                                              | 0.00/20.1k [00:00&lt;?, ?B/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|                                              | 0.00/20.1k [00:00&lt;?, ?B/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|█████████████████████████████████████| 20.1k/20.1k [00:00&lt;00:00, 34.5MB/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="../_images/629ce6092ad483c37d397e2ae4932f6a24dfb85b7e8ccbd92c45fce058e2dd64.png" src="../_images/629ce6092ad483c37d397e2ae4932f6a24dfb85b7e8ccbd92c45fce058e2dd64.png" />
+</figure>
+</div>
+</div>
 <p>Periodic plotting (i.e. correcting and mirroring) of <code class="docutils literal notranslate"><span class="pre">Edge</span></code> and <code class="docutils literal notranslate"><span class="pre">Vertex</span></code> fields
 is also supported. All planar periodic patches will have the same “tight” axis
 limits, as defined by periods of the underlying mesh.</p>
@@ -397,7 +435,7 @@ limits, as defined by periods of the underlying mesh.</p>
 <li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.NorthPolarStereo" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.NorthPolarStereo</span></code></a></p></li>
 <li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.SouthPolarStereo" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.SouthPolarStereo</span></code></a></p></li>
 </ul>
-<div class="myclass1 myclass2 admonition note" id="planar-non-periodic-note">
+<div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This subset of supported project only applies to spherical meshes.
 Planar (non-periodic) meshes are not limited to this list and can choose from
@@ -424,7 +462,7 @@ the full range of <code class="docutils literal notranslate"><span class="pre">c
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">file_format: mystnb kernelspec: name: python3</p>
+        <p class="prev-next-title">Quick Start for Users</p>
       </div>
     </a>
     <a class="right-next"
@@ -452,14 +490,9 @@ the full range of <code class="docutils literal notranslate"><span class="pre">c
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">file_format: mystnb kernelspec: name: python3</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#periodic-mesh-support">Periodic Mesh Support</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#planar-periodic-meshes">Planar Periodic Meshes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-map-projections-for-spherical-meshes">Supported Map Projections for Spherical Meshes</a></li>
 </ul>
-</li>
-</ul>
-
   </nav></div>
 
 </div></div>

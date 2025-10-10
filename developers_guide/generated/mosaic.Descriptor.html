@@ -154,10 +154,8 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../user_guide/quick_start.html">file_format: mystnb kernelspec: name: python3</a></li>
-
-<li class="toctree-l1"><a class="reference internal" href="../../user_guide/wrapping.html">file_format: mystnb kernelspec: name: python3</a></li>
-
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/quick_start.html">Quick Start for Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/wrapping.html">Periodic Mesh Support</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="nav bd-sidenav">
@@ -353,9 +351,9 @@ document.write(`
 <dd><p>Data structure describing unstructured MPAS meshes.</p>
 <p>Enables visualization of fields defined at cell centers, vertices,
 and edges within <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> through the creation of
-<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> objects. Separate patch
+<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> objects. Separate patch
 arrays, which are subsequently passed to the
-<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> class by the
+<a class="reference external" href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.PolyCollection" title="(in Matplotlib v3.10.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PolyCollection</span></code></a> class by the
 <a class="reference internal" href="mosaic.polypcolor.html#mosaic.polypcolor" title="mosaic.polypcolor"><code class="xref py py-class docutils literal notranslate"><span class="pre">polypcolor</span></code></a> method,
 are lazily loaded for each variable location (i.e. cells, edges, and
 vertices) when attribute is first looked up. We use lazily loaded arrays
