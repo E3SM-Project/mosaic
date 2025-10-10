@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## file_format: mystnb kernelspec: name: python3
+---
+file_format: mystnb
+kernelspec:
+  name: python3
+---
 
 # Quick Start for Users
 
