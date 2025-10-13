@@ -14,7 +14,7 @@ def download_meshes(app, env, docnames):  # noqa: ARG001
     """Function to download meshes prior to executing documentation, so
     progress bars don't appear in the rendered docs
     """
-    for mesh in ["QU.240km", "mpasli.AIS8to30"]:
+    for mesh in ["QU.240km", "mpasli.AIS8to30", "doubly_periodic_4x4"]:
         mosaic.datasets.open_dataset(mesh)
 
 
