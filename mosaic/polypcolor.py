@@ -120,7 +120,7 @@ def polypcolor(
     vmax = kwargs.pop("vmax", None)
     norm = kwargs.pop("norm", None)
 
-    collection = PolyCollection(verts, array=array, **kwargs)
+    collection = PolyCollection(verts, array=array, norm=norm, **kwargs)
 
     # only set the transform if GeoAxes
     if isinstance(ax, GeoAxes):
