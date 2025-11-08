@@ -64,6 +64,9 @@ def _mirror_polycollection(ax, collection, descriptor, array, **kwargs):
         mirrored_verts, array=array[mirrored_idxs], zorder=zorder, **kwargs
     )
 
+    if np.allclose(array, array[0], rtol=1e-8, atol=1e-10):
+        norm = collection.norm
+
     mirrored_collection.set_cmap(cmap)
     mirrored_collection.set_norm(norm)
     mirrored_collection.set_clim(vmin, vmax)
