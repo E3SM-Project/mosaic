@@ -7,7 +7,7 @@ mesh data on it's native grid within `matplotlib`. Currently MPAS meshes are the
 only unstructured meshes used in `E3SM` that `mosaic` supports, but future work
 will add support for others.
 
-:::{admonition} Please reach out with any problems!
+:::\{admonition} Please reach out with any problems!
 :class: tip
 
 If you have any trouble with `mosaic`, especially problems plotting your `MPAS`
@@ -23,7 +23,8 @@ If you suspect you've found a bug in `mosaic` feel free to open an issue on
 :caption: User Guide:
 
 user_guide/quick_start
-user_guide/wrapping
+user_guide/spherical_mesh_support
+user_guide/periodic_mesh_support
 ```
 
 ```{toctree}

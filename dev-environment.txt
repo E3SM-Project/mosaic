@@ -28,6 +28,7 @@ mypy
 pre-commit
 
 # Documentation
+ipywidgets
 myst-nb
 nbqa
 sphinx

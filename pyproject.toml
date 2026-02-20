@@ -32,6 +32,7 @@ dependencies = [
 [project.optional-dependencies]
 docs = [
     # building documentation
+    "ipywidgets",
     "sphinx",
     "myst-nb",
     "nbqa",

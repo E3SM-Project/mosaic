@@ -27,9 +27,11 @@ Then we can use `mosaic` to plot on the native mesh using `matplotlib`. For exam
 
 ```{code-cell} ipython3
 import cartopy.crs as ccrs
-import mosaic
+import cartopy.feature as cfeature
+import cmocean
 import matplotlib.pyplot as plt
-import xarray as xr
+
+import mosaic
 
 # download and read the mesh from lcrc
 ds = mosaic.datasets.open_dataset("QU.240km")
@@ -40,9 +42,13 @@ projection = ccrs.InterruptedGoodeHomolosine()
 transform = ccrs.Geodetic()
 
 # create the figure and a GeoAxis
-fig, ax = plt.subplots(1, 1, figsize=(9,7), facecolor="w",
-                       constrained_layout=True,
-                       subplot_kw=dict(projection=projection))
+fig, ax = plt.subplots(
+    figsize=(9, 7),
+    constrained_layout=True,
+    subplot_kw={"projection": projection},
+)
+
+cmap = cmocean.tools.crop(cmocean.cm.topo, -5e3, 0, 0.0)
 
 # create a `Descriptor` object which takes the mesh information and creates
 # the polygon coordinate arrays needed for `matplotlib.collections.PolyCollection`.
@@ -50,14 +56,23 @@ descriptor = mosaic.Descriptor(ds, projection, transform)
 
 # using the `Descriptor` object we just created, make a pseudocolor plot of
 # the "indexToCellID" variable, which is defined at cell centers.
-collection = mosaic.polypcolor(ax, descriptor, ds.indexToCellID, antialiaseds=True)
+collection = mosaic.polypcolor(
+    ax, descriptor, -ds.bottomDepth, antialiaseds=True, cmap=cmap
+)
 
-ax.coastlines()
-fig.colorbar(collection, fraction=0.1, shrink=0.5, label="Cell Index");
+ax.coastlines(lw=0.5)
+ax.add_feature(cfeature.LAND, fc="grey", zorder=-1, alpha=0.8)
+fig.colorbar(
+    collection,
+    fraction=0.1,
+    shrink=0.4,
+    extend="both",
+    label="Topography [m a.s.l.]",
+);
 ```
 
 For more information about how spherical meshes are handled and a list of supported
-map projections, see: <project:#wrapping>.
+map projections, see: <project:#spherical_mesh_support>
 
 ### Planar Non-Periodic
 
@@ -70,9 +85,15 @@ arrays are parsed (c.f. `lonCell`/`latCell`).
 
 ```{code-cell} ipython3
 import cartopy.crs as ccrs
-import mosaic
 import matplotlib.pyplot as plt
-import xarray as xr
+import matplotlib.path as mpath
+import numpy as np
+from matplotlib import colors
+
+import mosaic
+
+# seconds per year
+spy = 60 * 60 * 24 * 365
 
 # download and read the mesh from lcrc
 ds = mosaic.datasets.open_dataset("mpasli.AIS8to30")
@@ -83,24 +104,47 @@ projection = ccrs.SouthPolarStereo()
 transform = ccrs.SouthPolarStereo()
 
 # create the figure and a GeoAxis
-fig, ax = plt.subplots(1, 1, figsize=(9,7), facecolor="w",
-                       constrained_layout=True,
-                       subplot_kw=dict(projection=projection))
+fig, ax = plt.subplots(
+    figsize=(7, 7),
+    constrained_layout=True,
+    subplot_kw={"projection": projection},
+)
 
 # create a `Descriptor` object which takes the mesh information and creates
 # the polygon coordinate arrays needed for `matplotlib.collections.PolyCollection`.
 descriptor = mosaic.Descriptor(ds, projection, transform, use_latlon=False)
 
+# calculate reconstructed speed in m/s
+speed_reconstruct = np.sqrt(ds.uReconstructX**2 + ds.uReconstructY**2)
+# extract surface speed and convert for m/yr
+speed_reconstruct = speed_reconstruct.isel(nVertInterfaces=0) * spy
+
 # using the `Descriptor` object we just created, make a pseudocolor plot of
-# the "indexToCellID" variable, which is defined at cell centers.
-collection = mosaic.polypcolor(ax, descriptor, ds.thickness, antialiaseds=False)
+# the surface speed, which is defined at cell centers.
+collection = mosaic.polypcolor(
+    ax,
+    descriptor,
+    speed_reconstruct,
+    antialiaseds=False,
+    norm=colors.LogNorm(vmin=1, vmax=3e3),
+    cmap="plasma",
+)
 
 # Because this is not a global mesh, it's necessary to explicitly set it's extent.
 ax.set_extent([-180, 180, -90, -60], ccrs.PlateCarree())
 
+# Below is needed for a circular boundary
+theta = np.linspace(0, 2*np.pi, 100)
+center, radius = [0.5, 0.5], 0.5
+verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+circle = mpath.Path(verts * radius + center)
+
+ax.set_boundary(circle, transform=ax.transAxes)
+
+
 ax.gridlines()
 ax.coastlines()
-fig.colorbar(collection, fraction=0.1, label="Thickness [m]");
+fig.colorbar(collection, fraction=0.1, shrink=0.5, label="Surface Speed [m/yr]");
 ```
 
 In the case where we do not know what projection the coordinate arrays of the
