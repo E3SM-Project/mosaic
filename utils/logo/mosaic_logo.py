@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 from __future__ import annotations
 
+import matplotlib as mpl
+
+mpl.use("Agg")
+
 import configparser
 import logging
 from contextlib import chdir, nullcontext
@@ -17,8 +21,6 @@ from mpas_tools.mesh.conversion import convert, cull
 from mpas_tools.mesh.creation import build_planar_mesh
 
 import mosaic
-
-plt.matplotlib.use("Agg")
 
 
 @click.group()
