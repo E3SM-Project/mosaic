@@ -2,8 +2,8 @@
 
 # Mosaic
 
-`mosaic` provides the functionality to visualize unstructured [MPAS](https://mpas-dev.github.io/)
-mesh data on it's native grid within `matplotlib`.
+`mosaic` enables visualization of unstructured [MPAS](https://mpas-dev.github.io/)
+mesh data on the native grid through `matplotlib`.
 
 ```{tip} Please reach out with any problems!
 
@@ -36,5 +36,5 @@ developers_guide/api
 :hidden:
 :caption: Community:
 
-GitHub disscusions <https://github.com/E3SM-Project/mosaic/discussions>
+GitHub discussions <https://github.com/E3SM-Project/mosaic/discussions>
 ```
