@@ -77,6 +77,11 @@ warn_unused_configs = true
 [tool.setuptools.dynamic]
 version = { attr = "mosaic.version.__version__" }
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mosaic", "mosaic.*"]
+namespaces = false
+
 [tool.ruff]
 line-length = 79
 
