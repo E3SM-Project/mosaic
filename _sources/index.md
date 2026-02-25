@@ -2,13 +2,10 @@
 
 # Mosaic
 
-`mosaic` provides the functionality to visualize unstructured [MPAS](https://mpas-dev.github.io/)
-mesh data on it's native grid within `matplotlib`. Currently MPAS meshes are the
-only unstructured meshes used in `E3SM` that `mosaic` supports, but future work
-will add support for others.
+`mosaic` enables visualization of unstructured [MPAS](https://mpas-dev.github.io/)
+mesh data on the native grid through `matplotlib`.
 
-:::{admonition} Please reach out with any problems!
-:class: tip
+```{tip} Please reach out with any problems!
 
 If you have any trouble with `mosaic`, especially problems plotting your `MPAS`
 mesh of choice, please reach out via [GitHub discussions](https://github.com/E3SM-Project/mosaic/discussions)
@@ -16,7 +13,7 @@ under the ["Q&A" category](https://github.com/E3SM-Project/mosaic/discussions/ca
 
 If you suspect you've found a bug in `mosaic` feel free to open an issue on
 [GitHub](https://github.com/E3SM-Project/mosaic/issues).
-:::
+```
 
 ```{toctree}
 :maxdepth: 2
@@ -39,5 +36,5 @@ developers_guide/api
 :hidden:
 :caption: Community:
 
-GitHub disscusions <https://github.com/E3SM-Project/mosaic/discussions>
+GitHub discussions <https://github.com/E3SM-Project/mosaic/discussions>
 ```
