@@ -1,0 +1,238 @@
+#!/usr/bin/env python
+from __future__ import annotations
+
+import matplotlib as mpl
+
+mpl.use("Agg")
+
+import configparser
+import logging
+from contextlib import chdir, nullcontext
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import click
+import cmocean  # noqa: F401
+import jigsawpy
+import matplotlib.pyplot as plt
+import numpy as np
+import xarray as xr
+from mpas_tools.mesh.conversion import convert, cull
+from mpas_tools.mesh.creation import build_planar_mesh
+
+import mosaic
+
+
+@click.group()
+def cli():
+    pass
+
+
+def read_config() -> configparser.ConfigParser:
+    config = configparser.ConfigParser()
+    config_path = Path(__file__).with_name("mosaic_logo.cfg")
+    config.read(config_path)
+    return config
+
+
+def mpl_text_to_bool_matrix(
+    word: str,
+    fontsize: int = 64,
+    dpi: int = 500,
+    pad_px: int = 100,
+    threshold: int = 255,
+    fontfamily: str = "monospace",
+):
+    """
+    Function to render text using Matplotlib and convert it to a boolean matrix.
+
+    Parameters
+    ----------
+    word : str
+        The text to render and convert.
+    fontsize : int, optional
+        The font size to use for rendering the text, by default 64.
+    dpi : int, optional
+        Dots per inch (DPI) for the figure, by default 500.
+    pad_px : int, optional
+        Number of pixels to pad around the text bounding box, by default 100.
+    threshold : int, optional
+        Grayscale threshold for determining text pixels, by default 255.
+    fontfamily : str, optional
+        Font family to use for rendering the text, by default "monospace".
+
+    Returns
+    -------
+    np.ndarray
+        A 2D boolean array where True indicates the presence of text pixels
+        and False indicates background
+    """
+
+    fig, ax = plt.subplots(figsize=(6, 2), dpi=dpi)
+
+    text = ax.text(
+        0.5,
+        0.5,
+        word,
+        ha="center",
+        va="center",
+        fontsize=fontsize,
+        color="black",
+        fontfamily=fontfamily,
+        antialiased=True,
+    )
+
+    fig.canvas.draw()
+    rgba = np.asarray(fig.canvas.buffer_rgba())
+    H, W = rgba.shape[:2]
+
+    renderer = fig.canvas.get_renderer()
+    bbox = text.get_window_extent(renderer=renderer)
+
+    x0 = max(int(bbox.x0) - pad_px, 0)
+    x1 = min(int(bbox.x1) + pad_px, W)
+
+    # bbox y coords are bottom-up, but image rows are top-down => flip
+    y0 = max(int(H - bbox.y1) - pad_px, 0)
+    y1 = min(int(H - bbox.y0) + pad_px, H)
+
+    # Crop to the text bounding box (in display/pixel coords)
+    crop_rgb = rgba[y0:y1, x0:x1, :3].astype(np.float32)
+
+    # Convert to grayscale (luma) and threshold
+    gray = (
+        0.2126 * crop_rgb[..., 0]
+        + 0.7152 * crop_rgb[..., 1]
+        + 0.0722 * crop_rgb[..., 2]
+    )
+    mask = gray < threshold
+
+    plt.close(fig)
+    return mask
+
+
+@cli.command(
+    "mesh", help="Create a mesh, using jigsaw, that spells out mosaic"
+)
+def create_mesh() -> None:
+    config = read_config()
+
+    dpi = config.getint("mesh", "dpi")
+    pad_px = config.getint("mesh", "pad_px")
+    mask = mpl_text_to_bool_matrix(" mosaic ", dpi=dpi, pad_px=pad_px)
+
+    dmin = config.getfloat("mesh", "dmin")
+    dmax = config.getfloat("mesh", "dmax")
+
+    cell_width = np.where(mask, dmin, dmax)
+    cell_width = np.flip(cell_width, axis=0)
+
+    ny, nx = mask.shape
+
+    xmin, xmax = (0, 1e3 * (nx / ny))
+    ymin, ymax = (0, 1e3)
+
+    x = np.linspace(xmin, xmax, nx)
+    y = np.linspace(ymin, ymax, ny)
+
+    geom_points = np.array(
+        [
+            ((xmin, ymin), 0),
+            ((xmax, ymin), 0),
+            ((xmax, ymax), 0),
+            ((xmin, ymax), 0),
+        ],
+        dtype=jigsawpy.jigsaw_msh_t.VERT2_t,
+    )
+
+    geom_edges = np.array(
+        [((0, 1), 0), ((1, 2), 0), ((2, 3), 0), ((3, 0), 0)],
+        dtype=jigsawpy.jigsaw_msh_t.EDGE2_t,
+    )
+
+    use_tmpdir = config.getboolean("mesh", "use_tmpdir")
+
+    prev_dir = Path.cwd()
+    work_dir = Path("jigsaw_workdir")
+
+    if not use_tmpdir:
+        work_dir.mkdir(exist_ok=True)
+
+    context_manager = (
+        TemporaryDirectory() if use_tmpdir else nullcontext(str(work_dir))
+    )
+
+    with context_manager as workdir, chdir(workdir):
+        logger = logging.getLogger(__name__)
+        logging.basicConfig(
+            filename="mesh_creation.log", encoding="utf-8", level=logging.DEBUG
+        )
+
+        build_planar_mesh(
+            cellWidth=cell_width,
+            x=x,
+            y=y,
+            geom_points=geom_points,
+            geom_edges=geom_edges,
+            out_filename="base_mesh.nc",
+            logger=logger,
+        )
+
+        ds = xr.open_dataset("base_mesh.nc")
+        ds = convert(ds, logger=logger)
+        ds = cull(ds, logger=logger)
+        ds.encoding.pop("unlimited_dims")
+        ds.to_netcdf(prev_dir / "mosaic_logo.nc")
+
+
+@cli.command(
+    "render",
+    help=(
+        "Render the mosaic logo, using the `mosaic_logo.nc` mesh generated by"
+        "the `./mosaic_logo.py mesh` command"
+    ),
+)
+def render_logo() -> None:
+    config = read_config()
+    mesh_path = Path("mosaic_logo.nc")
+
+    if not mesh_path.exists():
+        create_mesh()
+
+    ds = xr.open_dataset(mesh_path)
+    descriptor = mosaic.Descriptor(ds)
+
+    dmin = config.getfloat("mesh", "dmin")
+    factor = config.getfloat("render", "factor")
+
+    min_area = 2.0 * (dmin / 2.0) ** 2.0 * np.sqrt(3.0)
+    threshold = factor * min_area
+
+    cmap = plt.get_cmap(config.get("render", "cmap"))
+    cmap.set_under("k")
+
+    fig, ax = plt.subplots()
+
+    kwargs = {
+        "cmap": cmap,
+        "vmin": threshold,
+        "antialiased": True,
+        "edgecolor": "k",
+        "linewidth": 0.1,
+    }
+
+    mosaic.polypcolor(ax, descriptor, ds.areaCell, **kwargs)
+
+    ax.set_xlim(ds.xVertex.min(), ds.xVertex.max())
+    ax.set_ylim(ds.yVertex.min(), ds.yVertex.max())
+
+    ax.set_axis_off()
+    ax.set_aspect("equal")
+
+    dpi = config.getfloat("render", "dpi")
+    fig.savefig("mosaic_logo.pdf", bbox_inches="tight")
+    fig.savefig("mosaic_logo.png", bbox_inches="tight", dpi=dpi)
+
+
+if __name__ == "__main__":
+    cli()

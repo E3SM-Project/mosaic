@@ -15,3 +15,8 @@ docs/_build/
 
 # OSX
 .DS_Store
+
+*.nc
+graph.info
+*.msh
+*.log

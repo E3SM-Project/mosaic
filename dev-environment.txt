@@ -13,12 +13,14 @@ tqdm
 xarray
 
 # Development
+click
 jupyterlab
+mpas_tools
 
 # Building
 setuptools >=60
 
-# Linting and tesing
+# Linting and testing
 pip
 pytest
 pytest-timeout

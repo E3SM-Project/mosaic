@@ -1,11 +1,13 @@
-# Mosaic
+<p align="center">
+  <img src="docs/_static/mosaic_logo.png" alt="mosaic logo" width="774" height="228">
+</p>
+
+______________________________________________________________________
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15420083.svg)](https://doi.org/10.5281/zenodo.15420083)
 
-`mosaic` provides the functionality to visualize unstructured [MPAS](https://mpas-dev.github.io/)
-mesh data on it's native grid within `matplotlib`. Currently MPAS meshes are the
-only unstructured meshes used in `E3SM` that `mosaic` supports, but future work
-will add support for others.
+`mosaic` enables visualization of unstructured [MPAS](https://mpas-dev.github.io/)
+mesh data on the native grid through `matplotlib`.
 
 ## Documentation
 

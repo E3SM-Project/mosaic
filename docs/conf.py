@@ -65,6 +65,7 @@ templates_path = ["_templates"]
 
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+html_logo = "_static/mosaic_logo.png"
 exclude_patterns = ["_build", ".DS_Store"]
 
 intersphinx_mapping = {
