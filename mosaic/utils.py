@@ -16,7 +16,7 @@ def _make_lookup_table(mask: np.ndarray[bool]) -> np.ndarray[np.int64]:
     Parameters
     ----------
     mask : :py:class:`~numpy.ndarray`
-        Array of length N where True and False mean keep and drop, respectiely
+        Array of length N where True and False mean keep and drop, respectively
 
     Returns
     -------
@@ -81,13 +81,13 @@ def cull_mesh(
     ds_base : :py:class:`~xarray.Dataset`
         Input mesh dataset, with zero-based connectivity arrays
 
-    culls_to_cull : :py:class:`~numpy.ndarray`
+    cells_to_cull : :py:class:`~numpy.ndarray`
         Mask of cells to be culled (True where cells should be culled).
 
     Returns
     -------
     :py:class:`~xarray.Dataset`
-        A culled culled mesh dataset, where `indexToCellID`, `indexToEdgeID`,
+        A culled mesh dataset, where `indexToCellID`, `indexToEdgeID`,
         and `indexToVertexID` arrays have been added, which act as lookup
         tables for data array from the base (ie. unculled) mesh
     """

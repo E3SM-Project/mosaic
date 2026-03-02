@@ -235,8 +235,8 @@ class Descriptor:
             projection, UNSUPPORTED_SPHERICAL_PROJECTIONS
         ):
             msg = (
-                f"Invalid projection: {type(projection).__name__} "
-                f" spherical meshes"
+                f"Invalid projection: {type(projection).__name__} is not "
+                f"supported for spherical meshes"
             )
             raise ValueError(msg)
 
@@ -257,7 +257,7 @@ class Descriptor:
 
         # compute mask of cells that need to be culled
         cull_mask = _compute_cull_mask(self.ds, self.projection)
-        self.ds = mosaic.utils.cull_mesh(self.ds.copy(deep=True), cull_mask)
+        self.ds = mosaic.utils.cull_mesh(self.ds, cull_mask)
 
     @property
     def sizes(self) -> dict[str, int]:

@@ -19,7 +19,7 @@ Unless you are using a *very* coarse mesh (e.g. `QU.960`), you will most likely
 not notice the results of the culling.
 
 ```{Note}
-This subset of supported project only applies to spherical meshes.
+This subset of supported projections only applies to spherical meshes.
 Planar (non-periodic) meshes are not limited to this list and can choose from
 the full range of `cartopy`
 [projections](https://scitools.org.uk/cartopy/docs/latest/reference/projections.html).
