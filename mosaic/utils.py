@@ -53,7 +53,7 @@ def _make_lookup_table(mask: np.ndarray[bool]) -> np.ndarray[np.int64]:
 
 def _remap_conn_array(
     ds: xr.Dataset, conn_array: str, lut: np.ndarray
-) -> np.ndarray:
+) -> tuple[tuple[str, str], np.ndarray]:
     dims_dict = {
         "cellsOnEdge": ("nEdges", "TWO"),
         "cellsOnVertex": ("nVertices", "vertexDegree"),

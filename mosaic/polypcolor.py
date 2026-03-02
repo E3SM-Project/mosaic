@@ -59,7 +59,7 @@ def _get_array_location(
 
 def _parse_args(
     descriptor: Descriptor, array: ArrayLike
-) -> tuple[str, ArrayLike]:
+) -> tuple[ArrayLike, ArrayLike]:
     """Helper function to get patch array corresponding to dataarray"""
 
     loc, array = _get_array_location(descriptor, array)
