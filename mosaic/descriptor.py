@@ -255,7 +255,7 @@ class Descriptor:
         # update the transform attribute following the reprojection
         self.transform = projection
 
-        # ...
+        # compute mask of cells that need to be culled
         cull_mask = _compute_cull_mask(self.ds, self.projection)
         self.ds = mosaic.utils.cull_mesh(self.ds.copy(deep=True), cull_mask)
 
@@ -748,7 +748,29 @@ def _compute_vertex_patches(ds: Dataset) -> ndarray:
 
 
 def _compute_cull_mask(ds: xr.Dataset, projection: CRS) -> ndarray[bool]:
-    """ """
+    """
+    Calculate boolean mask of cells to be culled for a given projection
+
+    cells are culled if any of the following conditions are met:
+        - all vertices on cell are outside the projection domain
+        - any vertices on cell is nan
+        - distance between projected cell center and the patch centroid is too
+          large (i.e. due to patch wrapping over the projection boundary)
+
+    Parameters
+    ----------
+    ds: xr.Dataset
+        A zero indexed dataset where coordinate arrays have already been
+        transformed to the projection coordinate system
+
+    projection: cartopy.crs.Projection
+        Target projection for plotting
+
+    Returns
+    -------
+    cull_mask: ndarray[bool]
+        Boolean mask of cells to be culled for plotting
+    """
 
     # get and prepare projection domain. prepare returns None, so do not assign
     ext_domain = projection.domain

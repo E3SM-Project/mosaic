@@ -44,5 +44,7 @@ Helper Functions
 .. autosummary::
     :toctree: generated/
 
+    utils.cull_mesh
     utils.get_invalid_patches
+    utils.compute_cell_centroid
 ```
