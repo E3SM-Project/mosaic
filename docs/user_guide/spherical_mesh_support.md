@@ -2,7 +2,7 @@
 
 We support all
 [cartopy projections](https://cartopy.readthedocs.io/stable/reference/projections.html),
-expect UTM, for spherical meshes.
+except UTM, for spherical meshes.
 To be able to support this wide range of projections, with very different
 projection boundaries, we cull problem cells from the mesh stored internally
 by the `mosaic.Descriptor`.
