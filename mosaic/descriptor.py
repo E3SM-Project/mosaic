@@ -116,18 +116,8 @@ class Descriptor:
         transform: CRS | None = None,
         use_latlon: bool = False,
     ) -> None:
-        #: The coordinate system in which patch coordinates are defined.
-        #:
-        #: This *could* have a different value than ``transform`` parameter
-        #: passed to the constructor, because we transform the one-dimensional
-        #: coordinate arrays at initialization, if both the ``transform`` and
-        #: ``projection`` kwargs are provided.
-        self.transform = transform
-
         #: Boolean whether parent mesh is spherical
         self.is_spherical = attr_to_bool(mesh_ds.on_a_sphere)
-
-        # TODO: if transform is None and is spherical and/or use_latlon transform is ccrs.Geodetic()
 
         if not self.is_spherical:
             is_periodic = attr_to_bool(mesh_ds.is_periodic)
@@ -147,6 +137,14 @@ class Descriptor:
         #: coordinate and connectivity arrays from the parent mesh needed to
         #: create patches arrays.
         self.ds = self._create_minimal_dataset(mesh_ds)
+
+        #: The coordinate system in which patch coordinates are defined.
+        #:
+        #: This *could* have a different value than ``transform`` parameter
+        #: passed to the constructor, because we transform the one-dimensional
+        #: coordinate arrays at initialization, if both the ``transform`` and
+        #: ``projection`` kwargs are provided.
+        self.transform = transform
 
         # calls ``projection.setter`` method, which will transform coordinates
         # if both a projection and transform were provided to the constructor
@@ -224,6 +222,21 @@ class Descriptor:
         return minimal_ds
 
     @property
+    def transform(self) -> CRS:
+        """The coordinate system in which patch coordinates are defined."""
+        return self._transform
+
+    @transform.setter
+    def transform(self, transform: CRS) -> None:
+        if (self.is_spherical and transform is None) or (
+            self.latlon and transform is None
+        ):
+            self._transform = ccrs.Geodetic()
+
+        else:
+            self._transform = transform
+
+    @property
     def projection(self) -> CRS:
         """The target projection for plotting."""
         return self._projection
@@ -250,8 +263,16 @@ class Descriptor:
         if self._projection is None:
             return
 
+        if self.transform is None:
+            msg = (
+                f"Must specify a transform, in order to reproject"
+                f"mesh coordinates to {type(projection).__name__}"
+            )
+            raise ValueError(msg)
+
         # blindly reproject coordinate arrays in the minimal dataset
         self._transform_coordinates(projection, self.transform)
+
         # update the transform attribute following the reprojection
         self.transform = projection
 
