@@ -5,10 +5,13 @@ from typing import Literal
 
 import cartopy.crs as ccrs
 import numpy as np
+import shapely
 import xarray as xr
 from cartopy.crs import CRS
 from numpy import ndarray
 from xarray.core.dataset import Dataset
+
+import mosaic.utils
 
 renaming_dict = {
     "lonCell": "xCell",
@@ -27,13 +30,11 @@ connectivity_arrays = [
     "edgesOnVertex",
 ]
 
-SUPPORTED_SPHERICAL_PROJECTIONS = (
-    ccrs._RectangularProjection,
-    ccrs._WarpedRectangularProjection,
-    ccrs.Stereographic,
-    ccrs.Mercator,
-    ccrs._CylindricalProjection,
-    ccrs.InterruptedGoodeHomolosine,
+UNSUPPORTED_SPHERICAL_PROJECTIONS = (
+    # EuroPP actually works is a subclass of the generic UTM projection, which
+    # does not work, so EuroPP raises an error.
+    ccrs.EuroPP,
+    ccrs.UTM,
 )
 
 
@@ -115,14 +116,6 @@ class Descriptor:
         transform: CRS | None = None,
         use_latlon: bool = False,
     ) -> None:
-        #: The coordinate system in which patch coordinates are defined.
-        #:
-        #: This *could* have a different value than ``transform`` parameter
-        #: passed to the constructor, because we transform the one-dimensional
-        #: coordinate arrays at initialization, if both the ``transform`` and
-        #: ``projection`` kwargs are provided.
-        self.transform = transform
-
         #: Boolean whether parent mesh is spherical
         self.is_spherical = attr_to_bool(mesh_ds.on_a_sphere)
 
@@ -137,10 +130,21 @@ class Descriptor:
         # calls attribute setter method
         self.latlon = use_latlon
 
+        # store original mesh dimension sizes
+        self.sizes = mesh_ds
+
         #: :py:class:`~xarray.Dataset` that contains the minimal subset of
         #: coordinate and connectivity arrays from the parent mesh needed to
         #: create patches arrays.
         self.ds = self._create_minimal_dataset(mesh_ds)
+
+        #: The coordinate system in which patch coordinates are defined.
+        #:
+        #: This *could* have a different value than ``transform`` parameter
+        #: passed to the constructor, because we transform the one-dimensional
+        #: coordinate arrays at initialization, if both the ``transform`` and
+        #: ``projection`` kwargs are provided.
+        self.transform = transform
 
         # calls ``projection.setter`` method, which will transform coordinates
         # if both a projection and transform were provided to the constructor
@@ -204,7 +208,11 @@ class Descriptor:
         if self.latlon:
             # convert lat/lon coordinates from radian to degrees
             for loc in ["Cell", "Edge", "Vertex"]:
-                minimal_ds[f"lon{loc}"] = np.rad2deg(minimal_ds[f"lon{loc}"])
+                # shift lon from [0, 360) to [-180, 180)
+                minimal_ds[f"lon{loc}"] = (
+                    (np.rad2deg(minimal_ds[f"lon{loc}"]) + 180.0) % 360
+                ) - 180.0
+                # lat is already [-90, 90] so no shift is needed
                 minimal_ds[f"lat{loc}"] = np.rad2deg(minimal_ds[f"lat{loc}"])
 
             # rename the coordinate arrays to be named x.../y... irrespective
@@ -214,60 +222,78 @@ class Descriptor:
         return minimal_ds
 
     @property
+    def transform(self) -> CRS | None:
+        """The coordinate system in which patch coordinates are defined."""
+        return self._transform
+
+    @transform.setter
+    def transform(self, transform: CRS | None) -> None:
+        if (self.is_spherical and transform is None) or (
+            self.latlon and transform is None
+        ):
+            self._transform = ccrs.Geodetic()
+
+        else:
+            self._transform = transform
+
+    @property
     def projection(self) -> CRS:
         """The target projection for plotting."""
         return self._projection
 
     @projection.setter
     def projection(self, projection: CRS) -> None:
-        # We don't support all map projections for spherical meshes, yet...
-        if (
-            projection is not None
-            and self.is_spherical
-            and not isinstance(projection, SUPPORTED_SPHERICAL_PROJECTIONS)
+        # small subset of regional projs are not supported for spherical meshes
+        if self.is_spherical and isinstance(
+            projection, UNSUPPORTED_SPHERICAL_PROJECTIONS
         ):
             msg = (
                 f"Invalid projection: {type(projection).__name__} is not "
-                f"supported - consider using a rectangular projection."
+                f"supported for spherical meshes"
             )
             raise ValueError(msg)
 
-        reprojecting = False
-        # Issue warning if changing the projection after initialization
-        # TODO: Add heuristic size (i.e. ``self.ds.nbytes``) above which the
-        #       warning is raised
+        # b/c cells with vertices outside projection boundary are culled
         if hasattr(self, "_projection"):
-            reprojecting = True
-            print(
-                "Reprojecting the descriptor can be inefficient "
-                "for large meshes"
-            )
-
-        # If both a projection and a transform are provided then
-        if projection and self.transform:
-            # reproject coordinate arrays in the minimal dataset
-            self._transform_coordinates(projection, self.transform)
-            # update the transform attribute following the reprojection
-            self.transform = projection
-            # Then loop over patch attributes
-            for loc in ["cell", "edge", "vertex"]:
-                attr = f"{loc}_patches"
-                # and only delete attributes that have previously been cached
-                if attr in self.__dict__:
-                    del self.__dict__[attr]
+            msg = "Reprojecting a descriptor is not supported"
+            raise AttributeError(msg)
 
         self._projection = projection
 
-        # if projection was not set at instantiation) or the descriptor is
-        # being reprojected; update the periods
-        if (
-            getattr(self, "x_period", False) is None
-            and getattr(self, "y_period", False) is None
-        ) or reprojecting:
-            # set to dummy values b/c projection limits will be parsed by the
-            # period setter methods
-            self.x_period = None
-            self.y_period = None
+        if self._projection is None:
+            return
+
+        if self.transform is None:
+            msg = (
+                f"Must specify a transform, in order to reproject"
+                f"mesh coordinates to {type(projection).__name__}"
+            )
+            raise ValueError(msg)
+
+        # blindly reproject coordinate arrays in the minimal dataset
+        self._transform_coordinates(projection, self.transform)
+
+        # update the transform attribute following the reprojection
+        self.transform = projection
+
+        # compute mask of cells that need to be culled
+        cull_mask = _compute_cull_mask(self.ds, self.projection)
+        self.ds = mosaic.utils.cull_mesh(self.ds, cull_mask)
+
+    @property
+    def sizes(self) -> dict[str, int]:
+        """
+        :py:class:`dict` of dimension (``nCells``, ``nEdges``, and
+        ``nVertices``) sizes
+        """
+        return self._sizes
+
+    @sizes.setter
+    def sizes(self, ds) -> None:
+        """ """
+        self._sizes = {
+            dim: ds.sizes[dim] for dim in ["nCells", "nEdges", "nVertices"]
+        }
 
     @property
     def latlon(self) -> bool:
@@ -289,9 +315,9 @@ class Descriptor:
         """Parse period attribute, return None for non-periodic meshes"""
 
         attr = f"{dim}_period"
-        try:
+        if attr in ds.attrs and ds.attrs[attr] is not None:
             period = float(ds.attrs[attr])
-        except KeyError:
+        else:
             period = None
 
         # in the off chance mesh is periodic but does not have period attribute
@@ -343,14 +369,15 @@ class Descriptor:
 
         def get_axis_min(self, coord: Literal["x", "y"]) -> float:
             """ """
+            period = self.__getattribute__(f"{coord}_period")
             edge_min = float(self.ds[f"{coord}Edge"].min())
             vertex_min = float(self.ds[f"{coord}Vertex"].min())
 
             # an edge connects two vertices, so a vertices most extreme
             # position should always be more extended than an edge's
-            if vertex_min > edge_min:
+            if (period is not None) and (vertex_min > edge_min):
                 max = float(self.ds[f"{coord}Vertex"].max())
-                min = max - self.__getattribute__(f"{coord}_period")
+                min = max - period
             else:
                 min = float(self.ds[f"{coord}Vertex"].min())
 
@@ -377,21 +404,16 @@ class Descriptor:
         patch. Nodes are ordered counter clockwise around the cell center.
         """
         patches = _compute_cell_patches(self.ds)
-        patches = self._wrap_patches(patches, "Cell")
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
+            patches = self._wrap_patches(patches, "Cell")
             mirrored, mirrored_idxs = self._mirror_patches(patches)
 
             # if mirrored patches were returned above store as attributes
             if mirrored is not None:
                 self._cell_mirrored = mirrored
                 self._cell_mirrored_idxs = mirrored_idxs
-
-        # cartopy doesn't handle nans in patches, so store a mask of the
-        # invalid patches to set the dataarray at those locations to nan.
-        if self.projection:
-            self._cell_pole_mask = self._compute_pole_mask("Cell")
 
         return patches
 
@@ -411,21 +433,16 @@ class Descriptor:
         corresponding node will be collapsed to the edge coordinate.
         """
         patches = _compute_edge_patches(self.ds)
-        patches = self._wrap_patches(patches, "Edge")
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
+            patches = self._wrap_patches(patches, "Edge")
             mirrored, mirrored_idxs = self._mirror_patches(patches)
 
             # if mirrored patches were returned above store as attributes
             if mirrored is not None:
                 self._edge_mirrored = mirrored
                 self._edge_mirrored_idxs = mirrored_idxs
-
-        # cartopy doesn't handle nans in patches, so store a mask of the
-        # invalid patches to set the dataarray at those locations to nan.
-        if self.projection:
-            self._edge_pole_mask = self._compute_pole_mask("Edge")
 
         return patches
 
@@ -452,10 +469,10 @@ class Descriptor:
         position.
         """
         patches = _compute_vertex_patches(self.ds)
-        patches = self._wrap_patches(patches, "Vertex")
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
+            patches = self._wrap_patches(patches, "Vertex")
             mirrored, mirrored_idxs = self._mirror_patches(patches)
 
             # if mirrored patches were returned above store as attributes
@@ -463,23 +480,19 @@ class Descriptor:
                 self._vertex_mirrored = mirrored
                 self._vertex_mirrored_idxs = mirrored_idxs
 
-        # cartopy doesn't handle nans in patches, so store a mask of the
-        # invalid patches to set the dataarray at those locations to nan.
-        if self.projection:
-            self._vertex_pole_mask = self._compute_pole_mask("Vertex")
-
         return patches
 
     def _transform_coordinates(self, projection, transform):
+        """Blindly transform coordinate arrays"""
+
         for loc in ["Cell", "Edge", "Vertex"]:
             transformed_coords = projection.transform_points(
                 transform, self.ds[f"x{loc}"], self.ds[f"y{loc}"]
             )
 
-            # ``transformed_coords`` is a numpy array so needs to assigned to
-            # the values of the dataarray
-            self.ds[f"x{loc}"].values = transformed_coords[:, 0]
-            self.ds[f"y{loc}"].values = transformed_coords[:, 1]
+            # assign to .data attr b/c RHS is numpy array
+            self.ds[f"x{loc}"].data = transformed_coords[:, 0]
+            self.ds[f"y{loc}"].data = transformed_coords[:, 1]
 
     def _wrap_patches(self, patches, loc):
         """Wrap patches for spherical and planar-periodic meshes"""
@@ -534,19 +547,6 @@ class Descriptor:
                 patches = _wrap_1D(patches, y_mask, y_sign, 1, self.y_period)
 
         return patches
-
-    def _compute_pole_mask(self, loc) -> ndarray:
-        """ """
-        limits = self.projection.y_limits
-        centers = self.ds[f"y{loc.title()}"].values
-
-        # TODO: determine threshold for ``isclose`` computation
-        at_pole = np.any(
-            np.isclose(centers.reshape(-1, 1), limits, rtol=1e-2), axis=1
-        )
-        past_pole = np.abs(centers) > np.abs(limits[1])
-
-        return at_pole | past_pole
 
     def _mirror_patches(self, patches):
         """Mirror patches across periodic boundary for planar-periodic meshes
@@ -766,3 +766,80 @@ def _compute_vertex_patches(ds: Dataset) -> ndarray:
     nodes[:, 4:, 1] = np.where(condition, nodes[:, 0:1, 1], nodes[:, 4:, 1])
 
     return nodes
+
+
+def _compute_cull_mask(ds: xr.Dataset, projection: CRS) -> ndarray[bool]:
+    """
+    Calculate boolean mask of cells to be culled for a given projection
+
+    cells are culled if any of the following conditions are met:
+        - all vertices on cell are outside the projection domain
+        - any vertices on cell is nan
+        - distance between projected cell center and the patch centroid is too
+          large (i.e. due to patch wrapping over the projection boundary)
+
+    Parameters
+    ----------
+    ds: xr.Dataset
+        A zero indexed dataset where coordinate arrays have already been
+        transformed to the projection coordinate system
+
+    projection: cartopy.crs.Projection
+        Target projection for plotting
+
+    Returns
+    -------
+    cull_mask: ndarray[bool]
+        Boolean mask of cells to be culled for plotting
+    """
+
+    # get and prepare projection domain. prepare returns None, so do not assign
+    ext_domain = projection.domain
+    shapely.prepare(ext_domain)
+
+    cell_patches = _compute_cell_patches(ds)
+
+    # start with no cells to be culled
+    cull_mask = np.zeros(ds.sizes["nCells"], dtype=bool)
+
+    xVertex = ds.xVertex.values
+    yVertex = ds.yVertex.values
+
+    # connectivity arrays have already been zero indexed
+    verticesOnCell = ds.verticesOnCell
+
+    # padded mask of vertices within the projection boundary
+    vertex_contained = np.r_[
+        False, shapely.contains_xy(ext_domain, xVertex, yVertex)
+    ]
+
+    # translate vertex mask to cell mask where at least one vertex is contained
+    cell_mask = np.any(vertex_contained[verticesOnCell + 1], axis=1)
+
+    # mask of cells with any nan vertices
+    nan_mask = np.any(np.isnan(cell_patches), axis=(1, 2))
+
+    # only check centroids of cells not being culled
+    x_cell = ds.xCell.values[cell_mask & ~nan_mask]
+    y_cell = ds.yCell.values[cell_mask & ~nan_mask]
+
+    # calculate patch centroid, to be compared to projected cell center
+    # TODO: filter our self intersecting polygons
+    x_cent, y_cent = mosaic.utils.compute_cell_centroid(
+        cell_patches[cell_mask & ~nan_mask],
+        verticesOnCell[cell_mask & ~nan_mask],
+    )
+
+    # TODO: can we use projection.threshold instead?
+    thresh = mosaic.utils.get_radius(projection) * 1.5e-2
+
+    # mask where cell centroids and projected cell center are too far apart
+    centroid_mask = np.hypot(x_cell - x_cent, y_cell - y_cent) > thresh
+
+    # cull cells that are nan OR with no vertices within projection domain
+    cull_mask |= nan_mask | ~cell_mask
+    # centroid mask was only calculated for cells not being culled
+    cull_mask[cell_mask & ~nan_mask] |= centroid_mask
+
+    # TODO: add option to return component mask for debugging
+    return cull_mask

@@ -4,9 +4,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from shapely import LinearRing, is_valid
 
 import mosaic
+import mosaic.utils
 
 mpl.use("Agg", force=True)
 
@@ -112,11 +112,11 @@ class TestPlanarPeriodicMirroring:
         # stack the patch arrays for complete testing
         patches = np.vstack([interior_patches, mirrored_patches])
 
-        # convert the patches to a list of shapely geometries
-        geoms = [LinearRing(patch) for patch in patches]
+        # get list of invalid patches
+        invalid = mosaic.utils.get_invalid_patches(patches)
 
         # assert that all the patches are valid
-        assert np.all(is_valid(geoms))
+        assert invalid is None
 
     @pytest.mark.parametrize("patch", ["Cell", "Edge", "Vertex"])
     @pytest.mark.parametrize("vmin", [None, "mid", "over", "under"])
