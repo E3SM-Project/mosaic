@@ -190,7 +190,7 @@ def compute_cell_centroid(
     cx, cy: (np.ndarray, np.ndarray)
         Patch centroids where each array is of length nCells
     """
-    mask = verticesOnCell.values != -1
+    mask = np.asarray(verticesOnCell != -1, dtype=bool)
 
     r, c = np.nonzero(~mask)
     bad = np.any(cell_patches[r, c, :] != cell_patches[r, 0, :], axis=1)
