@@ -114,7 +114,7 @@ def cull_mesh(
     edge_mask = np.any(cell_mask_p[ds_base.cellsOnEdge + 1], axis=1)
 
     edge_mask_p = np.r_[False, edge_mask]
-    # keep vertex is any adjacent vertex is kept
+    # keep vertex if any adjacent edge is kept
     vert_mask = np.any(edge_mask_p[ds_base.edgesOnVertex + 1], axis=1)
 
     # indices of kept location from the original mesh
@@ -190,7 +190,7 @@ def compute_cell_centroid(
     cx, cy: (np.ndarray, np.ndarray)
         Patch centroids where each array is of length nCells
     """
-    mask = verticesOnCell != -1
+    mask = verticesOnCell.values != -1
 
     r, c = np.nonzero(~mask)
     bad = np.any(cell_patches[r, c, :] != cell_patches[r, 0, :], axis=1)

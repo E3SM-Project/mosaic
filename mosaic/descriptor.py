@@ -222,12 +222,12 @@ class Descriptor:
         return minimal_ds
 
     @property
-    def transform(self) -> CRS:
+    def transform(self) -> CRS | None:
         """The coordinate system in which patch coordinates are defined."""
         return self._transform
 
     @transform.setter
-    def transform(self, transform: CRS) -> None:
+    def transform(self, transform: CRS | None) -> None:
         if (self.is_spherical and transform is None) or (
             self.latlon and transform is None
         ):
