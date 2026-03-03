@@ -20,7 +20,8 @@ If you suspect you've found a bug in `mosaic` feel free to open an issue on
 :caption: User Guide:
 
 user_guide/quick_start
-user_guide/wrapping
+user_guide/spherical_mesh_support
+user_guide/periodic_mesh_support
 ```
 
 ```{toctree}

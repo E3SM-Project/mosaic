@@ -162,7 +162,8 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../user_guide/quick_start.html">Quick Start for Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../user_guide/wrapping.html">Periodic Mesh Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/spherical_mesh_support.html">Spherical Mesh Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/periodic_mesh_support.html">Planar Periodic Meshes</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="current nav bd-sidenav">
@@ -419,8 +420,14 @@ document.write(`
 <h2>Helper Functions<a class="headerlink" href="#helper-functions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mosaic.utils.get_invalid_patches.html#mosaic.utils.get_invalid_patches" title="mosaic.utils.get_invalid_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.get_invalid_patches</span></code></a>(descriptor, location)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mosaic.utils.cull_mesh.html#mosaic.utils.cull_mesh" title="mosaic.utils.cull_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.cull_mesh</span></code></a>(ds_base, cells_to_cull)</p></td>
+<td><p>Cull cells from a mesh using a cell mask</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mosaic.utils.get_invalid_patches.html#mosaic.utils.get_invalid_patches" title="mosaic.utils.get_invalid_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.get_invalid_patches</span></code></a>(patches)</p></td>
 <td><p>Helper function to identify problematic patches.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mosaic.utils.compute_cell_centroid.html#mosaic.utils.compute_cell_centroid" title="mosaic.utils.compute_cell_centroid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils.compute_cell_centroid</span></code></a>(cell_patches, ...)</p></td>
+<td><p>Compute Centroid of cell patch using shoelace formula</p></td>
 </tr>
 </tbody>
 </table>

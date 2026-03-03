@@ -3,4 +3,4 @@
 
 .. currentmodule:: mosaic
 
-.. autoattribute:: Descriptor.transform
+.. autoproperty:: Descriptor.transform

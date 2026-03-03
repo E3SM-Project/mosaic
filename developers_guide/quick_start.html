@@ -49,7 +49,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="API Reference" href="api.html" />
-    <link rel="prev" title="Periodic Mesh Support" href="../user_guide/wrapping.html" />
+    <link rel="prev" title="Planar Periodic Meshes" href="../user_guide/periodic_mesh_support.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -162,7 +162,8 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../user_guide/quick_start.html">Quick Start for Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../user_guide/wrapping.html">Periodic Mesh Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/spherical_mesh_support.html">Spherical Mesh Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/periodic_mesh_support.html">Planar Periodic Meshes</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="current nav bd-sidenav">
@@ -336,6 +337,8 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-installation">Developer Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-styling-and-linting">Code Styling and Linting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running Tests</a></li>
 </ul>
             </nav>
         </div>
@@ -356,7 +359,7 @@ document.write(`
 <span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="nb">set</span> <span class="n">channel_priority</span> <span class="n">strict</span>
 <span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">n</span> <span class="n">mosaic</span><span class="o">-</span><span class="n">dev</span> <span class="o">--</span><span class="n">file</span> <span class="n">dev</span><span class="o">-</span><span class="n">environment</span><span class="o">.</span><span class="n">txt</span>
 <span class="n">conda</span> <span class="n">activate</span> <span class="n">mosaic</span><span class="o">-</span><span class="n">dev</span>
-<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">deps</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">build</span><span class="o">-</span><span class="n">isolation</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 </pre></div>
 </div>
 <p>If you have an existing <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment you’d like install the development version of <code class="docutils literal notranslate"><span class="pre">mosaic</span></code> in, you can run:</p>
@@ -365,6 +368,33 @@ document.write(`
 <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 </pre></div>
 </div>
+</section>
+<section id="code-styling-and-linting">
+<span id="dev-code-styling"></span><h2>Code Styling and Linting<a class="headerlink" href="#code-styling-and-linting" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">mosaic</span></code> uses <a class="reference external" href="https://pre-commit.com/"><code class="docutils literal notranslate"><span class="pre">pre-commit</span></code></a> to enforce code style and
+quality. After setting up your environment, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+<p>This only needs to be done once per environment. <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> will
+automatically check and format your code on each commit. If it makes changes,
+review and re-commit as needed. Some issues (like inconsistent variable types)
+may require manual fixes.</p>
+<p>Internally, <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> uses:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.astral.sh/ruff/">ruff</a> for PEP8 compliance and import formatting,</p></li>
+<li><p><a class="reference external" href="https://github.com/ikamensh/flynt">flynt</a> to convert format strings to
+f-strings,</p></li>
+<li><p><a class="reference external" href="https://mypy-lang.org/">mypy</a> for type checking.</p></li>
+</ul>
+</section>
+<section id="running-tests">
+<h2>Running Tests<a class="headerlink" href="#running-tests" title="Link to this heading">#</a></h2>
+<p>To run the test suite:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest
+</pre></div>
+</div>
+<p>Make sure all tests pass before submitting a pull request.</p>
 </section>
 </section>
 
@@ -380,12 +410,12 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../user_guide/wrapping.html"
+       href="../user_guide/periodic_mesh_support.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Periodic Mesh Support</p>
+        <p class="prev-next-title">Planar Periodic Meshes</p>
       </div>
     </a>
     <a class="right-next"
@@ -414,6 +444,8 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-installation">Developer Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-styling-and-linting">Code Styling and Linting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running Tests</a></li>
 </ul>
   </nav></div>
 

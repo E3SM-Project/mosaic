@@ -162,7 +162,8 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../user_guide/quick_start.html">Quick Start for Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../user_guide/wrapping.html">Periodic Mesh Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/spherical_mesh_support.html">Spherical Mesh Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/periodic_mesh_support.html">Planar Periodic Meshes</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="nav bd-sidenav">
@@ -438,6 +439,12 @@ constructor, but instead will be equal to <code class="xref py py-attr docutils 
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">projection</span></code></p></td>
 <td><p>The target projection for plotting.</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizes</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of dimension (<code class="docutils literal notranslate"><span class="pre">nCells</span></code>, <code class="docutils literal notranslate"><span class="pre">nEdges</span></code>, and <code class="docutils literal notranslate"><span class="pre">nVertices</span></code>) sizes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="mosaic.Descriptor.transform.html#mosaic.Descriptor.transform" title="mosaic.Descriptor.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
+<td><p>The coordinate system in which patch coordinates are defined.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="mosaic.Descriptor.vertex_patches.html#mosaic.Descriptor.vertex_patches" title="mosaic.Descriptor.vertex_patches"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertex_patches</span></code></a></p></td>
 <td><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> of patch coordinates for vertex centered values</p></td>
 </tr>
@@ -447,16 +454,13 @@ constructor, but instead will be equal to <code class="xref py py-attr docutils 
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">y_period</span></code></p></td>
 <td><p>Period along y-dimension, is <code class="docutils literal notranslate"><span class="pre">None</span></code> for non-periodic meshes</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="mosaic.Descriptor.transform.html#mosaic.Descriptor.transform" title="mosaic.Descriptor.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
-<td><p>The coordinate system in which patch coordinates are defined.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_spherical</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_spherical</span></code></p></td>
 <td><p>Boolean whether parent mesh is spherical</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_periodic</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_periodic</span></code></p></td>
 <td><p>Boolean whether parent mesh is (planar) periodic in at least one dim</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ds</span></code></p></td>
 <td><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a> that contains the minimal subset of coordinate and connectivity arrays from the parent mesh needed to create patches arrays.</p></td>
 </tr>
 </tbody>

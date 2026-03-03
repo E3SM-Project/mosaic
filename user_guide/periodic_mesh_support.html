@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Periodic Mesh Support &#8212; mosaic 1.2.1 documentation</title>
+    <title>Planar Periodic Meshes &#8212; mosaic 1.2.1 documentation</title>
   
   
   
@@ -45,11 +45,11 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/wrapping';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/periodic_mesh_support';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Quick Start for Developers" href="../developers_guide/quick_start.html" />
-    <link rel="prev" title="Quick Start for Users" href="quick_start.html" />
+    <link rel="prev" title="Spherical Mesh Support" href="spherical_mesh_support.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -162,7 +162,8 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start for Users</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Periodic Mesh Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spherical_mesh_support.html">Spherical Mesh Support</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Planar Periodic Meshes</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="nav bd-sidenav">
@@ -241,7 +242,7 @@
       
       
       
-      <li><a href="../_sources/user_guide/wrapping.md" target="_blank"
+      <li><a href="../_sources/user_guide/periodic_mesh_support.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -312,9 +313,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -325,20 +324,11 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Periodic Mesh Support</h1>
+    <h1>Planar Periodic Meshes</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#planar-periodic-meshes">Planar Periodic Meshes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-map-projections-for-spherical-meshes">Supported Map Projections for Spherical Meshes</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -348,20 +338,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="periodic-mesh-support">
-<h1>Periodic Mesh Support<a class="headerlink" href="#periodic-mesh-support" title="Link to this heading">#</a></h1>
-<p>We currently make the simplifying assumption that spherical meshes are a
-special instance of periodic meshes, which are periodic across the antimeridian.
-We support both planar periodic and map projected spherical meshes, using the
-same methods, by assuming that the period (in the x and y directions
-respectively) is constant. This assumption is valid for planar periodic meshes
-and for some map projections, but falls apart for certain map projection where
-the antimeridian does not follow a strait line. Therefore we only support a
-subset of <code class="docutils literal notranslate"><span class="pre">cartopy</span></code> projections, which are listed below. Future work will
-develop a more elaborate method of dealing with spherical mesh periodicity,
-which in turn will expand the list supported map projections.</p>
-<section id="planar-periodic-meshes">
-<h2>Planar Periodic Meshes<a class="headerlink" href="#planar-periodic-meshes" title="Link to this heading">#</a></h2>
+  <section class="tex2jax_ignore mathjax_ignore" id="planar-periodic-meshes">
+<h1>Planar Periodic Meshes<a class="headerlink" href="#planar-periodic-meshes" title="Link to this heading">#</a></h1>
 <p>For patches of a planar periodic mesh that cross a periodic boundary we correct
 the patch coordinates to remove the periodicity <strong>and</strong> mirror the patches
 across the periodic boundary. The end product of both correcting and mirroring
@@ -395,10 +373,6 @@ periodic patches is a fully periodic plot as demonstrated below:</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
-  from .autonotebook import tqdm as notebook_tqdm
-</pre></div>
-</div>
 <figure class="align-default">
 <img alt="../_images/59abd9cd3bbbfb95436a19ab14ac471ef158dcbcc642a5b53dd25b40d5f19efd.png" src="../_images/59abd9cd3bbbfb95436a19ab14ac471ef158dcbcc642a5b53dd25b40d5f19efd.png" />
 </figure>
@@ -407,38 +381,6 @@ periodic patches is a fully periodic plot as demonstrated below:</p>
 <p>Periodic plotting (i.e. correcting and mirroring) of <code class="docutils literal notranslate"><span class="pre">Edge</span></code> and <code class="docutils literal notranslate"><span class="pre">Vertex</span></code> fields
 is also supported. All planar periodic patches will have the same “tight” axis
 limits, as defined by periods of the underlying mesh.</p>
-<p>Future work will extend the patch mirroring functionality to spherical meshes.</p>
-</section>
-<section id="supported-map-projections-for-spherical-meshes">
-<h2>Supported Map Projections for Spherical Meshes<a class="headerlink" href="#supported-map-projections-for-spherical-meshes" title="Link to this heading">#</a></h2>
-<p>Currently, the only support map projection for spherical meshes are:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.PlateCarree" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.PlateCarree</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.LambertCylindrical" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.LambertCylindrical</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.Mercator" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.Mercator</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.Miller" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.Miller</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.Robinson" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.Robinson</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.Stereographic" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.Stereographic</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.RotatedPole" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.RotatedPole</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.InterruptedGoodeHomolosine" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.InterruptedGoodeHomolosine</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.EckertI" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.EckertI</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.EckertII" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.EckertII</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.EckertIII" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.EckertIII</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.EckertIV" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.EckertIV</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.EckertV" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.EckertV</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.EckertVI" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.EckertVI</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.EqualEarth" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.EqualEarth</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.NorthPolarStereo" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.NorthPolarStereo</span></code></a></p></li>
-<li><p><a class="reference external" href="https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.SouthPolarStereo" title="cartopy 0.25.0.post2"><code class="docutils literal notranslate"><span class="pre">cartopy.crs.SouthPolarStereo</span></code></a></p></li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This subset of supported project only applies to spherical meshes.
-Planar (non-periodic) meshes are not limited to this list and can choose from
-the full range of <code class="docutils literal notranslate"><span class="pre">cartopy</span></code>
-<a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/reference/projections.html">projections</a>.</p>
-</div>
-</section>
 </section>
 
 
@@ -453,12 +395,12 @@ the full range of <code class="docutils literal notranslate"><span class="pre">c
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="quick_start.html"
+       href="spherical_mesh_support.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Quick Start for Users</p>
+        <p class="prev-next-title">Spherical Mesh Support</p>
       </div>
     </a>
     <a class="right-next"
@@ -476,22 +418,6 @@ the full range of <code class="docutils literal notranslate"><span class="pre">c
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#planar-periodic-meshes">Planar Periodic Meshes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-map-projections-for-spherical-meshes">Supported Map Projections for Spherical Meshes</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

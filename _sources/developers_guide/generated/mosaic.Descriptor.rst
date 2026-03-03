@@ -28,10 +28,11 @@
       ~Descriptor.latlon
       ~Descriptor.origin
       ~Descriptor.projection
+      ~Descriptor.sizes
+      ~Descriptor.transform
       ~Descriptor.vertex_patches
       ~Descriptor.x_period
       ~Descriptor.y_period
-      ~Descriptor.transform
       ~Descriptor.is_spherical
       ~Descriptor.is_periodic
       ~Descriptor.ds

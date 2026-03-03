@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>mosaic.utils.get_invalid_patches &#8212; mosaic 1.2.1 documentation</title>
+    <title>mosaic.utils.cull_mesh &#8212; mosaic 1.2.1 documentation</title>
   
   
   
@@ -45,11 +45,11 @@
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'developers_guide/generated/mosaic.utils.get_invalid_patches';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developers_guide/generated/mosaic.utils.cull_mesh';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="mosaic.utils.compute_cell_centroid" href="mosaic.utils.compute_cell_centroid.html" />
-    <link rel="prev" title="mosaic.utils.cull_mesh" href="mosaic.utils.cull_mesh.html" />
+    <link rel="next" title="mosaic.utils.get_invalid_patches" href="mosaic.utils.get_invalid_patches.html" />
+    <link rel="prev" title="mosaic.Descriptor.transform" href="mosaic.Descriptor.transform.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -242,7 +242,7 @@
       
       
       
-      <li><a href="../../_sources/developers_guide/generated/mosaic.utils.get_invalid_patches.rst" target="_blank"
+      <li><a href="../../_sources/developers_guide/generated/mosaic.utils.cull_mesh.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -326,7 +326,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>mosaic.utils.get_invalid_patches</h1>
+    <h1>mosaic.utils.cull_mesh</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -336,7 +336,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.utils.get_invalid_patches"><code class="docutils literal notranslate"><span class="pre">get_invalid_patches()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.utils.cull_mesh"><code class="docutils literal notranslate"><span class="pre">cull_mesh()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -348,23 +348,28 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="mosaic-utils-get-invalid-patches">
-<h1>mosaic.utils.get_invalid_patches<a class="headerlink" href="#mosaic-utils-get-invalid-patches" title="Link to this heading">#</a></h1>
+  <section id="mosaic-utils-cull-mesh">
+<h1>mosaic.utils.cull_mesh<a class="headerlink" href="#mosaic-utils-cull-mesh" title="Link to this heading">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="mosaic.utils.get_invalid_patches">
-<span class="sig-prename descclassname"><span class="pre">mosaic.utils.</span></span><span class="sig-name descname"><span class="pre">get_invalid_patches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patches</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mosaic.utils.get_invalid_patches" title="Link to this definition">#</a></dt>
-<dd><p>Helper function to identify problematic patches.</p>
-<p>Returns the indices of the problematic patches as determined by
-<a class="reference external" href="https://shapely.readthedocs.io/en/stable/reference/shapely.is_valid.html#shapely.is_valid" title="(in Shapely)"><code class="xref py py-func docutils literal notranslate"><span class="pre">shapely.is_valid()</span></code></a>.</p>
+<dt class="sig sig-object py" id="mosaic.utils.cull_mesh">
+<span class="sig-prename descclassname"><span class="pre">mosaic.utils.</span></span><span class="sig-name descname"><span class="pre">cull_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells_to_cull</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mosaic.utils.cull_mesh" title="Link to this definition">#</a></dt>
+<dd><p>Cull cells from a mesh using a cell mask</p>
+<p>The function removes cells based on the <cite>cells_to_cull</cite> mask, where a
+<cite>True</cite> value means the cell will be culled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>patches</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>) – The patch array to check</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds_base</strong> (<a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>) – Input mesh dataset, with zero-based connectivity arrays</p></li>
+<li><p><strong>cells_to_cull</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>) – Mask of cells to be culled (True where cells should be culled).</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Indices of invalid patches. If no patches are invalid then returns None</p>
+<dd class="field-even"><p>A culled mesh dataset, where <cite>indexToCellID</cite>, <cite>indexToEdgeID</cite>,
+and <cite>indexToVertexID</cite> arrays have been added, which act as lookup
+tables for data array from the base (ie. unculled) mesh</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.xarray.dev/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v2026.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -383,20 +388,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="mosaic.utils.cull_mesh.html"
+       href="mosaic.Descriptor.transform.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">mosaic.utils.cull_mesh</p>
+        <p class="prev-next-title">mosaic.Descriptor.transform</p>
       </div>
     </a>
     <a class="right-next"
-       href="mosaic.utils.compute_cell_centroid.html"
+       href="mosaic.utils.get_invalid_patches.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">mosaic.utils.compute_cell_centroid</p>
+        <p class="prev-next-title">mosaic.utils.get_invalid_patches</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -416,7 +421,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.utils.get_invalid_patches"><code class="docutils literal notranslate"><span class="pre">get_invalid_patches()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.utils.cull_mesh"><code class="docutils literal notranslate"><span class="pre">cull_mesh()</span></code></a></li>
 </ul>
   </nav></div>
 
