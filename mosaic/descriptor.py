@@ -808,16 +808,13 @@ def _compute_cull_mask(ds: xr.Dataset, projection: CRS) -> ndarray[bool]:
     # connectivity arrays have already been zero indexed
     verticesOnCell = ds.verticesOnCell
 
-    # mask of vertices within the projection boundary
-    vertex_contained = shapely.contains_xy(ext_domain, xVertex, yVertex)
+    # padded mask of vertices within the projection boundary
+    vertex_contained = np.r_[
+        False, shapely.contains_xy(ext_domain, xVertex, yVertex)
+    ]
 
     # translate vertex mask to cell mask where at least one vertex is contained
-    cell_mask = np.any(
-        np.where(
-            verticesOnCell != -1, vertex_contained[verticesOnCell], False
-        ),
-        axis=1,
-    )
+    cell_mask = np.any(vertex_contained[verticesOnCell + 1], axis=1)
 
     # mask of cells with any nan vertices
     nan_mask = np.any(np.isnan(cell_patches), axis=(1, 2))
