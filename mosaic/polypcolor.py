@@ -4,69 +4,10 @@ import numpy as np
 from cartopy.mpl.geoaxes import GeoAxes
 from matplotlib.axes import Axes
 from matplotlib.collections import PolyCollection
-from numpy.typing import ArrayLike
 from xarray.core.dataarray import DataArray
 
 from mosaic.descriptor import Descriptor
 from mosaic.mpas_collection import MPASCollection
-
-
-def _get_array_location(
-    descriptor: Descriptor, array: ArrayLike
-) -> tuple[str, ArrayLike]:
-    """Helper function to find mesh location where array is defined"""
-
-    dimension_to_location = {
-        "nCells": "cell",
-        "nEdges": "edge",
-        "nVertices": "vertex",
-    }
-
-    if array.ndim != 1:
-        msg = f"Array should be one dimensional, instead has {array.ndim} dims"
-        if sum([size > 1 for size in array.shape]) > 1:
-            # more than one dimensions is greater than length one
-            raise ValueError(msg)
-        array = array.squeeze()
-
-    # dict of dim lengths of the original dataset
-    origin_rev = {v: k for k, v in descriptor.sizes.items()}
-    # dict of dim lengths of the culled dataset
-    culled_rev = {descriptor.ds.sizes[d]: d for d in descriptor.sizes}
-
-    # start by trying to find match in original dataset
-    dim = origin_rev.get(array.size)
-    if dim is not None:
-        loc = dimension_to_location[dim]
-        array_name = f"indexTo{loc.capitalize()}ID"
-        if array_name in descriptor.ds:
-            lut = descriptor.ds[array_name]
-            return loc, array[lut]
-        return loc, array
-
-    # fallback to checking culled dataset
-    dim = culled_rev.get(array.size)
-    if dim is not None:
-        # no need to look up table with culled mesh array
-        return dimension_to_location[dim], array
-
-    msg = (
-        f"Size of array {array.size} is incompatible with mesh dimensions "
-        f"{descriptor.sizes}"
-    )
-    raise ValueError(msg)
-
-
-def _parse_args(
-    descriptor: Descriptor, array: ArrayLike
-) -> tuple[ArrayLike, ArrayLike]:
-    """Helper function to get patch array corresponding to dataarray"""
-
-    loc, array = _get_array_location(descriptor, array)
-
-    verts = getattr(descriptor, f"{loc}_patches")
-
-    return verts, array
 
 
 def _mirror_polycollection(ax, collection, descriptor, array, **kwargs):
@@ -75,7 +16,7 @@ def _mirror_polycollection(ax, collection, descriptor, array, **kwargs):
     Following ``cartopy.mpl.geoaxes._wrap_quadmesh``
     """
 
-    loc, array = _get_array_location(descriptor, array)
+    loc, array = descriptor._get_array_location(array)
 
     mirrored_verts = getattr(descriptor, f"_{loc}_mirrored", None)
     mirrored_idxs = getattr(descriptor, f"_{loc}_mirrored_idxs", None)
@@ -148,7 +89,8 @@ def polypcolor(
         :py:class:`~matplotlib.collections.PolyCollection` creation.
     """
 
-    verts, array = _parse_args(descriptor, array)
+    loc, array = descriptor._get_array_location(array)
+    verts = getattr(descriptor, f"{loc}_patches")
 
     # need to pop b/c PolyCollection does not accept these
     vmin = kwargs.pop("vmin", None)

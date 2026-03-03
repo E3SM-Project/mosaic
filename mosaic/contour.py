@@ -59,8 +59,13 @@ class MPASContourSet(ContourSet):
 
 class MPASContourGenerator:
     def __init__(self, descriptor, z):
+        loc, array = descriptor._get_array_location(z)
+        if loc != "cell":
+            msg = f"Contour levels must be defined on cell centers, not {loc}"
+            raise ValueError(msg)
+
         self.ds = descriptor.ds
-        self._z = z
+        self._z = array
 
         self.boundary_edge_mask = (self.ds.cellsOnEdge == -1).any("TWO").values
         self.boundary_vertices = np.unique(
