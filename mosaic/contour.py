@@ -65,7 +65,7 @@ class MPASContourGenerator:
             raise ValueError(msg)
 
         self.ds = descriptor.ds
-        self._z = array
+        self._z = np.asarray(array)
 
         self.boundary_edge_mask = (self.ds.cellsOnEdge == -1).any("TWO").values
         self.boundary_vertices = np.unique(
@@ -125,51 +125,60 @@ class MPASContourGenerator:
 
     def _split_and_order_graph(self, graph):
         """ """
-        ds = self.ds
+
+        x_vertex = self.ds.xVertex.values
+        y_vertex = self.ds.yVertex.values
 
         # empty lists where we'll store output to be returned
         lines = []
 
+        # local binding
+        dfs_pre = nx.dfs_preorder_nodes
+        graph_degree = graph.degree()
+
         for component in nx.connected_components(graph):
-            subgraph = graph.subgraph(component)
+            if len(component) == 1:
+                node = next(iter(component))
+                msg = f"Invalid contour component: singleton node {node}"
+                raise ValueError(msg)
 
-            # What about try nx.eulerian_path
-            # pad nodes only if closed (nx.is_tree is False)
-            # also accept NetworkX Error is euler path does not exists
-            if nx.is_eulerian(subgraph):
-                contour_nodes = np.array(
-                    [u for u, v in nx.eulerian_circuit(subgraph)]
+            # With max degree <= 2, endpoints are exactly degree-1 nodes
+            endpoints = [v for v in component if graph_degree[v] == 1]
+
+            # cycle (i.e. closed loop)
+            if len(endpoints) == 0:
+                contour_nodes = list(
+                    dfs_pre(graph, source=next(iter(component)))
                 )
+                contour_nodes.append(contour_nodes[0])
 
-                # need to close the paths
-                contour_nodes = np.pad(contour_nodes, (0, 1), mode="wrap")
+            # path (i.e. unclosed loop)
+            elif len(endpoints) == 2:
+                # set intersection
+                boundary_nodes = [
+                    v for v in endpoints if v in self.boundary_vertices
+                ]
 
-            else:
-                nodes = list(subgraph.nodes)
-
-                (idxs,) = np.where(np.isin(nodes, self.boundary_vertices))
-
-                if len(idxs) != 2:
+                if len(boundary_nodes) != 2:
                     msg = (
                         "Couldn't find start/end of contour that intersects "
                         "boundary"
                     )
                     raise ValueError(msg)
 
-                start, end = idxs
+                start, _ = boundary_nodes
 
-                paths = list(
-                    nx.all_simple_paths(subgraph, nodes[start], nodes[end])
+                contour_nodes = list(dfs_pre(graph, source=start))
+            else:
+                node = next(iter(component))
+                msg = (
+                    f"Invalid contour component: node ({node}) degree is not"
+                    f"1 or 2. Instead is {len(endpoints)}"
                 )
-
-                if len(list(paths)) != 1:
-                    msg = "More than one path through boundary graph found"
-                    raise ValueError(msg)
-
-                contour_nodes = paths[0]
+                raise ValueError(msg)
 
             _lines = np.stack(
-                [ds.xVertex[contour_nodes], ds.yVertex[contour_nodes]], -1
+                [x_vertex[contour_nodes], y_vertex[contour_nodes]], -1
             )
 
             lines.append(_lines)

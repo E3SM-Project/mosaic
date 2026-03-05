@@ -17,6 +17,7 @@ xarray
 click
 jupyterlab
 hyperfine
+line_profiler
 mpas_tools
 
 # Building
