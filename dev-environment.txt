@@ -4,6 +4,7 @@ cmocean
 h5netcdf
 netcdf4
 matplotlib-base
+networkx
 numpy
 pooch
 pyproj
@@ -15,6 +16,8 @@ xarray
 # Development
 click
 jupyterlab
+hyperfine
+line_profiler
 mpas_tools
 
 # Building
