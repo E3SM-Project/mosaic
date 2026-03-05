@@ -48,11 +48,11 @@ class MPASContourSet(ContourSet):
 
         self._contour_generator = MPASContourGenerator(descriptor, z)
 
-        xCell = descriptor.ds.xCell
-        yCell = descriptor.ds.yCell
+        x_vertex = descriptor.ds.xVertex
+        y_vertex = descriptor.ds.yVertex
 
-        self._mins = [xCell.min(), yCell.min()]
-        self._maxs = [xCell.max(), yCell.max()]
+        self._mins = [x_vertex.min(), y_vertex.min()]
+        self._maxs = [x_vertex.max(), y_vertex.max()]
 
         return kwargs
 
