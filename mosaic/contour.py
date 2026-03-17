@@ -209,46 +209,63 @@ class MPASContourGenerator:
 
         n_polygons = len(polygons)
 
-        # create a tree...
         tree = STRtree(polygons)
 
         idx = tree.query(polygons, predicate="contains_properly")
 
-        # TODO: Add condition for empty idx
-        parents, children = idx
+        if idx.size == 0:
+            return polys, codes
 
-        # how many polygons contain i-th polygon
-        depth = np.bincount(children, minlength=n_polygons)
+        all_parents, all_children = idx
 
-        if any(depth > 1):
-            msg = "Cannot Properly Handle Nested Interior Boundaries Yet"
-            raise ValueError(msg)
+        # Nesting depth: number of polygons that contain polygon i.
+        depth = np.bincount(all_children, minlength=n_polygons)
+
+        # For each child, find its direct parent: the containing polygon with
+        # the greatest depth (i.e., the closest/tightest enclosing polygon).
+        direct_parent = np.full(n_polygons, -1, dtype=int)
+        for p, c in zip(all_parents, all_children, strict=False):
+            if direct_parent[c] == -1 or depth[p] > depth[direct_parent[c]]:
+                direct_parent[c] = p
 
         _polys = []
         _codes = []
+        processed = set()
 
-        for p in set(parents):
-            c = children[parents == p]
+        # Even-depth polygons are exterior rings; their direct (odd-depth)
+        # children are interior holes. Odd-depth polygons inside even-depth
+        # holes are new exterior rings at depth+1, handled in a later iteration.
+        for i in range(n_polygons):
+            if depth[i] % 2 == 0:
+                p_ccw = _is_ccw(polygons[i])
+                c_list = np.where(direct_parent == i)[0]
 
-            p_ccw = _is_ccw(polygons[p])
-            strides = [_stride(p_ccw, _is_ccw(polygons[i])) for i in c]
+                strides = [
+                    _stride(p_ccw, _is_ccw(polygons[j])) for j in c_list
+                ]
 
-            ext_poly = [polys[p]]
-            int_polys = [
-                polys[i][::s] for i, s in zip(c, strides, strict=False)
-            ]
+                ext_poly = [polys[i]]
+                int_polys = [
+                    polys[j][::s]
+                    for j, s in zip(c_list, strides, strict=False)
+                ]
 
-            ext_codes = [codes[p]]
-            int_codes = [codes[i] for i in c]
+                ext_codes = [codes[i]]
+                int_codes = [codes[j] for j in c_list]
 
-            _polys.append(np.vstack(ext_poly + int_polys))
-            _codes.append(np.hstack(ext_codes + int_codes))
+                _polys.append(np.vstack(ext_poly + int_polys))
+                _codes.append(np.hstack(ext_codes + int_codes))
 
-        others_set = set(np.concat([parents, children]))
-        others_idx = others_set.symmetric_difference(set(range(n_polygons)))
+                # adds exterior ring
+                processed.add(i)
+                # adds interior holes
+                processed.update(c_list.tolist())
 
-        _polys.extend([polys[i] for i in others_idx])
-        _codes.extend([codes[i] for i in others_idx])
+        # Catch any polygons not handled above
+        for i in range(n_polygons):
+            if i not in processed:
+                _polys.append(polys[i])
+                _codes.append(codes[i])
 
         return _polys, _codes
 
