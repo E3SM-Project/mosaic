@@ -101,10 +101,9 @@ class MPASContourGenerator:
         """ """
         ds = self.ds
 
+        padded_mask = np.r_[False, mask]
         # mark mask as False for all cells outside domain
-        cells_on_edge_mask = np.where(
-            ds.cellsOnEdge == -1, False, mask[ds.cellsOnEdge]
-        )
+        cells_on_edge_mask = np.asarray(padded_mask[ds.cellsOnEdge + 1])
 
         # boolean mask for edges along contour
         edge_mask = np.logical_xor.reduce(cells_on_edge_mask, axis=1)
@@ -125,6 +124,8 @@ class MPASContourGenerator:
 
     def _split_and_order_graph(self, graph):
         """ """
+
+        # TODO: if graph is empty return
 
         x_vertex = self.ds.xVertex.values
         y_vertex = self.ds.yVertex.values
@@ -187,6 +188,9 @@ class MPASContourGenerator:
 
     def _assemble_contour_codes(self, contours: list):
         """ """
+
+        # TODO: if graph is empty return
+
         codes = []
 
         line_to = mpath.Path.LINETO
