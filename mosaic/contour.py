@@ -5,7 +5,10 @@ import networkx as nx
 import numpy as np
 import shapely
 from matplotlib.contour import ContourSet
+from numpy.typing import ArrayLike
 from shapely import Polygon, STRtree, prepare
+
+from mosaic.descriptor import Descriptor
 
 
 def contour(ax, *args, **kwargs):
@@ -58,7 +61,7 @@ class MPASContourSet(ContourSet):
 
 
 class MPASContourGenerator:
-    def __init__(self, descriptor, z):
+    def __init__(self, descriptor: Descriptor, z: ArrayLike):
         loc, array = descriptor._get_array_location(z)
         if loc != "cell":
             msg = f"Contour levels must be defined on cell centers, not {loc}"
@@ -72,7 +75,9 @@ class MPASContourGenerator:
             self.ds.verticesOnEdge[self.boundary_edge_mask]
         )
 
-    def create_filled_contour(self, lower_level: float, upper_level: float):
+    def create_filled_contour(
+        self, lower_level: float, upper_level: float
+    ) -> tuple[list[np.ndarray], list[int]]:
         """ """
 
         lower_level, upper_level = self.check_levels(lower_level, upper_level)
@@ -87,7 +92,9 @@ class MPASContourGenerator:
 
         return polys, codes
 
-    def create_contour(self, level: float):
+    def create_contour(
+        self, level: float
+    ) -> tuple[list[np.ndarray], list[int]]:
         """ """
         mask = self._z > level
 
@@ -97,7 +104,9 @@ class MPASContourGenerator:
 
         return lines, codes
 
-    def _create_contour_graph(self, mask, filled: bool):
+    def _create_contour_graph(
+        self, mask: np.ndarray, filled: bool
+    ) -> nx.Graph:
         """ """
         ds = self.ds
 
@@ -122,10 +131,11 @@ class MPASContourGenerator:
 
         return graph
 
-    def _split_and_order_graph(self, graph):
+    def _split_and_order_graph(self, graph: nx.Graph) -> list[np.ndarray]:
         """ """
 
-        # TODO: if graph is empty return
+        if nx.is_empty(graph):
+            return []
 
         x_vertex = self.ds.xVertex.values
         y_vertex = self.ds.yVertex.values
@@ -186,10 +196,11 @@ class MPASContourGenerator:
 
         return lines
 
-    def _assemble_contour_codes(self, contours: list):
+    def _assemble_contour_codes(self, contours: list[np.ndarray]) -> list[int]:
         """ """
 
-        # TODO: if graph is empty return
+        if len(contours) == 0:
+            return []
 
         codes = []
 
@@ -205,13 +216,18 @@ class MPASContourGenerator:
 
         return codes
 
-    def _sort_filled_contours(self, polys, codes):
+    def _sort_filled_contours(
+        self, polys: list[np.ndarray], codes: list[int]
+    ) -> tuple[list[np.ndarray], list[int]]:
         """ """
         polygons = list(map(Polygon, polys))
         # prepare returns None, so do not assign
         [prepare(p) for p in polygons]
 
         n_polygons = len(polygons)
+
+        if n_polygons == 0:
+            return polys, codes
 
         tree = STRtree(polygons)
 
@@ -273,7 +289,9 @@ class MPASContourGenerator:
 
         return _polys, _codes
 
-    def check_levels(self, upper_level, lower_level):
+    def check_levels(
+        self, upper_level: float, lower_level: float
+    ) -> tuple[float, float]:
         """ """
         # TODO: checked filled are monotonic
         # TODO: check no nan's
@@ -281,7 +299,7 @@ class MPASContourGenerator:
         return upper_level, lower_level
 
 
-def _is_ccw(polygon) -> bool:
+def _is_ccw(polygon: Polygon) -> bool:
     return shapely.is_ccw(polygon.exterior)
 
 

@@ -151,3 +151,62 @@ class TestUnfilledContourGraphProperties(ContourGraphGenerator):
                 if len(invalid) > 0:
                     msg = f"Endpoints {invalid} are not boundary vertices."
                     raise AssertionError(msg)
+
+
+class TestEmptyContours:
+    ds = mosaic.datasets.open_dataset("QU.240km")
+    descriptor = mosaic.Descriptor(ds, projection=ccrs.PlateCarree())
+
+    def test_unfilled_contour_all_below_level(self) -> None:
+        """When all values are below contour level, return empty contour"""
+        field = np.ones(self.descriptor.sizes["nCells"]) * 5.0
+        level = 10.0
+
+        contour_gen = MPASContourGenerator(self.descriptor, field)
+        polys, codes = contour_gen.create_contour(level)
+
+        assert isinstance(polys, list)
+        assert isinstance(codes, list)
+        assert len(polys) == 0
+        assert len(codes) == 0
+
+    def test_unfilled_contour_all_above_level(self) -> None:
+        """When all values are above contour level, return empty contour"""
+        field = np.ones(self.descriptor.sizes["nCells"]) * 10.0
+        level = 5.0
+
+        contour_gen = MPASContourGenerator(self.descriptor, field)
+        polys, codes = contour_gen.create_contour(level)
+
+        assert isinstance(polys, list)
+        assert isinstance(codes, list)
+        assert len(polys) == 0
+        assert len(codes) == 0
+
+    def test_filled_contour_levels_all_above(self) -> None:
+        """When field is outside fill bounds, return empty contour"""
+        field = np.ones(self.descriptor.sizes["nCells"]) * 5.0
+
+        contour_gen = MPASContourGenerator(self.descriptor, field)
+        polys, codes = contour_gen.create_filled_contour(
+            lower_level=10.0, upper_level=20.0
+        )
+
+        assert isinstance(polys, list)
+        assert isinstance(codes, list)
+        assert len(polys) == 0
+        assert len(codes) == 0
+
+    def test_filled_contour_levels_all_below(self) -> None:
+        """When field is outside fill bounds, return empty contour"""
+        field = np.ones(self.descriptor.sizes["nCells"]) * 20.0
+
+        contour_gen = MPASContourGenerator(self.descriptor, field)
+        polys, codes = contour_gen.create_filled_contour(
+            lower_level=5.0, upper_level=10.0
+        )
+
+        assert isinstance(polys, list)
+        assert isinstance(codes, list)
+        assert len(polys) == 0
+        assert len(codes) == 0
