@@ -3,6 +3,7 @@ from __future__ import annotations
 import cartopy.crs as ccrs
 import networkx as nx
 import numpy as np
+import pytest
 from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
@@ -210,3 +211,45 @@ class TestEmptyContours:
         assert isinstance(codes, list)
         assert len(polys) == 0
         assert len(codes) == 0
+
+
+class TestCheckLevels:
+    """Test validation of contour level ordering"""
+
+    ds = mosaic.datasets.open_dataset("QU.240km")
+    descriptor = mosaic.Descriptor(ds, projection=ccrs.PlateCarree())
+    field = np.ones(descriptor.sizes["nCells"])
+    contour_gen = MPASContourGenerator(descriptor, field)
+
+    def test_check_levels_valid_increasing(self) -> None:
+        """Contour levels with lower < upper should pass validation"""
+        lower_level = 5.0
+        upper_level = 10.0
+
+        result_lower, result_upper = self.contour_gen.check_levels(
+            lower_level, upper_level
+        )
+
+        assert result_upper == upper_level
+        assert result_lower == lower_level
+
+    def test_check_levels_equal(self) -> None:
+        """Contour levels with lower == upper should raise ValueError"""
+        level = 5.0
+
+        with pytest.raises(
+            ValueError, match="Contour levels must be increasing"
+        ):
+            self.contour_gen.check_levels(lower_level=level, upper_level=level)
+
+    def test_check_levels_inverted(self) -> None:
+        """Contour levels with lower > upper should raise ValueError"""
+        lower_level = 10.0
+        upper_level = 5.0
+
+        with pytest.raises(
+            ValueError, match="Contour levels must be increasing"
+        ):
+            self.contour_gen.check_levels(
+                lower_level=lower_level, upper_level=upper_level
+            )

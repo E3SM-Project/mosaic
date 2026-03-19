@@ -290,13 +290,13 @@ class MPASContourGenerator:
         return _polys, _codes
 
     def check_levels(
-        self, upper_level: float, lower_level: float
+        self, lower_level: float, upper_level: float
     ) -> tuple[float, float]:
-        """ """
-        # TODO: checked filled are monotonic
-        # TODO: check no nan's
+        if not lower_level < upper_level:
+            msg = "Contour levels must be increasing"
+            raise ValueError(msg)
 
-        return upper_level, lower_level
+        return lower_level, upper_level
 
 
 def _is_ccw(polygon: Polygon) -> bool:
