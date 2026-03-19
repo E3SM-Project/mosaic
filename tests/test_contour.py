@@ -11,8 +11,10 @@ import mosaic
 from mosaic.contour import MPASContourGenerator
 
 
-class ContourCycleGraphGenerator:
-    """ """
+class ContourGraphGenerator:
+    """
+    Generate random field of floats and random contour (filled or unfilled)
+    """
 
     ds = mosaic.datasets.open_dataset("QU.240km")
     descriptor = mosaic.Descriptor(ds, projection=ccrs.PlateCarree())
@@ -20,8 +22,6 @@ class ContourCycleGraphGenerator:
     def _build_contour_cyle_graph(
         self, data: st.DataObject, filled: bool
     ) -> tuple[nx.Graph, set[int]]:
-        """ """
-
         n_cells = self.descriptor.sizes["nCells"]
 
         field = data.draw(
@@ -38,14 +38,16 @@ class ContourCycleGraphGenerator:
         )
 
         field_min, field_max = np.min(field), np.max(field)
+        field_range = field_max - field_min
 
         # Ensure field has sufficient variation
         assume(field_min < field_max)
-        # TODO: Adjust this threshold based on range of values in field
-        assume(field_max - field_min > 1.0)
+        # Ensure at least 1% relative variation, or absolute minimum of 0.01
+        min_variation = max(0.01, 0.01 * abs(field_max))
+        assume(field_range > min_variation)
 
+        # Generate contour levels strictly between min and max
         if filled:
-            # Generate contour levels strictly between min and max
             lower_level = data.draw(
                 st.floats(
                     min_value=field_min,
@@ -67,7 +69,6 @@ class ContourCycleGraphGenerator:
 
             cell_mask = (field > lower_level) & (field < upper_level)
         else:
-            # Generate contour level strictly between min and max
             level = data.draw(
                 st.floats(
                     min_value=field_min,
@@ -94,13 +95,17 @@ class ContourCycleGraphGenerator:
         return graph, boundary_vertices
 
 
-class TestFilledContourProperties(ContourCycleGraphGenerator):
-    """ """
+class TestFilledContourGraphProperties(ContourGraphGenerator):
+    """
+    Filled contours should only be cycle graphs
+
+    .. [1] https://en.wikipedia.org/wiki/Cycle_graph
+    """
 
     @settings(deadline=None, max_examples=200)
     @given(data=st.data())
     def test_node_degrees_are_2(self, data: st.DataObject) -> None:
-        """Test that all nodes in the boundary graph have degree 1 or 2."""
+        """Cycle graphs should only have nodes of degree 2"""
         graph, _ = self._build_contour_cyle_graph(data, filled=True)
 
         for node, degree in graph.degree():
@@ -109,13 +114,18 @@ class TestFilledContourProperties(ContourCycleGraphGenerator):
             )
 
 
-class TestUnfilledContourProperties(ContourCycleGraphGenerator):
-    """ """
+class TestUnfilledContourGraphProperties(ContourGraphGenerator):
+    """
+    Unfilled contours should only be path or cycle graphs
+
+    .. [1] https://en.wikipedia.org/wiki/Path_graph
+    .. [2] https://en.wikipedia.org/wiki/Cycle_graph
+    """
 
     @settings(deadline=None, max_examples=200)
     @given(data=st.data())
     def test_node_degrees_are_1_or_2(self, data: st.DataObject) -> None:
-        """Test that all nodes in the boundary graph have degree 1 or 2."""
+        """Path/cycle graphs should only have nodes of deg. 1/2, respctively"""
         graph, _ = self._build_contour_cyle_graph(data, filled=False)
 
         for node, degree in graph.degree():
@@ -125,8 +135,8 @@ class TestUnfilledContourProperties(ContourCycleGraphGenerator):
 
     @settings(deadline=None, max_examples=200)
     @given(data=st.data())
-    def test_paths_endpoints_on_boundary(self, data: st.DataObject) -> None:
-        """ """
+    def test_path_endpoints_on_boundary(self, data: st.DataObject) -> None:
+        """If component is path graph, should begin & end on mesh boundary"""
         graph, boundary_vertices = self._build_contour_cyle_graph(
             data, filled=False
         )
