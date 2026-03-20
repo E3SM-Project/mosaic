@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
+
 import matplotlib.path as mpath
-import networkx as nx
 import numpy as np
 import shapely
 from matplotlib.contour import ContourSet
@@ -106,7 +107,7 @@ class MPASContourGenerator:
 
     def _create_contour_graph(
         self, mask: np.ndarray, filled: bool
-    ) -> nx.Graph:
+    ) -> ContourGraph:
         """ """
         ds = self.ds
 
@@ -125,47 +126,35 @@ class MPASContourGenerator:
         vertex_1 = ds.verticesOnEdge[edge_mask].isel(TWO=0).values
         vertex_2 = ds.verticesOnEdge[edge_mask].isel(TWO=1).values
 
-        # create a graph from the boundary edges
-        graph = nx.Graph()
-        graph.add_edges_from(zip(vertex_1, vertex_2, strict=False))
+        return ContourGraph(vertex_1, vertex_2)
 
-        return graph
-
-    def _split_and_order_graph(self, graph: nx.Graph) -> list[np.ndarray]:
+    def _split_and_order_graph(self, graph: ContourGraph) -> list[np.ndarray]:
         """ """
 
-        if nx.is_empty(graph):
+        if not graph:
             return []
 
         x_vertex = self.ds.xVertex.values
         y_vertex = self.ds.yVertex.values
 
-        # empty lists where we'll store output to be returned
         lines = []
 
-        # local binding
-        dfs_pre = nx.dfs_preorder_nodes
-        graph_degree = graph.degree()
-
-        for component in nx.connected_components(graph):
+        for component in graph.components():
             if len(component) == 1:
                 node = next(iter(component))
                 msg = f"Invalid contour component: singleton node {node}"
                 raise ValueError(msg)
 
             # With max degree <= 2, endpoints are exactly degree-1 nodes
-            endpoints = [v for v in component if graph_degree[v] == 1]
+            endpoints = [v for v in component if graph.degree(v) == 1]
 
             # cycle (i.e. closed loop)
             if len(endpoints) == 0:
-                contour_nodes = list(
-                    dfs_pre(graph, source=next(iter(component)))
-                )
+                contour_nodes = graph.walk(next(iter(component)))
                 contour_nodes.append(contour_nodes[0])
 
             # path (i.e. unclosed loop)
             elif len(endpoints) == 2:
-                # set intersection
                 boundary_nodes = [
                     v for v in endpoints if v in self.boundary_vertices
                 ]
@@ -178,8 +167,7 @@ class MPASContourGenerator:
                     raise ValueError(msg)
 
                 start, _ = boundary_nodes
-
-                contour_nodes = list(dfs_pre(graph, source=start))
+                contour_nodes = graph.walk(start)
             else:
                 node = next(iter(component))
                 msg = (
@@ -299,6 +287,144 @@ class MPASContourGenerator:
             raise ValueError(msg)
 
         return lower_level, upper_level
+
+
+class ContourGraph:
+    """Lightweight undirected graph for MPAS contour traversal.
+
+    Represents the set of mesh line segments that form a contour level as an
+    adjacency-list graph. Each connected component is guaranteed to be either
+    a path graph (an open arc whose endpoints lie on the domain boundary) or a
+    cycle graph (a closed loop entirely within the domain interior). Both
+    topologies have maximum node degree two, which makes full graph-library
+    machinery unnecessary.
+
+    Parameters
+    ----------
+    v1, v2 : np.ndarray
+        Parallel arrays of vertex IDs defining the contour edges.  Each pair
+        ``(v1[i], v2[i])`` is an undirected edge.
+    """
+
+    def __init__(self, v1: np.ndarray, v2: np.ndarray) -> None:
+        adj: dict[int, list[int]] = {}
+        for u, v in zip(v1, v2, strict=True):
+            adj.setdefault(u, []).append(v)
+            adj.setdefault(v, []).append(u)
+        self._adj = adj
+
+    def __bool__(self) -> bool:
+        return bool(self._adj)
+
+    def __iter__(self) -> Iterator[int]:
+        return iter(self._adj)
+
+    def degree(self, node: int) -> int:
+        """Return the degree (number of neighbors) of *node*."""
+        return len(self._adj[node])
+
+    def components(self) -> Iterator[set[int]]:
+        """Yield each connected component as a set of node IDs.
+
+        Uses an iterative depth-first flood fill so that the call stack is
+        never deeper than O(1) regardless of component size.
+
+        Yields
+        ------
+        set[int]
+            Node IDs belonging to one connected component.  Components are
+            yielded in the order their seed node is first encountered during
+            iteration over the adjacency dict.
+
+        References
+        ----------
+        .. [1] "Component (graph theory)", Wikipedia,
+               https://en.wikipedia.org/wiki/Component_(graph_theory)
+        .. [2] "Depth-first search", Wikipedia,
+               https://en.wikipedia.org/wiki/Depth-first_search
+        """
+        visited: set[int] = set()
+        for seed in self._adj:
+            if seed in visited:
+                continue
+            component: set[int] = set()
+            stack = [seed]
+            while stack:
+                node = stack.pop()
+                if node in visited:
+                    continue
+                visited.add(node)
+                component.add(node)
+                stack.extend(self._adj[node])
+            yield component
+
+    def walk(self, start: int) -> list[int]:
+        """Return a ordered list of node IDs by traversing from *start*.
+
+        Because every node has degree <= 2, there is at most one unvisited
+        neighbor at each step, reducing traversal to a simple linear chain
+        walk.  The method handles both path graphs (open chains) and cycle
+        graphs (closed loops); for cycles the caller is responsible for
+        appending ``path[0]`` to close the loop.
+
+        Parameters
+        ----------
+        start : int
+            The node ID from which to begin the walk.  For path components
+            this should be one of the two degree-1 endpoints; for cycle
+            components any node may be used.
+
+        Returns
+        -------
+        list[int]
+            Node IDs in traversal order, beginning with *start*.
+
+        References
+        ----------
+        .. [1] "Path graph", Wikipedia,
+               https://en.wikipedia.org/wiki/Path_graph
+        .. [2] "Cycle graph", Wikipedia,
+               https://en.wikipedia.org/wiki/Cycle_graph
+        """
+        path, seen, cur = [start], {start}, start
+        while nxt := [n for n in self._adj[cur] if n not in seen]:
+            cur = nxt[0]
+            path.append(cur)
+            seen.add(cur)
+        return path
+
+    def to_networkx(self):
+        """Convert to a :class:`networkx.Graph` for testing and inspection.
+
+        networkx is an testing dependency and is not required for normal use
+
+        Returns
+        -------
+        networkx.Graph
+            An undirected graph with the same nodes and edges.
+
+        Raises
+        ------
+        ImportError
+            If networkx is not installed.
+        """
+        try:
+            import networkx as nx  # noqa: PLC0415
+        except ImportError as e:
+            msg = (
+                "networkx is required to call to_networkx(). "
+                "Install it with: pip install networkx"
+            )
+            raise ImportError(msg) from e
+
+        g = nx.Graph()
+        g.add_edges_from(
+            (u, v)
+            for u, neighbors in self._adj.items()
+            for v in neighbors
+            if u < v
+        )
+        return g
 
 
 def _is_ccw(polygon: Polygon) -> bool:

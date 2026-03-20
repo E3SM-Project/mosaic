@@ -123,7 +123,7 @@ class ContourGraphGenerator(ContourGenerator):
         graph = contour_gen._create_contour_graph(cell_mask, filled=filled)
         boundary_vertices = set(contour_gen.boundary_vertices)
 
-        return graph, boundary_vertices
+        return graph.to_networkx(), boundary_vertices
 
 
 class ContourGeometryGenerator(ContourGenerator):
