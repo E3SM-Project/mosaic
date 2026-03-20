@@ -4,7 +4,6 @@ cmocean
 h5netcdf
 netcdf4
 matplotlib-base
-networkx
 numpy
 pooch
 pyproj
@@ -30,6 +29,7 @@ pytest-timeout
 isort
 flake8
 mypy
+networkx
 pre-commit
 hypothesis
 
