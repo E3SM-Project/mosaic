@@ -77,7 +77,7 @@ class MPASContourGenerator:
 
     def create_filled_contour(
         self, lower_level: float, upper_level: float
-    ) -> tuple[list[np.ndarray], list[int]]:
+    ) -> tuple[list[np.ndarray], list[np.ndarray]]:
         """ """
 
         lower_level, upper_level = self.check_levels(lower_level, upper_level)
@@ -94,7 +94,7 @@ class MPASContourGenerator:
 
     def create_contour(
         self, level: float
-    ) -> tuple[list[np.ndarray], list[int]]:
+    ) -> tuple[list[np.ndarray], list[np.ndarray]]:
         """ """
         mask = self._z > level
 
@@ -196,7 +196,9 @@ class MPASContourGenerator:
 
         return lines
 
-    def _assemble_contour_codes(self, contours: list[np.ndarray]) -> list[int]:
+    def _assemble_contour_codes(
+        self, contours: list[np.ndarray]
+    ) -> list[np.ndarray]:
         """ """
 
         if len(contours) == 0:
@@ -218,7 +220,7 @@ class MPASContourGenerator:
 
     def _sort_filled_contours(
         self, polys: list[np.ndarray], codes: list[int]
-    ) -> tuple[list[np.ndarray], list[int]]:
+    ) -> tuple[list[np.ndarray], list[np.ndarray]]:
         """ """
         polygons = list(map(Polygon, polys))
         # prepare returns None, so do not assign
