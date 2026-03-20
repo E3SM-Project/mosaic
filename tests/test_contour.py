@@ -11,7 +11,54 @@ from hypothesis.extra import numpy as hnp
 from shapely import LineString, Polygon
 
 import mosaic
-from mosaic.contour import MPASContourGenerator
+from mosaic.contour import MPASContourGenerator, _is_ccw
+
+# TODO:
+# - [ ] Need some further investigation of how matplotlib handles nans
+
+
+def _square_ring(
+    cx: float, cy: float, size: float, ccw: bool = True
+) -> np.ndarray:
+    """Return a closed square ring centered at (cx, cy) with half-width *size*.
+
+    The ring is counter-clockwise by default and clockwise when ccw=False.
+    """
+    if ccw:
+        coords = [
+            [cx - size, cy - size],
+            [cx + size, cy - size],
+            [cx + size, cy + size],
+            [cx - size, cy + size],
+        ]
+    else:
+        coords = [
+            [cx - size, cy - size],
+            [cx - size, cy + size],
+            [cx + size, cy + size],
+            [cx + size, cy - size],
+        ]
+    coords.append(coords[0])
+    return np.array(coords, dtype=float)
+
+
+def _make_codes(ring: np.ndarray) -> np.ndarray:
+    """Return matplotlib path codes for a single ring (MOVETO + LINETOs)."""
+    codes = np.full(len(ring), mpath.Path.LINETO, dtype=mpath.Path.code_type)
+    codes[0] = mpath.Path.MOVETO
+    return codes
+
+
+def _parse_rings(
+    poly_coords: np.ndarray, codes: np.ndarray
+) -> list[np.ndarray]:
+    """Split a single output path into constituent rings by MOVETO boundary."""
+    starts = np.flatnonzero(codes == mpath.Path.MOVETO)
+    rings = []
+    for i, start in enumerate(starts):
+        end = starts[i + 1] if i + 1 < len(starts) else len(codes)
+        rings.append(poly_coords[start:end])
+    return rings
 
 
 class ContourGenerator:
@@ -365,3 +412,159 @@ class TestCheckLevels:
             self.contour_gen.check_levels(
                 lower_level=lower_level, upper_level=upper_level
             )
+
+
+class TestSortFilledContoursUnit:
+    """Unit tests for _sort_filled_contours using synthetic ring data.
+
+    Each test constructs explicit coordinate arrays at known nesting depths
+    and checks that the output topology (number of paths, ring counts, hole
+    containment, and winding order) matches the expected result.
+    """
+
+    ds = mosaic.datasets.open_dataset("QU.240km")
+    descriptor = mosaic.Descriptor(ds, projection=ccrs.PlateCarree())
+    field = np.ones(descriptor.sizes["nCells"])
+    contour_gen = MPASContourGenerator(descriptor, field)
+
+    def test_single_ring_no_holes(self) -> None:
+        """A single ring with no nesting produces one exterior polygon."""
+        ring = _square_ring(0, 0, 5)
+        polys = [ring]
+        codes = [_make_codes(ring)]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        assert len(out_polys) == 1
+        assert np.sum(out_codes[0] == mpath.Path.MOVETO) == 1
+
+    def test_two_disjoint_rings(self) -> None:
+        """Two non-overlapping rings produce two separate exterior polygons."""
+        polys = [_square_ring(0, 0, 5), _square_ring(20, 0, 5)]
+        codes = [_make_codes(r) for r in polys]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        assert len(out_polys) == 2
+        assert all(np.sum(c == mpath.Path.MOVETO) == 1 for c in out_codes)
+
+    def test_simple_donut(self) -> None:
+        """One ring containing another produces one polygon with one hole."""
+        outer = _square_ring(0, 0, 10)
+        inner = _square_ring(0, 0, 4)
+        polys = [outer, inner]
+        codes = [_make_codes(r) for r in polys]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        assert len(out_polys) == 1
+        rings = _parse_rings(out_polys[0], out_codes[0])
+        assert len(rings) == 2
+
+    def test_three_level_nesting(self) -> None:
+        """A→B→C nesting: exterior A with hole B, and standalone exterior C."""
+        ring_a = _square_ring(0, 0, 12)
+        ring_b = _square_ring(0, 0, 8)
+        ring_c = _square_ring(0, 0, 4)
+        polys = [ring_a, ring_b, ring_c]
+        codes = [_make_codes(r) for r in polys]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        assert len(out_polys) == 2
+        moveto_counts = sorted(
+            np.sum(c == mpath.Path.MOVETO) for c in out_codes
+        )
+        assert moveto_counts == [1, 2]
+
+    def test_multiple_holes(self) -> None:
+        """One exterior ring containing three disjoint holes."""
+        polys = [
+            _square_ring(0, 0, 20),
+            _square_ring(-10, 0, 3),
+            _square_ring(0, 0, 3),
+            _square_ring(10, 0, 3),
+        ]
+        codes = [_make_codes(r) for r in polys]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        assert len(out_polys) == 1
+        assert np.sum(out_codes[0] == mpath.Path.MOVETO) == 4
+
+    def test_two_separate_donuts(self) -> None:
+        """Two independent donuts each produce one polygon with one hole."""
+        polys = [
+            _square_ring(-15, 0, 8),
+            _square_ring(-15, 0, 3),
+            _square_ring(15, 0, 8),
+            _square_ring(15, 0, 3),
+        ]
+        codes = [_make_codes(r) for r in polys]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        assert len(out_polys) == 2
+        assert all(np.sum(c == mpath.Path.MOVETO) == 2 for c in out_codes)
+
+    def test_deep_nesting_four_levels(self) -> None:
+        """A→B→C→D: two output polygons, each with one hole."""
+        polys = [
+            _square_ring(0, 0, 16),
+            _square_ring(0, 0, 12),
+            _square_ring(0, 0, 8),
+            _square_ring(0, 0, 4),
+        ]
+        codes = [_make_codes(r) for r in polys]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        assert len(out_polys) == 2
+        moveto_counts = sorted(
+            np.sum(c == mpath.Path.MOVETO) for c in out_codes
+        )
+        assert moveto_counts == [2, 2]
+
+    def test_winding_order_correction_same_orientation(self) -> None:
+        """A hole with the same winding as its exterior must be reversed."""
+        outer = _square_ring(0, 0, 10, ccw=True)
+        inner = _square_ring(0, 0, 4, ccw=True)
+        polys = [outer, inner]
+        codes = [_make_codes(r) for r in polys]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        rings = _parse_rings(out_polys[0], out_codes[0])
+        assert _is_ccw(Polygon(rings[0]))
+        assert not _is_ccw(Polygon(rings[1]))
+
+    def test_hole_already_opposite_winding(self) -> None:
+        """A hole already opposite to its exterior must not be reversed."""
+        outer = _square_ring(0, 0, 10, ccw=True)
+        inner = _square_ring(0, 0, 4, ccw=False)
+        polys = [outer, inner]
+        codes = [_make_codes(r) for r in polys]
+
+        out_polys, out_codes = self.contour_gen._sort_filled_contours(
+            polys, codes
+        )
+
+        rings = _parse_rings(out_polys[0], out_codes[0])
+        assert _is_ccw(Polygon(rings[0]))
+        assert not _is_ccw(Polygon(rings[1]))
