@@ -1,18 +1,20 @@
 from __future__ import annotations
 
 import cartopy.crs as ccrs
+import matplotlib.path as mpath
 import networkx as nx
 import numpy as np
 import pytest
 from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
+from shapely import LineString, Polygon
 
 import mosaic
 from mosaic.contour import MPASContourGenerator
 
 
-class ContourGraphGenerator:
+class ContourGenerator:
     """
     Generate random field of floats and random contour (filled or unfilled)
     """
@@ -20,9 +22,7 @@ class ContourGraphGenerator:
     ds = mosaic.datasets.open_dataset("QU.240km")
     descriptor = mosaic.Descriptor(ds, projection=ccrs.PlateCarree())
 
-    def _build_contour_cyle_graph(
-        self, data: st.DataObject, filled: bool
-    ) -> tuple[nx.Graph, set[int]]:
+    def _build_field(self, data: st.DataObject) -> np.ndarray:
         n_cells = self.descriptor.sizes["nCells"]
 
         field = data.draw(
@@ -47,38 +47,72 @@ class ContourGraphGenerator:
         min_variation = max(0.01, 0.01 * abs(field_max))
         assume(field_range > min_variation)
 
-        # Generate contour levels strictly between min and max
-        if filled:
-            lower_level = data.draw(
-                st.floats(
-                    min_value=field_min,
-                    max_value=field_max,
-                    exclude_min=True,
-                    exclude_max=True,
-                )
-            )
+        return field
 
-            upper_level = data.draw(
-                st.floats(
-                    min_value=lower_level,
-                    max_value=field_max,
-                    exclude_max=True,
-                )
+    def _build_unfilled_contour_level(
+        self, field_min: float, field_max: float, data: st.DataObject
+    ) -> float:
+        return data.draw(
+            st.floats(
+                min_value=field_min,
+                max_value=field_max,
+                exclude_min=True,
+                exclude_max=True,
+                allow_nan=False,
+                allow_infinity=False,
             )
-            # Ensure lower < upper
-            assume(lower_level < upper_level)
+        )
+
+    def _build_filled_contour_levels(
+        self, field_min: float, field_max: float, data: st.DataObject
+    ) -> tuple[float, float]:
+        lower_level = data.draw(
+            st.floats(
+                min_value=field_min,
+                max_value=field_max,
+                exclude_min=True,
+                exclude_max=True,
+            )
+        )
+
+        upper_level = data.draw(
+            st.floats(
+                min_value=lower_level,
+                max_value=field_max,
+                exclude_max=True,
+            )
+        )
+        # Ensure lower < upper
+        assume(lower_level < upper_level)
+
+        return lower_level, upper_level
+
+
+class ContourGraphGenerator(ContourGenerator):
+    """
+    Convert random field and contour to a networkx.Graph
+
+    Also returns unique boundary vertices, needed for proppert testing
+    """
+
+    def _build_contour_cyle_graph(
+        self, data: st.DataObject, filled: bool
+    ) -> tuple[nx.Graph, set[int]]:
+        field = self._build_field(data)
+
+        field_min, field_max = np.min(field), np.max(field)
+
+        contour_gen = MPASContourGenerator(self.descriptor, field)
+
+        if filled:
+            lower_level, upper_level = self._build_filled_contour_levels(
+                field_min=field_min, field_max=field_max, data=data
+            )
 
             cell_mask = (field > lower_level) & (field < upper_level)
         else:
-            level = data.draw(
-                st.floats(
-                    min_value=field_min,
-                    max_value=field_max,
-                    exclude_min=True,
-                    exclude_max=True,
-                    allow_nan=False,
-                    allow_infinity=False,
-                )
+            level = self._build_unfilled_contour_level(
+                field_min=field_min, field_max=field_max, data=data
             )
 
             cell_mask = field > level
@@ -86,14 +120,64 @@ class ContourGraphGenerator:
         # Exclude all True and all False masks
         assume(cell_mask.any() and (~cell_mask).any())
 
-        contour_gen = MPASContourGenerator(
-            self.descriptor, cell_mask.astype(float)
-        )
-
         graph = contour_gen._create_contour_graph(cell_mask, filled=filled)
         boundary_vertices = set(contour_gen.boundary_vertices)
 
         return graph, boundary_vertices
+
+
+class ContourGeometryGenerator(ContourGenerator):
+    """
+    Convert contour coordinates to Shapely geometries
+
+    Filled contour --> shapely.Polygon
+    Unfilled Conoutr --> shapely.LineString
+    """
+
+    def _build_contour_geometries(
+        self, data: st.DataObject, filled: bool
+    ) -> list[LineString] | list[Polygon]:
+        field = self._build_field(data)
+
+        field_min, field_max = np.min(field), np.max(field)
+
+        contour_gen = MPASContourGenerator(self.descriptor, field)
+
+        if filled:
+            lower_level, upper_level = self._build_filled_contour_levels(
+                field_min=field_min, field_max=field_max, data=data
+            )
+
+            polys, codes = contour_gen.create_filled_contour(
+                lower_level, upper_level
+            )
+
+            geoms = []
+            for p, c in zip(polys, codes, strict=True):
+                # Split at MOVETO boundaries
+                starts = np.flatnonzero(c == mpath.Path.MOVETO)
+                # first ring = exterior shell, rest = holes
+                rings = [
+                    p[
+                        starts[i] : starts[i + 1]
+                        if i + 1 < len(starts)
+                        else len(p)
+                    ]
+                    for i in range(len(starts))
+                ]
+
+                geoms.append(Polygon(shell=rings[0], holes=rings[1:]))
+
+        else:
+            level = self._build_unfilled_contour_level(
+                field_min=field_min, field_max=field_max, data=data
+            )
+
+            polys, _ = contour_gen.create_contour(level)
+
+            geoms = [LineString(p) for p in polys]
+
+        return geoms
 
 
 class TestFilledContourGraphProperties(ContourGraphGenerator):
@@ -154,7 +238,35 @@ class TestUnfilledContourGraphProperties(ContourGraphGenerator):
                     raise AssertionError(msg)
 
 
+class TestFilledContourPolygonProperties(ContourGeometryGenerator):
+    """Cycle graphs produced by a filled contour should be valid Polygons"""
+
+    @settings(deadline=None, max_examples=200)
+    @given(data=st.data())
+    def test_no_self_intersection_and_closed(
+        self, data: st.DataObject
+    ) -> None:
+        """Polygon is valid if closed and is not self intersecting"""
+        geoms = self._build_contour_geometries(data, filled=True)
+
+        assert all(g.is_valid for g in geoms)
+
+
+class TestUnfilledContourLineStringProperties(ContourGeometryGenerator):
+    """Convert unfilled contours to LineStrings; test for self intersection"""
+
+    @settings(deadline=None, max_examples=200)
+    @given(data=st.data())
+    def test_no_self_intersection(self, data: st.DataObject) -> None:
+        """LineStrings is simple if there is no self intersection"""
+        geoms = self._build_contour_geometries(data, filled=False)
+
+        assert all(g.is_simple for g in geoms)
+
+
 class TestEmptyContours:
+    """Test empty contour is well defined"""
+
     ds = mosaic.datasets.open_dataset("QU.240km")
     descriptor = mosaic.Descriptor(ds, projection=ccrs.PlateCarree())
 
