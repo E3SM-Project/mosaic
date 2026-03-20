@@ -25,11 +25,12 @@ user_guide/periodic_mesh_support
 ```
 
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 1
 :caption: Developers Guide:
 
 developers_guide/quick_start
 developers_guide/api
+developers_guide/design_docs
 ```
 
 ```{toctree}

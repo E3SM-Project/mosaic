@@ -20,6 +20,7 @@ dependencies = [
     "h5netcdf",
     "netcdf4",
     "matplotlib",
+    "networkx",
     "numpy",
     "pooch",
     "pyproj",
