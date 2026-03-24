@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 
+import matplotlib._docstring
 import matplotlib.path as mpath
 import numpy as np
 import shapely
@@ -11,13 +12,172 @@ from shapely import Polygon, STRtree, prepare
 
 from mosaic.descriptor import Descriptor
 
+# Single shared docstring for both contour and contourf, mirroring the
+# structure of matplotlib's contour_doc.  %(cmap_doc)s etc. are expanded
+# eagerly at definition time (same trick as matplotlib/contour.py L1702).
+_contour_doc_template = """
+:py:func:`contour` and :py:func:`contourf` draw contour lines and filled
+contours respectively on an unstructured MPAS mesh.  Except as noted,
+function signatures and return values are the same for both versions.
 
+Parameters
+----------
+descriptor : ~mosaic.Descriptor
+    MPAS mesh descriptor containing the unstructured grid connectivity and
+    coordinate arrays
+
+Z : array-like
+    Scalar field defined at cell centers over which the contour is
+    drawn.  Color-mapping is controlled by *cmap*, *norm*, *vmin*, and
+    *vmax*.
+
+levels : int or array-like, optional
+    Determines the number and positions of the contour lines / regions.
+
+    If an int *n*, use :py:class:`~matplotlib.ticker.MaxNLocator`, which tries to
+    automatically choose no more than *n+2* "nice" contour level
+    boundaries between the minimum and maximum values of *Z*.
+
+    If array-like, draw contour lines at the specified levels.  The
+    values must be in increasing order.
+
+    If not given, a reasonable default is chosen automatically.
+
+Returns
+-------
+:py:class:`MPASContourSet`
+
+Other Parameters
+----------------
+colors : :mpltype:`color` or list of :mpltype:`color`, optional
+    The colors of the levels, i.e. the lines for ``mosaic.contour`` and
+    the areas for ``mosaic.contourf``.
+
+    The sequence is cycled for the levels in ascending order. If the
+    sequence is shorter than the number of levels, it's repeated.
+
+    As a shortcut, a single color may be used in place of one-element
+    lists, i.e. ``'red'`` instead of ``['red']`` to color all levels
+    with the same color.
+
+    By default (value *None*), the colormap specified by *cmap* will be
+    used.
+
+alpha : float, default: 1
+    The alpha blending value, between 0 (transparent) and 1 (opaque).
+
+%(cmap_doc)s
+
+    This parameter is ignored if *colors* is set.
+
+%(norm_doc)s
+
+    This parameter is ignored if *colors* is set.
+
+%(vmin_vmax_doc)s
+
+    If *vmin* or *vmax* are not given, the default color scaling is
+    based on *levels*.
+
+    This parameter is ignored if *colors* is set.
+
+locator : :py:class:`~matplotlib.ticker.Locator` subclass, optional
+    The locator is used to determine the contour levels if they are not
+    given explicitly via *levels*.  Defaults to
+    `~matplotlib.ticker.MaxNLocator`.
+
+extend : {'neither', 'both', 'min', 'max'}, default: 'neither'
+    Determines the coloring of values that are outside the *levels*
+    range.
+
+    If 'neither', values outside the *levels* range are not colored.
+    If 'min', 'max' or 'both', color the values below, above or below
+    and above the *levels* range.
+
+    Values below ``min(levels)`` and above ``max(levels)`` are mapped
+    to the under/over values of the `.Colormap`.  Note that most
+    colormaps do not have dedicated colors for these by default, so
+    that the over and under values are the edge values of the colormap.
+    You may want to set these values explicitly using
+    `.Colormap.set_under` and `.Colormap.set_over`.
+
+linewidths : float or array-like, default: :rc:`contour.linewidth`
+    *Only applies to* :py:func:`contour`.
+
+    The line width of the contour lines.
+
+    If a number, all levels will be plotted with this linewidth.
+
+    If a sequence, the levels in ascending order will be plotted with
+    the linewidths in the order specified.
+
+    If *None*, this falls back to :rc:`lines.linewidth`.
+
+linestyles : {*None*, 'solid', 'dashed', 'dashdot', 'dotted'}, optional
+    *Only applies to* :py:func:`contour`.
+
+    If *linestyles* is *None*, the default is 'solid' unless the lines
+    are monochrome.  In that case, negative contours will instead take
+    their linestyle from the *negative_linestyles* argument.
+
+    *linestyles* can also be an iterable of the above strings specifying
+    a set of linestyles to be used. If this iterable is shorter than the
+    number of contour levels it will be repeated as necessary.
+
+negative_linestyles : {*None*, 'solid', 'dashed', 'dashdot', 'dotted'}, \
+optional
+    *Only applies to* :py:func:`contour`.
+
+    If *linestyles* is *None* and the lines are monochrome, this
+    argument specifies the line style for negative contours.
+
+    If *negative_linestyles* is *None*, the default is taken from
+    :rc:`contour.negative_linestyle`.
+
+hatches : list[str], optional
+    *Only applies to* :py:func:`contourf`.
+
+    A list of cross hatch patterns to use on the filled areas.  If
+    *None*, no hatching will be added to the contour.  See
+    `.Patch.set_hatch` for pattern syntax.
+
+antialiased : bool, optional
+    Enable antialiasing, overriding the defaults.  For filled contours,
+    the default is *False*.  For line contours, it is taken from
+    :rc:`lines.antialiased`.
+
+Notes
+-----
+1. ``mosaic.contourf`` does not draw polygon edges.  To draw edges, add
+   line contours with calls to `mosaic.contour`.
+
+2. ``mosaic.contourf`` fills intervals that are closed at the top; that
+   is, for boundaries *z1* and *z2*, the filled region is::
+
+      z1 < Z <= z2
+
+   except for the lowest interval, which is closed on both sides (i.e.
+   it includes the lowest value).
+
+3. Contouring is performed directly on the MPAS unstructured mesh by
+   traversing the dual graph of cell edges, without any intermediate
+   grid interpolation.
+"""
+_contour_doc = _contour_doc_template % matplotlib._docstring.interpd.params
+
+matplotlib._docstring.interpd.register(mosaic_contour_doc=_contour_doc)
+
+
+@matplotlib._docstring.interpd
 def contour(ax, *args, **kwargs):
     """
-    Plot contour lines.
+    Plot contour lines on an unstructured MPAS mesh.
 
     Call signature::
+
         contour(ax, descriptor, Z, [levels], **kwargs)
+
+    %(mosaic_contour_doc)s
     """
     kwargs["filled"] = False
     contours = MPASContourSet(ax, *args, **kwargs)
@@ -25,12 +185,16 @@ def contour(ax, *args, **kwargs):
     return contours
 
 
+@matplotlib._docstring.interpd
 def contourf(ax, *args, **kwargs):
     """
-    Plot contour lines.
+    Plot filled contours on an unstructured MPAS mesh.
 
     Call signature::
-        contour(ax, descriptor, Z, [levels], **kwargs)
+
+        contourf(ax, descriptor, Z, [levels], **kwargs)
+
+    %(mosaic_contour_doc)s
     """
     kwargs["filled"] = True
     contours = MPASContourSet(ax, *args, **kwargs)
