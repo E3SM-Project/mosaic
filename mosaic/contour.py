@@ -44,6 +44,7 @@ class MPASContourSet(ContourSet):
     def _process_args(self, *args, **kwargs):
         """ """
         descriptor, z, *args = args
+        z = np.asarray(z)
 
         self.zmax = z.max().astype(float)
         self.zmin = z.min().astype(float)
