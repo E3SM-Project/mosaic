@@ -9,6 +9,7 @@ import shapely
 import xarray as xr
 from cartopy.crs import CRS
 from numpy import ndarray
+from numpy.typing import ArrayLike
 from xarray.core.dataset import Dataset
 
 import mosaic.utils
@@ -667,6 +668,54 @@ class Descriptor:
             mirrored = None
 
         return mirrored, idxs
+
+    def _get_array_location(self, array: ArrayLike) -> tuple[str, ArrayLike]:
+        """Helper function to find mesh location where array is defined
+
+        If descriptor has been culled, also subset array to culled mesh size.
+        """
+
+        dimension_to_location = {
+            "nCells": "cell",
+            "nEdges": "edge",
+            "nVertices": "vertex",
+        }
+
+        array = np.asarray(array)
+
+        if array.ndim != 1:
+            msg = f"Array should be 1-D, instead has {array.ndim} dims"
+            if sum([size > 1 for size in array.shape]) > 1:
+                # more than one dimensions is greater than length one
+                raise ValueError(msg)
+            array = array.squeeze()
+
+        # dict of dim lengths of the original dataset
+        origin_rev = {v: k for k, v in self.sizes.items()}
+        # dict of dim lengths of the culled dataset
+        culled_rev = {self.ds.sizes[d]: d for d in self.sizes}
+
+        # start by trying to find match in original dataset
+        dim = origin_rev.get(array.size)
+        if dim is not None:
+            loc = dimension_to_location[dim]
+            array_name = f"indexTo{loc.capitalize()}ID"
+            if array_name in self.ds:
+                lut = self.ds[array_name]
+                return loc, array[lut]
+            return loc, array
+
+        # fallback to checking culled dataset
+        dim = culled_rev.get(array.size)
+        if dim is not None:
+            # no need to look up table with culled mesh array
+            return dimension_to_location[dim], array
+
+        msg = (
+            f"Size of array {array.size} is incompatible with mesh dimensions "
+            f"{self.sizes}"
+        )
+        raise ValueError(msg)
 
 
 def _compute_cell_patches(ds: Dataset) -> ndarray:

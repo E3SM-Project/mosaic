@@ -51,6 +51,8 @@ dev = [
     "isort",
     "flake8",
     "mypy",
+    "hypothesis",
+    "networkx",
     "pre-commit",
 ]
 

@@ -51,6 +51,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx_remove_toctrees",
+    "matplotlib.sphinxext.roles",
 ]
 
 source_suffix = {
@@ -106,6 +107,7 @@ copybutton_prompt_text = ">>> "
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 napoleon_preprocess_types = True
+napoleon_use_param = False
 napoleon_type_aliases = {
     "cartopy.crs.Projection": ":class:`cartopy.crs.CRS`",
     # objects without namespace: xarray

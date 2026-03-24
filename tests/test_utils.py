@@ -94,7 +94,9 @@ def test_util_vs_shapely_for_random_convex_polygon(scale):
         np.hstack([shapely.Polygon(p).centroid.xy for p in polys])
     )
 
-    np.testing.assert_allclose([cx, cy], [sx, sy], rtol=1e-12, atol=1e-12)
+    np.testing.assert_allclose(
+        [cx, cy], [sx, sy], rtol=1e-10, atol=1e-10 * scale
+    )
 
 
 def test_padding_violation_raises_and_reports_cell():

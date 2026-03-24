@@ -22,14 +22,16 @@ If you suspect you've found a bug in `mosaic` feel free to open an issue on
 user_guide/quick_start
 user_guide/spherical_mesh_support
 user_guide/periodic_mesh_support
+user_guide/contouring
 ```
 
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 1
 :caption: Developers Guide:
 
 developers_guide/quick_start
 developers_guide/api
+developers_guide/design_docs
 ```
 
 ```{toctree}
