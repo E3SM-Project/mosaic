@@ -681,6 +681,8 @@ class Descriptor:
             "nVertices": "vertex",
         }
 
+        array = np.asarray(array)
+
         if array.ndim != 1:
             msg = f"Array should be 1-D, instead has {array.ndim} dims"
             if sum([size > 1 for size in array.shape]) > 1:

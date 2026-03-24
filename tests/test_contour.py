@@ -142,7 +142,7 @@ class ContourGraphGenerator(ContourGenerator):
     Also returns unique boundary vertices, needed for proppert testing
     """
 
-    def _build_contour_cyle_graph(
+    def _build_contour_cycle_graph(
         self, data: st.DataObject, filled: bool
     ) -> tuple[nx.Graph, set[int]]:
         field = self._build_field(data)
@@ -238,7 +238,7 @@ class TestFilledContourGraphProperties(ContourGraphGenerator):
     @given(data=st.data())
     def test_node_degrees_are_2(self, data: st.DataObject) -> None:
         """Cycle graphs should only have nodes of degree 2"""
-        graph, _ = self._build_contour_cyle_graph(data, filled=True)
+        graph, _ = self._build_contour_cycle_graph(data, filled=True)
 
         for node, degree in graph.degree():
             assert degree == 2, (
@@ -258,7 +258,7 @@ class TestUnfilledContourGraphProperties(ContourGraphGenerator):
     @given(data=st.data())
     def test_node_degrees_are_1_or_2(self, data: st.DataObject) -> None:
         """Path/cycle graphs should only have nodes of deg. 1/2, respctively"""
-        graph, _ = self._build_contour_cyle_graph(data, filled=False)
+        graph, _ = self._build_contour_cycle_graph(data, filled=False)
 
         for node, degree in graph.degree():
             assert degree in (1, 2), (
@@ -269,7 +269,7 @@ class TestUnfilledContourGraphProperties(ContourGraphGenerator):
     @given(data=st.data())
     def test_path_endpoints_on_boundary(self, data: st.DataObject) -> None:
         """If component is path graph, should begin & end on mesh boundary"""
-        graph, boundary_vertices = self._build_contour_cyle_graph(
+        graph, boundary_vertices = self._build_contour_cycle_graph(
             data, filled=False
         )
 

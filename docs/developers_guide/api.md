@@ -26,6 +26,7 @@ Data Structures
     :toctree: generated/
 
     Descriptor
+    mosaic.contour.MPASContourSet
 
 Helper Functions
 ----------------

@@ -34,8 +34,8 @@ Z : array-like
 levels : int or array-like, optional
     Determines the number and positions of the contour lines / regions.
 
-    If an int *n*, use :py:class:`~matplotlib.ticker.MaxNLocator`, which tries to
-    automatically choose no more than *n+2* "nice" contour level
+    If an int *n*, use :py:class:`~matplotlib.ticker.MaxNLocator`, which tries
+    to automatically choose no more than *n+2* "nice" contour level
     boundaries between the minimum and maximum values of *Z*.
 
     If array-like, draw contour lines at the specified levels.  The
@@ -45,7 +45,7 @@ levels : int or array-like, optional
 
 Returns
 -------
-:py:class:`MPASContourSet`
+:py:class:`~mosaic.contour.MPASContourSet`
 
 Other Parameters
 ----------------
@@ -203,7 +203,22 @@ def contourf(ax, *args, **kwargs):
 
 
 class MPASContourSet(ContourSet):
-    """ """
+    """
+    A :class:`matplotlib.contour.ContourSet` subclass for MPAS meshes.
+
+    This contour set is created by :func:`mosaic.contour` and
+    :func:`mosaic.contourf` to draw contour lines and filled contours on an
+    unstructured MPAS mesh.
+
+    Compared to :class:`matplotlib.contour.ContourSet`, the first
+    positional argument is expected to be a
+    :class:`~mosaic.descriptor.Descriptor` describing the MPAS mesh,
+    and the contour generator is provided by
+    :class:`MPASContourGenerator`.
+
+    Users normally do not instantiate this class directly; instead,
+    call :func:`mosaic.contour` or :func:`mosaic.contourf`.
+    """
 
     def _process_args(self, *args, **kwargs):
         """ """
@@ -217,8 +232,8 @@ class MPASContourSet(ContourSet):
 
         self._contour_generator = MPASContourGenerator(descriptor, z)
 
-        x_vertex = descriptor.ds.xVertex
-        y_vertex = descriptor.ds.yVertex
+        x_vertex = np.asarray(descriptor.ds.xVertex)
+        y_vertex = np.asarray(descriptor.ds.yVertex)
 
         self._mins = [x_vertex.min(), y_vertex.min()]
         self._maxs = [x_vertex.max(), y_vertex.max()]
@@ -326,7 +341,7 @@ class MPASContourGenerator:
 
                 if len(boundary_nodes) != 2:
                     msg = (
-                        "Couldn't find start/end of contour that intersects "
+                        "Couldn't find start/end of contour that intersects"
                         "boundary"
                     )
                     raise ValueError(msg)
@@ -372,7 +387,7 @@ class MPASContourGenerator:
         return codes
 
     def _sort_filled_contours(
-        self, polys: list[np.ndarray], codes: list[int]
+        self, polys: list[np.ndarray], codes: list[np.ndarray]
     ) -> tuple[list[np.ndarray], list[np.ndarray]]:
         """ """
         polygons = list(map(Polygon, polys))
@@ -409,7 +424,7 @@ class MPASContourGenerator:
 
         # Even-depth polygons are exterior rings; their direct (odd-depth)
         # children are interior holes. Odd-depth polygons inside even-depth
-        # holes are new exterior rings at depth+1, handled in a later iteration.
+        # holes are new exterior rings at depth+1, handled in a later iteration
         for i in range(n_polygons):
             if depth[i] % 2 == 0:
                 p_ccw = _is_ccw(polygons[i])
