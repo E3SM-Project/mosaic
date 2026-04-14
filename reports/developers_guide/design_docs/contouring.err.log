@@ -1,0 +1,84 @@
+Traceback (most recent call last):
+  File "/home/runner/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+    ~~~~~~~~~^
+        nb,
+        ^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/home/runner/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/runner/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/runner/miniconda3/envs/mosaic_dev/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/runner/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+        cell, index, execution_count=self.code_cells_executed + 1
+    )
+  File "/home/runner/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+ds = planar_hex_mesh(20)
+gauss = gaussian(ds.xCell, ds.yCell)
+descriptor = mosaic.Descriptor(ds)
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mTypeError[39m                                 Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[3][39m[32m, line 1[39m
+[32m----> [39m[32m1[39m ds = planar_hex_mesh([32m20[39m)
+[32m      2[39m gauss = gaussian(ds.xCell, ds.yCell)
+[32m      3[39m descriptor = mosaic.Descriptor(ds)
+
+[36mCell[39m[36m [39m[32mIn[1][39m[32m, line 49[39m, in [36mplanar_hex_mesh[39m[34m(N)[39m
+[32m     45[39m     [38;5;28;01mwith[39;00m redirect_stdout(output_capture):
+[32m     46[39m         ds = make_planar_hex_mesh(
+[32m     47[39m             nx=N, ny=N, dc=[32m1[39m / N, nonperiodic_x=[38;5;28;01mTrue[39;00m, nonperiodic_y=[38;5;28;01mTrue[39;00m
+[32m     48[39m         )
+[32m---> [39m[32m49[39m         ds = cull(ds)
+[32m     50[39m         ds = convert(ds)
+[32m     51[39m         [38;5;66;03m# returns None, does centering inplace[39;00m
+[32m     52[39m         center(ds)
+
+[36mFile [39m[32m~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/mpas_tools/mesh/conversion.py:126[39m, in [36mcull[39m[34m(dsIn, dsMask, dsInverse, dsPreserve, graphInfoFileName, logger, dir)[39m
+[32m    124[39m tempdir = mkdtemp([38;5;28mdir[39m=[38;5;28mdir[39m)
+[32m    125[39m inFileName = [33mf[39m[33m'[39m[38;5;132;01m{[39;00mtempdir[38;5;132;01m}[39;00m[33m/ds_in.nc[39m[33m'[39m
+[32m--> [39m[32m126[39m dsIn = [43m_masks_to_int[49m[43m([49m[43mdsIn[49m[43m)[49m
+[32m    127[39m write_netcdf(dsIn, inFileName)
+[32m    128[39m outFileName = [33mf[39m[33m'[39m[38;5;132;01m{[39;00mtempdir[38;5;132;01m}[39;00m[33m/ds_out.nc[39m[33m'[39m
+
+[36mFile [39m[32m~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/mpas_tools/mesh/conversion.py:249[39m, in [36m_masks_to_int[39m[34m(dsIn)[39m
+[32m    242[39m [38;5;250m[39m[33;03m"""Convert mask variables to int32 type as required by the cell culler."""[39;00m
+[32m    243[39m var_list = [
+[32m    244[39m     [33m'[39m[33mregionCellMasks[39m[33m'[39m,
+[32m    245[39m     [33m'[39m[33mtransectCellMasks[39m[33m'[39m,
+[32m    246[39m     [33m'[39m[33mcullCell[39m[33m'[39m,
+[32m    247[39m     [33m'[39m[33mcellSeedMask[39m[33m'[39m,
+[32m    248[39m ]
+[32m--> [39m[32m249[39m dsOut = [43mxr[49m[43m.[49m[43mDataset[49m[43m([49m[43mdsIn[49m[43m,[49m[43m [49m[43mattrs[49m[43m=[49m[43mdsIn[49m[43m.[49m[43mattrs[49m[43m)[49m
+[32m    250[39m [38;5;28;01mfor[39;00m var [38;5;129;01min[39;00m var_list:
+[32m    251[39m     [38;5;28;01mif[39;00m var [38;5;129;01min[39;00m dsIn:
+
+[36mFile [39m[32m~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/xarray/core/dataset.py:389[39m, in [36mDataset.__init__[39m[34m(self, data_vars, coords, attrs)[39m
+[32m    385[39m     ) -> [38;5;28;01mNone[39;00m:
+[32m    386[39m         [38;5;28;01mif[39;00m data_vars [38;5;28;01mis[39;00m [38;5;28;01mNone[39;00m:
+[32m    387[39m             data_vars = {}
+[32m    388[39m         [38;5;28;01mif[39;00m isinstance(data_vars, Dataset):
+[32m--> [39m[32m389[39m             raise TypeError(
+[32m    390[39m                 [33m"Passing a Dataset as `data_vars` to the Dataset constructor is"[39m
+[32m    391[39m                 [33m" not supported. Use `ds.copy()` to create a copy of a Dataset."[39m
+[32m    392[39m             )
+
+[31mTypeError[39m: Passing a Dataset as `data_vars` to the Dataset constructor is not supported. Use `ds.copy()` to create a copy of a Dataset.
+

@@ -379,12 +379,59 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">ds</span> <span class="o">=</span> <span class="n">planar_hex_mesh</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">gauss</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">xCell</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">yCell</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">descriptor</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">Descriptor</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+
+<span class="nn">Cell In[1], line 49,</span> in <span class="ni">planar_hex_mesh</span><span class="nt">(N)</span>
+<span class="g g-Whitespace">     </span><span class="mi">45</span>     <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">output_capture</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">46</span>         <span class="n">ds</span> <span class="o">=</span> <span class="n">make_planar_hex_mesh</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">47</span>             <span class="n">nx</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">ny</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">dc</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">N</span><span class="p">,</span> <span class="n">nonperiodic_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nonperiodic_y</span><span class="o">=</span><span class="kc">True</span>
+<span class="g g-Whitespace">     </span><span class="mi">48</span>         <span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">49</span>         <span class="n">ds</span> <span class="o">=</span> <span class="n">cull</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">50</span>         <span class="n">ds</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">51</span>         <span class="c1"># returns None, does centering inplace</span>
+<span class="g g-Whitespace">     </span><span class="mi">52</span>         <span class="n">center</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/mpas_tools/mesh/conversion.py:126,</span> in <span class="ni">cull</span><span class="nt">(dsIn, dsMask, dsInverse, dsPreserve, graphInfoFileName, logger, dir)</span>
+<span class="g g-Whitespace">    </span><span class="mi">124</span> <span class="n">tempdir</span> <span class="o">=</span> <span class="n">mkdtemp</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="nb">dir</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">125</span> <span class="n">inFileName</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tempdir</span><span class="si">}</span><span class="s1">/ds_in.nc&#39;</span>
+<span class="ne">--&gt; </span><span class="mi">126</span> <span class="n">dsIn</span> <span class="o">=</span> <span class="n">_masks_to_int</span><span class="p">(</span><span class="n">dsIn</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">127</span> <span class="n">write_netcdf</span><span class="p">(</span><span class="n">dsIn</span><span class="p">,</span> <span class="n">inFileName</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">128</span> <span class="n">outFileName</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tempdir</span><span class="si">}</span><span class="s1">/ds_out.nc&#39;</span>
+
+<span class="nn">File ~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/mpas_tools/mesh/conversion.py:249,</span> in <span class="ni">_masks_to_int</span><span class="nt">(dsIn)</span>
+<span class="g g-Whitespace">    </span><span class="mi">242</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Convert mask variables to int32 type as required by the cell culler.&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">243</span> <span class="n">var_list</span> <span class="o">=</span> <span class="p">[</span>
+<span class="g g-Whitespace">    </span><span class="mi">244</span>     <span class="s1">&#39;regionCellMasks&#39;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">245</span>     <span class="s1">&#39;transectCellMasks&#39;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">246</span>     <span class="s1">&#39;cullCell&#39;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">247</span>     <span class="s1">&#39;cellSeedMask&#39;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">248</span> <span class="p">]</span>
+<span class="ne">--&gt; </span><span class="mi">249</span> <span class="n">dsOut</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">dsIn</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">dsIn</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">250</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">251</span>     <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">dsIn</span><span class="p">:</span>
+
+<span class="nn">File ~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/xarray/core/dataset.py:389,</span> in <span class="ni">Dataset.__init__</span><span class="nt">(self, data_vars, coords, attrs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">385</span>     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">386</span>         <span class="k">if</span> <span class="n">data_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">387</span>             <span class="n">data_vars</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="g g-Whitespace">    </span><span class="mi">388</span>         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_vars</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">389</span>             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">390</span>                 <span class="s2">&quot;Passing a Dataset as `data_vars` to the Dataset constructor is&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">391</span>                 <span class="s2">&quot; not supported. Use `ds.copy()` to create a copy of a Dataset.&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">392</span>             <span class="p">)</span>
+
+<span class="ne">TypeError</span>: Passing a Dataset as `data_vars` to the Dataset constructor is not supported. Use `ds.copy()` to create a copy of a Dataset.
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/b176a8145fe0a03b925d317faef1559eb78c7fe1c3af0b8a33d9ce6e23f58a42.png"><img alt="../../_images/b176a8145fe0a03b925d317faef1559eb78c7fe1c3af0b8a33d9ce6e23f58a42.png" height="265" src="../../_images/b176a8145fe0a03b925d317faef1559eb78c7fe1c3af0b8a33d9ce6e23f58a42.png" width="360" />
-</a>
-</div>
 </div>
 <p><strong>Figure 1.</strong> Gaussian kernel with <span class="math notranslate nohighlight">\(A=2\)</span> and <span class="math notranslate nohighlight">\(\sigma=0.15\)</span> evaluated on a <span class="math notranslate nohighlight">\(20\times20\)</span> cell planar non-periodic MPAS mesh.</p>
 <p>Now, let’s contour the <code class="docutils literal notranslate"><span class="pre">1.0</span></code> level. Like “Marching Squares” algorithm, we’ll start by creating a boolean mask of cells above and below the contour level.</p>
@@ -396,27 +443,15 @@
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/611bb3636adfb1ee74edf454f63e1fac5e60fefe2986aeb45f6fb015da01d21d.png"><img alt="../../_images/611bb3636adfb1ee74edf454f63e1fac5e60fefe2986aeb45f6fb015da01d21d.png" height="361" src="../../_images/611bb3636adfb1ee74edf454f63e1fac5e60fefe2986aeb45f6fb015da01d21d.png" width="361" />
-</a>
-</div>
 </div>
 <p><strong>Figure 2.</strong> Boolean mask of cells with a value greater than <span class="math notranslate nohighlight">\(1\)</span> for the field plotted above (<strong>Figure 1</strong>). Gray cells are above (True) and white cells are below (False) the contour level.</p>
 <p>From examining the boolean mask, plotted on the native mesh, it becomes clear that one way to display contour boundary is to use the edges of the mesh where the mask is true on one side and false on the other.
 To identify the edges where this is true, we’ll use the “exculusive or” (i.e. <span class="math notranslate nohighlight">\(\mathrm{XOR}\)</span>) operation along the second dimension of the <span class="math notranslate nohighlight">\(\mathrm{cellsOnEdge}\)</span> array, which is of size <span class="math notranslate nohighlight">\(\mathrm{nEdges} \times 2\)</span>.</p>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/ac95c2f543e41fc7c4127c70867a6a9d312554a5aaa119c3b34c68d3c4b30b1b.png"><img alt="../../_images/ac95c2f543e41fc7c4127c70867a6a9d312554a5aaa119c3b34c68d3c4b30b1b.png" height="361" src="../../_images/ac95c2f543e41fc7c4127c70867a6a9d312554a5aaa119c3b34c68d3c4b30b1b.png" width="361" />
-</a>
-</div>
 </div>
 <p><strong>Figure 3.</strong> Boolean mask of cells with a value greater than <span class="math notranslate nohighlight">\(1\)</span>, with edges corresponding to the contour boundary denoted in blue.</p>
 <p>Unfortunately it’s not quite that simple. While we’ve identified the edges that correspond to the contour boundary, the <strong>order</strong> of those edges are quite important for plotting.</p>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/b9354a085c3196e15d77fe207f7f471dace6f2f316b5ae775029374d509162d4.png"><img alt="../../_images/b9354a085c3196e15d77fe207f7f471dace6f2f316b5ae775029374d509162d4.png" height="403" src="../../_images/b9354a085c3196e15d77fe207f7f471dace6f2f316b5ae775029374d509162d4.png" width="746" />
-</a>
-</div>
 </div>
 <p><strong>Figure 4.</strong> (Left) Contour boundary edges color coded by their index in the boundary edge list.
 (Right) An attempt to plot the boundary edges as polygon.
@@ -435,10 +470,6 @@ This subset of <span class="math notranslate nohighlight">\(\mathrm{verticesOnEd
 <p>Because the maximum degree is 2, traversal reduces to a simple linear chain walk: at each step there is at most one unvisited neighbor. For a <strong>path</strong>, we start at one of the two degree-1 endpoints and walk to the other. For a <strong>cycle</strong>, we start at any node and walk until no unvisited neighbors remain, then close the loop by appending the start node.</p>
 <p>This is implemented in the custom <code class="docutils literal notranslate"><span class="pre">ContourGraph</span></code> class in <code class="docutils literal notranslate"><span class="pre">mosaic/contour.py</span></code>. The <code class="docutils literal notranslate"><span class="pre">walk()</span></code> method performs the chain traversal, and <code class="docutils literal notranslate"><span class="pre">components()</span></code> uses an iterative depth-first search to enumerate connected components. No general graph library is required at runtime — NetworkX is available only as an optional testing utility via <code class="docutils literal notranslate"><span class="pre">ContourGraph.to_networkx()</span></code>.</p>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/0b2b629652b9186a99d9a20f332e97268a9ecf2562d414e47e475ad47d67a3fe.png"><img alt="../../_images/0b2b629652b9186a99d9a20f332e97268a9ecf2562d414e47e475ad47d67a3fe.png" height="403" src="../../_images/0b2b629652b9186a99d9a20f332e97268a9ecf2562d414e47e475ad47d67a3fe.png" width="746" />
-</a>
-</div>
 </div>
 <p><strong>Figure 5.</strong> (Left) Ordered contour boundary edges color-coded by their index in the boundary edge list. (Right) Ordered contour boundary edges as a polygon. Because the graph traversal produces a sorted vertex sequence, the resulting polygon is valid (i.e. not self-intersecting).</p>
 <p>With the ordered vertex sequence from the graph traversal, we can now plot the contour boundary as a polygon. This is the basic functionality we need to plot unstructured contour boundaries in <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>.
@@ -483,10 +514,6 @@ where:</p>
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/cf2e3eea244ad0f9f49654310b06629a27f57871f2c5a556a84adf7c7136f4de.png"><img alt="../../_images/cf2e3eea244ad0f9f49654310b06629a27f57871f2c5a556a84adf7c7136f4de.png" height="268" src="../../_images/cf2e3eea244ad0f9f49654310b06629a27f57871f2c5a556a84adf7c7136f4de.png" width="360" />
-</a>
-</div>
 </div>
 <p><strong>Figure 6.</strong> Checkerboard field, evaluated on a <span class="math notranslate nohighlight">\(100 \times 100\)</span> cell mesh.</p>
 <p>A first step, let’s create the boolean</p>
@@ -498,10 +525,6 @@ where:</p>
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/62f5f7229368f68e60dc95554d9e66987d13a5d6262b63f83a3736933500f5cf.png"><img alt="../../_images/62f5f7229368f68e60dc95554d9e66987d13a5d6262b63f83a3736933500f5cf.png" height="361" src="../../_images/62f5f7229368f68e60dc95554d9e66987d13a5d6262b63f83a3736933500f5cf.png" width="746" />
-</a>
-</div>
 </div>
 <p><strong>Figure 7.</strong> (Left) Boolean mask of <span class="math notranslate nohighlight">\(f(x, y) &lt; 0.0\)</span> evaluated on the MPAS mesh. (Right) The same checkerboard field, evaluated and contoured on a regular quadrilateral mesh. Blue lines are the contour lines and grey is the filled contour area.</p>
 <p><strong>Boundaries</strong></p>
@@ -539,10 +562,6 @@ where:</p>
 </div>
 </div>
 </details>
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/f6f34672fbe5130b7c18316bf4c4954d6bd158f9d37d46b9384701dbd32253b7.png"><img alt="../../_images/f6f34672fbe5130b7c18316bf4c4954d6bd158f9d37d46b9384701dbd32253b7.png" height="361" src="../../_images/f6f34672fbe5130b7c18316bf4c4954d6bd158f9d37d46b9384701dbd32253b7.png" width="746" />
-</a>
-</div>
 </div>
 <p><strong>Figure 8</strong>. (Left) <code class="docutils literal notranslate"><span class="pre">mosaic.contour</span></code> result for contours at <span class="math notranslate nohighlight">\(-1, 0, 1\)</span> (blue, orange, red) of the checkerboard field, evaluated on the MPAS mesh. (Right) <code class="docutils literal notranslate"><span class="pre">plt.contour</span></code> of the same checkerboard field on a regular quadrilateral grid for comparison.</p>
 <p>As we can see above, we get good agreement between our <code class="docutils literal notranslate"><span class="pre">mosaic.contour</span></code> implementation and the <code class="docutils literal notranslate"><span class="pre">plt.contour</span></code> result. The major difference is the jagged appearance of the MPAS contours due to the coarse resolution of the mesh, <strong>but</strong> this is desired feature of implementation. <code class="docutils literal notranslate"><span class="pre">plt.contour</span></code> does linear interpolation, which produces the smooth boundaries, but that is not something we want (or at least on all the time). Future work will investigate adding optional support for smooth contours.</p>
@@ -552,10 +571,6 @@ where:</p>
 <p>Filled contours, specifically the possibility of interior boundaries, presents a challenge to our treatment so far mesh contours as graphs.
 To illustrate this challenge we will visualize two, multi-component, <a class="reference external" href="https://en.wikipedia.org/wiki/Graph_isomorphism">isomorphic</a> graphs, which according to graph theory are equivalent.</p>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/33a0494964a72924e0c9d1459d8ed8b1d3a6a70f444441b76061637b33c699fb.png"><img alt="../../_images/33a0494964a72924e0c9d1459d8ed8b1d3a6a70f444441b76061637b33c699fb.png" height="361" src="../../_images/33a0494964a72924e0c9d1459d8ed8b1d3a6a70f444441b76061637b33c699fb.png" width="746" />
-</a>
-</div>
 </div>
 <p><strong>Figure 9</strong>. Two multi-componnet isomorphic graphs, plotted using their coordinate information.</p>
 <p>As far a graph theory is concerned, the two graphs above are equivalent.
@@ -571,18 +586,10 @@ So far we only used the mesh connectivity information to create the unfilled con
 For more information about this, refer to the <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> documentation: <a class="reference external" href="https://matplotlib.org/stable/gallery/shapes_and_collections/donut.html#sphx-glr-gallery-shapes-and-collections-donut-py">here</a>.</p>
 <p>Following the <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> documentation</p>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/dea584cc79dc6da8c91706f9c902780828c621429b0e6d790ba0c1a96928d4b9.png"><img alt="../../_images/dea584cc79dc6da8c91706f9c902780828c621429b0e6d790ba0c1a96928d4b9.png" height="245" src="../../_images/dea584cc79dc6da8c91706f9c902780828c621429b0e6d790ba0c1a96928d4b9.png" width="561" />
-</a>
-</div>
 </div>
 <p><strong>Figure 10</strong>. Illustration of the importance of the interior vs. exterior relative ordering for rendering interior boundaries.</p>
 <p>So, with above considerations in mind let’s return to the same sine field, evaluated on a <span class="math notranslate nohighlight">\(100 \times 100\)</span> cell mesh.</p>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/cf2e3eea244ad0f9f49654310b06629a27f57871f2c5a556a84adf7c7136f4de.png"><img alt="../../_images/cf2e3eea244ad0f9f49654310b06629a27f57871f2c5a556a84adf7c7136f4de.png" height="268" src="../../_images/cf2e3eea244ad0f9f49654310b06629a27f57871f2c5a556a84adf7c7136f4de.png" width="360" />
-</a>
-</div>
 </div>
 <p><strong>Figure 11.</strong> Checkerboard field, evaluated on a <span class="math notranslate nohighlight">\(100 \times 100\)</span> cell mesh.</p>
 <p>Like filled contouring, our first step will be to create the boolean mask.
@@ -595,19 +602,11 @@ Because this is a filled contour we will need both an upper and lower bound (cf.
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/9990dbf343e457018e747568ea06fb9fe5f8160b9b409128a4858c0daf4a54f6.png"><img alt="../../_images/9990dbf343e457018e747568ea06fb9fe5f8160b9b409128a4858c0daf4a54f6.png" height="361" src="../../_images/9990dbf343e457018e747568ea06fb9fe5f8160b9b409128a4858c0daf4a54f6.png" width="746" />
-</a>
-</div>
 </div>
 <p><strong>Figure 12.</strong> (Left) Boolean mask of <span class="math notranslate nohighlight">\(-1.0 &lt; f(x, y) &lt; 0.0\)</span> evaluated on the MPAS mesh. (Right) The same checkerboard field, evaluated and contoured on a regular quadrilateral mesh. The grey is the filled contour area.</p>
 <p>As a first step, we will use the exact same steps as unfilled contours to extract and sort the contour boundaries using the connectivity information.
 One important difference between the filled (grey) and unfilled (blue lines) is that the filled contours follow the mesh boundary.</p>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/0a6d4dbf0e8965ec7c56c0d8a469d31741205d85ceb13819a3ed13de0aef0b1a.png"><img alt="../../_images/0a6d4dbf0e8965ec7c56c0d8a469d31741205d85ceb13819a3ed13de0aef0b1a.png" height="315" src="../../_images/0a6d4dbf0e8965ec7c56c0d8a469d31741205d85ceb13819a3ed13de0aef0b1a.png" width="361" />
-</a>
-</div>
 </div>
 <p><strong>Figure 13.</strong> The contour boundaries identified just using connectivity information.
 Each unique contour component has it’s own color.
@@ -615,10 +614,6 @@ Notice the pink and brown boundaries are really interior boundaries of the blue 
 <p>We will now used the coordinate information to recursively search for containment of our contour components.
 If we find an interior boundary during this recursive search, we will also ensure it’s relative order is opposite it’s parent to ensure proper plotting in <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> once we will the contours.</p>
 <div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/c0509258c8a777747afd3eb7ac8f94ec91928b3ede57b44d6cd285f6d639be93.png"><img alt="../../_images/c0509258c8a777747afd3eb7ac8f94ec91928b3ede57b44d6cd285f6d639be93.png" height="315" src="../../_images/c0509258c8a777747afd3eb7ac8f94ec91928b3ede57b44d6cd285f6d639be93.png" width="361" />
-</a>
-</div>
 </div>
 <p><strong>Figure 14.</strong> The contour boundaries identified after recursively search for containment using the coordinate information.
 Notice the interior boundaries of the blue contour are now blue as we’d expect.</p>
@@ -656,10 +651,6 @@ Now let’s see it in practice and compare to our <code class="docutils literal 
 </div>
 </div>
 </details>
-<div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/d623a17b3ae9e43b64e4182a88eaa696ad02662d3c7cc98a0c700dabe651e3d5.png"><img alt="../../_images/d623a17b3ae9e43b64e4182a88eaa696ad02662d3c7cc98a0c700dabe651e3d5.png" height="361" src="../../_images/d623a17b3ae9e43b64e4182a88eaa696ad02662d3c7cc98a0c700dabe651e3d5.png" width="746" />
-</a>
-</div>
 </div>
 <p><strong>Figure 15.</strong> <code class="docutils literal notranslate"><span class="pre">mosaic.contourf</span></code> result for filled contour levels of <span class="math notranslate nohighlight">\(-1, 0, 1\)</span> of the checkerboard field, evaluated on the MPAS mesh. (Right) <code class="docutils literal notranslate"><span class="pre">plt.contourf</span></code> of the same checkerboard field on a regular quadrilateral grid for comparison.</p>
 <p>As we can see above, we also get good agreement between our <code class="docutils literal notranslate"><span class="pre">mosaic.contourf</span></code> implementation and the <code class="docutils literal notranslate"><span class="pre">plt.contourf</span></code> result.
