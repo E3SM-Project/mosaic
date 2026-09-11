@@ -27,20 +27,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=37a2a518" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../_static/documentation_options.js?v=27de968b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
@@ -51,26 +51,33 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'developers_guide/design_docs/contouring';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="prev" title="Design Documents" href="../design_docs.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -96,7 +103,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -295,11 +346,18 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -327,7 +385,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rough-sketch-of-implementation">Rough Sketch of Implementation</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unstrucuted-mesh-contours-as-graphs">Unstrucuted Mesh Contours as Graphs</a></li>
@@ -379,59 +437,12 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">ds</span> <span class="o">=</span> <span class="n">planar_hex_mesh</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">gauss</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">xCell</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">yCell</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">descriptor</span> <span class="o">=</span> <span class="n">mosaic</span><span class="o">.</span><span class="n">Descriptor</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-
-<span class="nn">Cell In[1], line 49,</span> in <span class="ni">planar_hex_mesh</span><span class="nt">(N)</span>
-<span class="g g-Whitespace">     </span><span class="mi">45</span>     <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">output_capture</span><span class="p">):</span>
-<span class="g g-Whitespace">     </span><span class="mi">46</span>         <span class="n">ds</span> <span class="o">=</span> <span class="n">make_planar_hex_mesh</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">47</span>             <span class="n">nx</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">ny</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">dc</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">N</span><span class="p">,</span> <span class="n">nonperiodic_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nonperiodic_y</span><span class="o">=</span><span class="kc">True</span>
-<span class="g g-Whitespace">     </span><span class="mi">48</span>         <span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">49</span>         <span class="n">ds</span> <span class="o">=</span> <span class="n">cull</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">50</span>         <span class="n">ds</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">51</span>         <span class="c1"># returns None, does centering inplace</span>
-<span class="g g-Whitespace">     </span><span class="mi">52</span>         <span class="n">center</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/mpas_tools/mesh/conversion.py:126,</span> in <span class="ni">cull</span><span class="nt">(dsIn, dsMask, dsInverse, dsPreserve, graphInfoFileName, logger, dir)</span>
-<span class="g g-Whitespace">    </span><span class="mi">124</span> <span class="n">tempdir</span> <span class="o">=</span> <span class="n">mkdtemp</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="nb">dir</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">125</span> <span class="n">inFileName</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tempdir</span><span class="si">}</span><span class="s1">/ds_in.nc&#39;</span>
-<span class="ne">--&gt; </span><span class="mi">126</span> <span class="n">dsIn</span> <span class="o">=</span> <span class="n">_masks_to_int</span><span class="p">(</span><span class="n">dsIn</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">127</span> <span class="n">write_netcdf</span><span class="p">(</span><span class="n">dsIn</span><span class="p">,</span> <span class="n">inFileName</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">128</span> <span class="n">outFileName</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tempdir</span><span class="si">}</span><span class="s1">/ds_out.nc&#39;</span>
-
-<span class="nn">File ~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/mpas_tools/mesh/conversion.py:249,</span> in <span class="ni">_masks_to_int</span><span class="nt">(dsIn)</span>
-<span class="g g-Whitespace">    </span><span class="mi">242</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Convert mask variables to int32 type as required by the cell culler.&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">243</span> <span class="n">var_list</span> <span class="o">=</span> <span class="p">[</span>
-<span class="g g-Whitespace">    </span><span class="mi">244</span>     <span class="s1">&#39;regionCellMasks&#39;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">245</span>     <span class="s1">&#39;transectCellMasks&#39;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">246</span>     <span class="s1">&#39;cullCell&#39;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">247</span>     <span class="s1">&#39;cellSeedMask&#39;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">248</span> <span class="p">]</span>
-<span class="ne">--&gt; </span><span class="mi">249</span> <span class="n">dsOut</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">dsIn</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">dsIn</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">250</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">251</span>     <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">dsIn</span><span class="p">:</span>
-
-<span class="nn">File ~/miniconda3/envs/mosaic_dev/lib/python3.14/site-packages/xarray/core/dataset.py:389,</span> in <span class="ni">Dataset.__init__</span><span class="nt">(self, data_vars, coords, attrs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">385</span>     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">386</span>         <span class="k">if</span> <span class="n">data_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">387</span>             <span class="n">data_vars</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="g g-Whitespace">    </span><span class="mi">388</span>         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_vars</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">389</span>             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">390</span>                 <span class="s2">&quot;Passing a Dataset as `data_vars` to the Dataset constructor is&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">391</span>                 <span class="s2">&quot; not supported. Use `ds.copy()` to create a copy of a Dataset.&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">392</span>             <span class="p">)</span>
-
-<span class="ne">TypeError</span>: Passing a Dataset as `data_vars` to the Dataset constructor is not supported. Use `ds.copy()` to create a copy of a Dataset.
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/95d7d86bd4cd9bfa4bf33c7025285008f03573d71851c3d2ba49c47c8c29a654.png"><img alt="../../_images/95d7d86bd4cd9bfa4bf33c7025285008f03573d71851c3d2ba49c47c8c29a654.png" height="265" src="../../_images/95d7d86bd4cd9bfa4bf33c7025285008f03573d71851c3d2ba49c47c8c29a654.png" width="360" />
+</a>
+</div>
 </div>
 <p><strong>Figure 1.</strong> Gaussian kernel with <span class="math notranslate nohighlight">\(A=2\)</span> and <span class="math notranslate nohighlight">\(\sigma=0.15\)</span> evaluated on a <span class="math notranslate nohighlight">\(20\times20\)</span> cell planar non-periodic MPAS mesh.</p>
 <p>Now, let’s contour the <code class="docutils literal notranslate"><span class="pre">1.0</span></code> level. Like “Marching Squares” algorithm, we’ll start by creating a boolean mask of cells above and below the contour level.</p>
@@ -443,15 +454,27 @@
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/8a08703211d6f370a92a2092635f943792838fd2b8f5b4440311d6218766c129.png"><img alt="../../_images/8a08703211d6f370a92a2092635f943792838fd2b8f5b4440311d6218766c129.png" height="361" src="../../_images/8a08703211d6f370a92a2092635f943792838fd2b8f5b4440311d6218766c129.png" width="361" />
+</a>
+</div>
 </div>
 <p><strong>Figure 2.</strong> Boolean mask of cells with a value greater than <span class="math notranslate nohighlight">\(1\)</span> for the field plotted above (<strong>Figure 1</strong>). Gray cells are above (True) and white cells are below (False) the contour level.</p>
 <p>From examining the boolean mask, plotted on the native mesh, it becomes clear that one way to display contour boundary is to use the edges of the mesh where the mask is true on one side and false on the other.
 To identify the edges where this is true, we’ll use the “exculusive or” (i.e. <span class="math notranslate nohighlight">\(\mathrm{XOR}\)</span>) operation along the second dimension of the <span class="math notranslate nohighlight">\(\mathrm{cellsOnEdge}\)</span> array, which is of size <span class="math notranslate nohighlight">\(\mathrm{nEdges} \times 2\)</span>.</p>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/f14769b3781352fd260dc4918119ad38f0c359322a1cbbc2bba7bec479252099.png"><img alt="../../_images/f14769b3781352fd260dc4918119ad38f0c359322a1cbbc2bba7bec479252099.png" height="361" src="../../_images/f14769b3781352fd260dc4918119ad38f0c359322a1cbbc2bba7bec479252099.png" width="361" />
+</a>
+</div>
 </div>
 <p><strong>Figure 3.</strong> Boolean mask of cells with a value greater than <span class="math notranslate nohighlight">\(1\)</span>, with edges corresponding to the contour boundary denoted in blue.</p>
 <p>Unfortunately it’s not quite that simple. While we’ve identified the edges that correspond to the contour boundary, the <strong>order</strong> of those edges are quite important for plotting.</p>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/424b70bf5dd643cb77a72beb6ca4ea63dd2cafeeb69376125de5b735ea616c68.png"><img alt="../../_images/424b70bf5dd643cb77a72beb6ca4ea63dd2cafeeb69376125de5b735ea616c68.png" height="402" src="../../_images/424b70bf5dd643cb77a72beb6ca4ea63dd2cafeeb69376125de5b735ea616c68.png" width="746" />
+</a>
+</div>
 </div>
 <p><strong>Figure 4.</strong> (Left) Contour boundary edges color coded by their index in the boundary edge list.
 (Right) An attempt to plot the boundary edges as polygon.
@@ -470,6 +493,10 @@ This subset of <span class="math notranslate nohighlight">\(\mathrm{verticesOnEd
 <p>Because the maximum degree is 2, traversal reduces to a simple linear chain walk: at each step there is at most one unvisited neighbor. For a <strong>path</strong>, we start at one of the two degree-1 endpoints and walk to the other. For a <strong>cycle</strong>, we start at any node and walk until no unvisited neighbors remain, then close the loop by appending the start node.</p>
 <p>This is implemented in the custom <code class="docutils literal notranslate"><span class="pre">ContourGraph</span></code> class in <code class="docutils literal notranslate"><span class="pre">mosaic/contour.py</span></code>. The <code class="docutils literal notranslate"><span class="pre">walk()</span></code> method performs the chain traversal, and <code class="docutils literal notranslate"><span class="pre">components()</span></code> uses an iterative depth-first search to enumerate connected components. No general graph library is required at runtime — NetworkX is available only as an optional testing utility via <code class="docutils literal notranslate"><span class="pre">ContourGraph.to_networkx()</span></code>.</p>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/fa6dfbf3d7719a94632179a85aa2b23267128813d6769ffff753156a615787d2.png"><img alt="../../_images/fa6dfbf3d7719a94632179a85aa2b23267128813d6769ffff753156a615787d2.png" height="402" src="../../_images/fa6dfbf3d7719a94632179a85aa2b23267128813d6769ffff753156a615787d2.png" width="746" />
+</a>
+</div>
 </div>
 <p><strong>Figure 5.</strong> (Left) Ordered contour boundary edges color-coded by their index in the boundary edge list. (Right) Ordered contour boundary edges as a polygon. Because the graph traversal produces a sorted vertex sequence, the resulting polygon is valid (i.e. not self-intersecting).</p>
 <p>With the ordered vertex sequence from the graph traversal, we can now plot the contour boundary as a polygon. This is the basic functionality we need to plot unstructured contour boundaries in <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>.
@@ -514,6 +541,10 @@ where:</p>
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/33519ec31a1277c1f06230bbd7d4bd28c2078bfa7e41e52099dbef36765c3180.png"><img alt="../../_images/33519ec31a1277c1f06230bbd7d4bd28c2078bfa7e41e52099dbef36765c3180.png" height="268" src="../../_images/33519ec31a1277c1f06230bbd7d4bd28c2078bfa7e41e52099dbef36765c3180.png" width="360" />
+</a>
+</div>
 </div>
 <p><strong>Figure 6.</strong> Checkerboard field, evaluated on a <span class="math notranslate nohighlight">\(100 \times 100\)</span> cell mesh.</p>
 <p>A first step, let’s create the boolean</p>
@@ -525,6 +556,10 @@ where:</p>
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/9a491773c6f35f82fc18c10e1a441c09f9ba1b7f531fe4efef4f109dbc76c5ab.png"><img alt="../../_images/9a491773c6f35f82fc18c10e1a441c09f9ba1b7f531fe4efef4f109dbc76c5ab.png" height="361" src="../../_images/9a491773c6f35f82fc18c10e1a441c09f9ba1b7f531fe4efef4f109dbc76c5ab.png" width="746" />
+</a>
+</div>
 </div>
 <p><strong>Figure 7.</strong> (Left) Boolean mask of <span class="math notranslate nohighlight">\(f(x, y) &lt; 0.0\)</span> evaluated on the MPAS mesh. (Right) The same checkerboard field, evaluated and contoured on a regular quadrilateral mesh. Blue lines are the contour lines and grey is the filled contour area.</p>
 <p><strong>Boundaries</strong></p>
@@ -539,12 +574,12 @@ where:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">double_pannel</span><span class="p">()</span>
 
 <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;levels&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-    <span class="s2">&quot;colors&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="s2">&quot;tab:orange&quot;</span><span class="p">,</span> <span class="s2">&quot;tab:red&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;linestyles&quot;</span><span class="p">:</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+    <span class="s2">"levels"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="s2">"colors"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"tab:blue"</span><span class="p">,</span> <span class="s2">"tab:orange"</span><span class="p">,</span> <span class="s2">"tab:red"</span><span class="p">],</span>
+    <span class="s2">"linestyles"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
 <span class="n">mosaic</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span>
     <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="n">descriptor</span><span class="p">,</span>
@@ -556,12 +591,16 @@ where:</p>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="o">*</span><span class="n">rect_grid</span><span class="p">,</span> <span class="n">rect_data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="o">*</span><span class="n">rect_grid</span><span class="p">,</span> <span class="n">rect_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\texttt</span><span class="si">{mosiac.contour}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\texttt</span><span class="si">{plt.contour}</span><span class="s2">&quot;</span><span class="p">);</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\texttt</span><span class="si">{mosiac.contour}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\texttt</span><span class="si">{plt.contour}</span><span class="s2">"</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 </details>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/0a752e73b916e8aed28b5b9e5a07482bb610b6380091fdf1c641cb0edfd23436.png"><img alt="../../_images/0a752e73b916e8aed28b5b9e5a07482bb610b6380091fdf1c641cb0edfd23436.png" height="361" src="../../_images/0a752e73b916e8aed28b5b9e5a07482bb610b6380091fdf1c641cb0edfd23436.png" width="746" />
+</a>
+</div>
 </div>
 <p><strong>Figure 8</strong>. (Left) <code class="docutils literal notranslate"><span class="pre">mosaic.contour</span></code> result for contours at <span class="math notranslate nohighlight">\(-1, 0, 1\)</span> (blue, orange, red) of the checkerboard field, evaluated on the MPAS mesh. (Right) <code class="docutils literal notranslate"><span class="pre">plt.contour</span></code> of the same checkerboard field on a regular quadrilateral grid for comparison.</p>
 <p>As we can see above, we get good agreement between our <code class="docutils literal notranslate"><span class="pre">mosaic.contour</span></code> implementation and the <code class="docutils literal notranslate"><span class="pre">plt.contour</span></code> result. The major difference is the jagged appearance of the MPAS contours due to the coarse resolution of the mesh, <strong>but</strong> this is desired feature of implementation. <code class="docutils literal notranslate"><span class="pre">plt.contour</span></code> does linear interpolation, which produces the smooth boundaries, but that is not something we want (or at least on all the time). Future work will investigate adding optional support for smooth contours.</p>
@@ -571,6 +610,10 @@ where:</p>
 <p>Filled contours, specifically the possibility of interior boundaries, presents a challenge to our treatment so far mesh contours as graphs.
 To illustrate this challenge we will visualize two, multi-component, <a class="reference external" href="https://en.wikipedia.org/wiki/Graph_isomorphism">isomorphic</a> graphs, which according to graph theory are equivalent.</p>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/ed94466b3b2418bb04a409cb8e484f4ddcac8f7b8521ed62468d965af9b71791.png"><img alt="../../_images/ed94466b3b2418bb04a409cb8e484f4ddcac8f7b8521ed62468d965af9b71791.png" height="361" src="../../_images/ed94466b3b2418bb04a409cb8e484f4ddcac8f7b8521ed62468d965af9b71791.png" width="746" />
+</a>
+</div>
 </div>
 <p><strong>Figure 9</strong>. Two multi-componnet isomorphic graphs, plotted using their coordinate information.</p>
 <p>As far a graph theory is concerned, the two graphs above are equivalent.
@@ -586,10 +629,18 @@ So far we only used the mesh connectivity information to create the unfilled con
 For more information about this, refer to the <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> documentation: <a class="reference external" href="https://matplotlib.org/stable/gallery/shapes_and_collections/donut.html#sphx-glr-gallery-shapes-and-collections-donut-py">here</a>.</p>
 <p>Following the <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> documentation</p>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/367ad1c7fd3c7750d06cbd74273b06b86a7467d54570c6f119a0d36401f06cd3.png"><img alt="../../_images/367ad1c7fd3c7750d06cbd74273b06b86a7467d54570c6f119a0d36401f06cd3.png" height="245" src="../../_images/367ad1c7fd3c7750d06cbd74273b06b86a7467d54570c6f119a0d36401f06cd3.png" width="561" />
+</a>
+</div>
 </div>
 <p><strong>Figure 10</strong>. Illustration of the importance of the interior vs. exterior relative ordering for rendering interior boundaries.</p>
 <p>So, with above considerations in mind let’s return to the same sine field, evaluated on a <span class="math notranslate nohighlight">\(100 \times 100\)</span> cell mesh.</p>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/33519ec31a1277c1f06230bbd7d4bd28c2078bfa7e41e52099dbef36765c3180.png"><img alt="../../_images/33519ec31a1277c1f06230bbd7d4bd28c2078bfa7e41e52099dbef36765c3180.png" height="268" src="../../_images/33519ec31a1277c1f06230bbd7d4bd28c2078bfa7e41e52099dbef36765c3180.png" width="360" />
+</a>
+</div>
 </div>
 <p><strong>Figure 11.</strong> Checkerboard field, evaluated on a <span class="math notranslate nohighlight">\(100 \times 100\)</span> cell mesh.</p>
 <p>Like filled contouring, our first step will be to create the boolean mask.
@@ -602,11 +653,19 @@ Because this is a filled contour we will need both an upper and lower bound (cf.
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/0a1a3f06e66a1958b5310a8c602d716386dd2ef485567891e867d78b6c6ecfa5.png"><img alt="../../_images/0a1a3f06e66a1958b5310a8c602d716386dd2ef485567891e867d78b6c6ecfa5.png" height="361" src="../../_images/0a1a3f06e66a1958b5310a8c602d716386dd2ef485567891e867d78b6c6ecfa5.png" width="746" />
+</a>
+</div>
 </div>
 <p><strong>Figure 12.</strong> (Left) Boolean mask of <span class="math notranslate nohighlight">\(-1.0 &lt; f(x, y) &lt; 0.0\)</span> evaluated on the MPAS mesh. (Right) The same checkerboard field, evaluated and contoured on a regular quadrilateral mesh. The grey is the filled contour area.</p>
 <p>As a first step, we will use the exact same steps as unfilled contours to extract and sort the contour boundaries using the connectivity information.
 One important difference between the filled (grey) and unfilled (blue lines) is that the filled contours follow the mesh boundary.</p>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/9ee2be8aec686d6e23e8a4ab857c2872f4bbb8e7578ccead48d4f260177b2c77.png"><img alt="../../_images/9ee2be8aec686d6e23e8a4ab857c2872f4bbb8e7578ccead48d4f260177b2c77.png" height="315" src="../../_images/9ee2be8aec686d6e23e8a4ab857c2872f4bbb8e7578ccead48d4f260177b2c77.png" width="361" />
+</a>
+</div>
 </div>
 <p><strong>Figure 13.</strong> The contour boundaries identified just using connectivity information.
 Each unique contour component has it’s own color.
@@ -614,6 +673,10 @@ Notice the pink and brown boundaries are really interior boundaries of the blue 
 <p>We will now used the coordinate information to recursively search for containment of our contour components.
 If we find an interior boundary during this recursive search, we will also ensure it’s relative order is opposite it’s parent to ensure proper plotting in <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> once we will the contours.</p>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/9ea0900649ae297b575f2b92d0fbed8490befc175f74faa718dd1424d81f8960.png"><img alt="../../_images/9ea0900649ae297b575f2b92d0fbed8490befc175f74faa718dd1424d81f8960.png" height="315" src="../../_images/9ea0900649ae297b575f2b92d0fbed8490befc175f74faa718dd1424d81f8960.png" width="361" />
+</a>
+</div>
 </div>
 <p><strong>Figure 14.</strong> The contour boundaries identified after recursively search for containment using the coordinate information.
 Notice the interior boundaries of the blue contour are now blue as we’d expect.</p>
@@ -629,12 +692,12 @@ Now let’s see it in practice and compare to our <code class="docutils literal 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">double_pannel</span><span class="p">()</span>
 
 <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;levels&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-    <span class="s2">&quot;colors&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="s2">&quot;tab:orange&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;linestyles&quot;</span><span class="p">:</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+    <span class="s2">"levels"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="s2">"colors"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"tab:blue"</span><span class="p">,</span> <span class="s2">"tab:orange"</span><span class="p">],</span>
+    <span class="s2">"linestyles"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">mosaic</span><span class="o">.</span><span class="n">polypcolor</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
 <span class="n">mosaic</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span>
     <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="n">descriptor</span><span class="p">,</span>
@@ -645,12 +708,16 @@ Now let’s see it in practice and compare to our <code class="docutils literal 
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="o">*</span><span class="n">rect_grid</span><span class="p">,</span> <span class="n">rect_data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="o">*</span><span class="n">rect_grid</span><span class="p">,</span> <span class="n">rect_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\texttt</span><span class="si">{mosiac.contour}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\texttt</span><span class="si">{plt.contour}</span><span class="s2">&quot;</span><span class="p">);</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\texttt</span><span class="si">{mosiac.contour}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\texttt</span><span class="si">{plt.contour}</span><span class="s2">"</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 </details>
+<div class="cell_output docutils container">
+<a class="reference internal image-reference" href="../../_images/68c151c24d8ee67886c8095e1bba1d1980b84fa4977d80da358327fe86424589.png"><img alt="../../_images/68c151c24d8ee67886c8095e1bba1d1980b84fa4977d80da358327fe86424589.png" height="361" src="../../_images/68c151c24d8ee67886c8095e1bba1d1980b84fa4977d80da358327fe86424589.png" width="746" />
+</a>
+</div>
 </div>
 <p><strong>Figure 15.</strong> <code class="docutils literal notranslate"><span class="pre">mosaic.contourf</span></code> result for filled contour levels of <span class="math notranslate nohighlight">\(-1, 0, 1\)</span> of the checkerboard field, evaluated on the MPAS mesh. (Right) <code class="docutils literal notranslate"><span class="pre">plt.contourf</span></code> of the same checkerboard field on a regular quadrilateral grid for comparison.</p>
 <p>As we can see above, we also get good agreement between our <code class="docutils literal notranslate"><span class="pre">mosaic.contourf</span></code> implementation and the <code class="docutils literal notranslate"><span class="pre">plt.contourf</span></code> result.
@@ -715,7 +782,7 @@ Again, the major difference is the jagged appearance of the MPAS contours due to
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rough-sketch-of-implementation">Rough Sketch of Implementation</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unstrucuted-mesh-contours-as-graphs">Unstrucuted Mesh Contours as Graphs</a></li>
@@ -780,8 +847,8 @@ By E3SM Development Team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>

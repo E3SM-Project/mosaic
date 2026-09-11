@@ -56,6 +56,7 @@
       ~MPASContourSet.get_gid
       ~MPASContourSet.get_hatch
       ~MPASContourSet.get_hatch_linewidth
+      ~MPASContourSet.get_hatchcolor
       ~MPASContourSet.get_in_layout
       ~MPASContourSet.get_joinstyle
       ~MPASContourSet.get_label
@@ -125,6 +126,7 @@
       ~MPASContourSet.set_gid
       ~MPASContourSet.set_hatch
       ~MPASContourSet.set_hatch_linewidth
+      ~MPASContourSet.set_hatchcolor
       ~MPASContourSet.set_in_layout
       ~MPASContourSet.set_joinstyle
       ~MPASContourSet.set_label

@@ -27,20 +27,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=37a2a518" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../_static/documentation_options.js?v=27de968b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
@@ -49,6 +49,7 @@
     <script src="../../_static/copybutton.js?v=4ea706d9"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'developers_guide/generated/mosaic.contourf';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="mosaic.Descriptor" href="mosaic.Descriptor.html" />
@@ -56,20 +57,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -95,7 +102,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -294,11 +345,18 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -326,7 +384,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.contourf"><code class="docutils literal notranslate"><span class="pre">contourf()</span></code></a></li>
 </ul>
             </nav>
@@ -361,7 +419,7 @@ coordinate arrays</p></li>
 drawn.  Color-mapping is controlled by <em>cmap</em>, <em>norm</em>, <em>vmin</em>, and
 <em>vmax</em>.</p></li>
 <li><p><strong>levels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, <em>optional</em>) – Determines the number and positions of the contour lines / regions.</p>
-<p>If an int <em>n</em>, use <a class="reference external" href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.MaxNLocator" title="(in Matplotlib v3.10.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaxNLocator</span></code></a>, which tries
+<p>If an int <em>n</em>, use <a class="reference external" href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.MaxNLocator" title="(in Matplotlib v3.11.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaxNLocator</span></code></a>, which tries
 to automatically choose no more than <em>n+2</em> “nice” contour level
 boundaries between the minimum and maximum values of <em>Z</em>.</p>
 <p>If array-like, draw contour lines at the specified levels.  The
@@ -375,7 +433,7 @@ values must be in increasing order.</p>
 </dd>
 <dt class="field-odd">Other Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul>
-<li><p><strong>colors</strong> (<a class="reference external" href="https://matplotlib.org/stable/users/explain/colors/colors.html#colors-def" title="(in Matplotlib v3.10.8)"><span class="xref std std-ref">color</span></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://matplotlib.org/stable/users/explain/colors/colors.html#colors-def" title="(in Matplotlib v3.10.8)"><span class="xref std std-ref">color</span></a>, <em>optional</em>) – The colors of the levels, i.e. the lines for <code class="docutils literal notranslate"><span class="pre">mosaic.contour</span></code> and
+<li><p><strong>colors</strong> (<a class="reference external" href="https://matplotlib.org/stable/users/explain/colors/colors.html#colors-def" title="(in Matplotlib v3.11.1)"><span class="xref std std-ref">color</span></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://matplotlib.org/stable/users/explain/colors/colors.html#colors-def" title="(in Matplotlib v3.11.1)"><span class="xref std std-ref">color</span></a>, <em>optional</em>) – The colors of the levels, i.e. the lines for <code class="docutils literal notranslate"><span class="pre">mosaic.contour</span></code> and
 the areas for <code class="docutils literal notranslate"><span class="pre">mosaic.contourf</span></code>.</p>
 <p>The sequence is cycled for the levels in ascending order. If the
 sequence is shorter than the number of levels, it’s repeated.</p>
@@ -386,7 +444,7 @@ with the same color.</p>
 used.</p>
 </li>
 <li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em>: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – The alpha blending value, between 0 (transparent) and 1 (opaque).</p></li>
-<li><p><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <cite>~matplotlib.colors.Colormap</cite>, <em>default</em>: <code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/customizing.html?highlight=image.cmap#matplotlibrc-sample" title="(in Matplotlib v3.10.8)"><span class="xref std std-ref"><span class="pre">rcParams[“image.cmap”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">'viridis'</span></code>)) – The Colormap instance or registered colormap name used to map scalar data
+<li><p><strong>cmap</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <cite>~matplotlib.colors.Colormap</cite>, <em>default</em>: <code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/configuration.html?highlight=image.cmap#rcparam-image-cmap" title="(in Matplotlib v3.11.1)"><span class="xref std std-ref"><span class="pre">rcParams[“image.cmap”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">'viridis'</span></code>)) – The Colormap instance or registered colormap name used to map scalar data
 to colors.</p>
 <p>This parameter is ignored if <em>colors</em> is set.</p>
 </li>
@@ -396,7 +454,7 @@ used, mapping the lowest value to 0 and the highest to 1.</p>
 <p>If given, this can be one of the following:</p>
 <ul class="simple">
 <li><p>An instance of <cite>.Normalize</cite> or one of its subclasses
-(see <a class="reference external" href="https://matplotlib.org/stable/users/explain/colors/colormapnorms.html#colormapnorms" title="(in Matplotlib v3.10.8)"><span>Colormap normalization</span></a>).</p></li>
+(see <a class="reference external" href="https://matplotlib.org/stable/users/explain/colors/colormapnorms.html#colormapnorms" title="(in Matplotlib v3.11.1)"><span>Colormap normalization</span></a>).</p></li>
 <li><p>A scale name, i.e. one of “linear”, “log”, “symlog”, “logit”, etc.  For a
 list of available scales, call <cite>matplotlib.scale.get_scale_names()</cite>.
 In that case, a suitable <cite>.Normalize</cite> subclass is dynamically generated
@@ -413,7 +471,7 @@ name together with <em>vmin</em>/<em>vmax</em> is acceptable).</p>
 based on <em>levels</em>.</p>
 <p>This parameter is ignored if <em>colors</em> is set.</p>
 </li>
-<li><p><strong>locator</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Locator" title="(in Matplotlib v3.10.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Locator</span></code></a> subclass, <em>optional</em>) – The locator is used to determine the contour levels if they are not
+<li><p><strong>locator</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/ticker_api.html#matplotlib.ticker.Locator" title="(in Matplotlib v3.11.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Locator</span></code></a> subclass, <em>optional</em>) – The locator is used to determine the contour levels if they are not
 given explicitly via <em>levels</em>.  Defaults to
 <cite>~matplotlib.ticker.MaxNLocator</cite>.</p></li>
 <li><p><strong>extend</strong> (<code class="docutils literal notranslate"><span class="pre">{'neither',</span> <span class="pre">'both',</span> <span class="pre">'min',</span> <span class="pre">'max'}</span></code>, <em>default</em>: <code class="docutils literal notranslate"><span class="pre">'neither'</span></code>) – Determines the coloring of values that are outside the <em>levels</em>
@@ -428,12 +486,12 @@ that the over and under values are the edge values of the colormap.
 You may want to set these values explicitly using
 <cite>.Colormap.set_under</cite> and <cite>.Colormap.set_over</cite>.</p>
 </li>
-<li><p><strong>linewidths</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, <em>default</em>: <code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/customizing.html?highlight=contour.linewidth#matplotlibrc-sample" title="(in Matplotlib v3.10.8)"><span class="xref std std-ref"><span class="pre">rcParams[“contour.linewidth”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)) – <em>Only applies to</em> <a class="reference internal" href="mosaic.contour.html#mosaic.contour" title="mosaic.contour"><code class="xref py py-func docutils literal notranslate"><span class="pre">contour()</span></code></a>.</p>
+<li><p><strong>linewidths</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, <em>default</em>: <code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/configuration.html?highlight=contour.linewidth#rcparam-contour-linewidth" title="(in Matplotlib v3.11.1)"><span class="xref std std-ref"><span class="pre">rcParams[“contour.linewidth”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)) – <em>Only applies to</em> <a class="reference internal" href="mosaic.contour.html#mosaic.contour" title="mosaic.contour"><code class="xref py py-func docutils literal notranslate"><span class="pre">contour()</span></code></a>.</p>
 <p>The line width of the contour lines.</p>
 <p>If a number, all levels will be plotted with this linewidth.</p>
 <p>If a sequence, the levels in ascending order will be plotted with
 the linewidths in the order specified.</p>
-<p>If <em>None</em>, this falls back to <code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/customizing.html?highlight=lines.linewidth#matplotlibrc-sample" title="(in Matplotlib v3.10.8)"><span class="xref std std-ref"><span class="pre">rcParams[“lines.linewidth”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>).</p>
+<p>If <em>None</em>, this falls back to <code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/configuration.html?highlight=lines.linewidth#rcparam-lines-linewidth" title="(in Matplotlib v3.11.1)"><span class="xref std std-ref"><span class="pre">rcParams[“lines.linewidth”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>).</p>
 </li>
 <li><p><strong>linestyles</strong> (<code class="docutils literal notranslate"><span class="pre">{*None*,</span> <span class="pre">'solid',</span> <span class="pre">'dashed',</span> <span class="pre">'dashdot',</span> <span class="pre">'dotted'}</span></code>, <em>optional</em>) – <em>Only applies to</em> <a class="reference internal" href="mosaic.contour.html#mosaic.contour" title="mosaic.contour"><code class="xref py py-func docutils literal notranslate"><span class="pre">contour()</span></code></a>.</p>
 <p>If <em>linestyles</em> is <em>None</em>, the default is ‘solid’ unless the lines
@@ -447,7 +505,7 @@ number of contour levels it will be repeated as necessary.</p>
 <p>If <em>linestyles</em> is <em>None</em> and the lines are monochrome, this
 argument specifies the line style for negative contours.</p>
 <p>If <em>negative_linestyles</em> is <em>None</em>, the default is taken from
-<code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/customizing.html?highlight=contour.negative_linestyle#matplotlibrc-sample" title="(in Matplotlib v3.10.8)"><span class="xref std std-ref"><span class="pre">rcParams[“contour.negative_linestyle”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">'dashed'</span></code>).</p>
+<code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/configuration.html?highlight=contour.negative_linestyle#rcparam-contour-negative-linestyle" title="(in Matplotlib v3.11.1)"><span class="xref std std-ref"><span class="pre">rcParams[“contour.negative_linestyle”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">'dashed'</span></code>).</p>
 </li>
 <li><p><strong>hatches</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>, <em>optional</em>) – <em>Only applies to</em> <a class="reference internal" href="#mosaic.contourf" title="mosaic.contourf"><code class="xref py py-func docutils literal notranslate"><span class="pre">contourf()</span></code></a>.</p>
 <p>A list of cross hatch patterns to use on the filled areas.  If
@@ -456,7 +514,7 @@ argument specifies the line style for negative contours.</p>
 </li>
 <li><p><strong>antialiased</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Enable antialiasing, overriding the defaults.  For filled contours,
 the default is <em>False</em>.  For line contours, it is taken from
-<code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/customizing.html?highlight=lines.antialiased#matplotlibrc-sample" title="(in Matplotlib v3.10.8)"><span class="xref std std-ref"><span class="pre">rcParams[“lines.antialiased”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p></li>
+<code class="docutils literal notranslate"><a class="reference external" href="https://matplotlib.org/stable/users/explain/configuration.html?highlight=lines.antialiased#rcparam-lines-antialiased" title="(in Matplotlib v3.11.1)"><span class="xref std std-ref"><span class="pre">rcParams[“lines.antialiased”]</span></span></a></code> (default: <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p></li>
 </ul>
 </dd>
 </dl>
@@ -526,7 +584,7 @@ grid interpolation.</p></li>
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mosaic.contourf"><code class="docutils literal notranslate"><span class="pre">contourf()</span></code></a></li>
 </ul>
   </nav></div>
@@ -576,8 +634,8 @@ By E3SM Development Team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>
