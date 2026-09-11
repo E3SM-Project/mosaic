@@ -1,0 +1,26 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: mosaic
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Andrew
+    family-names: Nolan
+    affiliation: Los Alamos National Laboratory
+    orcid: 'https://orcid.org/0000-0002-9785-0196'
+  - given-names: Xylar
+    family-names: 'Asay-Davis'
+    affiliation: Argonne National Laboratory
+    orcid: 'https://orcid.org/0000-0002-1990-892X'
+identifiers:
+  - type: url
+    value: 'https://doi.org/10.5281/zenodo.19572312'
+repository-code: 'https://github.com/e3SM-Project/mosaic'
+url: 'https://docs.e3sm.org/mosaic/'
+license: BSD-3-Clause
+version: 1.3.0
+date-released: '2026-04-14'
