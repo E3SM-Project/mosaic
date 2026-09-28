@@ -94,6 +94,25 @@ def compute_cell_patches(ds: Dataset) -> ndarray:
     return np.stack((x, y), axis=-1)
 
 
+def compute_cell_wireframe(ds: Dataset) -> tuple[ndarray, ndarray]:
+    """Construct line segments connecting the vertices of each edge.
+
+    Parameters
+    ----------
+    ds : Dataset
+        Zero-indexed MPAS mesh dataset.
+
+    Returns
+    -------
+    tuple[ndarray, ndarray]
+        (x, y) line segment arrays separated by NaN, shape ``(nEdges, 3)``.
+    """
+    x, y = resolve_coords(
+        ds, ds.verticesOnEdge, source="Vertex", fallback=None
+    )
+    return np.insert(x, 2, np.nan, axis=1), np.insert(y, 2, np.nan, axis=1)
+
+
 def compute_edge_patches(ds: Dataset) -> ndarray:
     """Create edge patches for an MPAS mesh.
 
@@ -129,6 +148,46 @@ def compute_edge_patches(ds: Dataset) -> ndarray:
     )
 
     return np.stack((x, y), axis=-1)
+
+
+def compute_edge_wireframe(ds: Dataset) -> tuple[ndarray, ndarray]:
+    """Construct line segments connecting cell centers to the vertices on cell.
+
+    Includes outer boundary edges to close the perimeter.
+
+    Parameters
+    ----------
+    ds : Dataset
+        Zero-indexed MPAS mesh dataset.
+
+    Returns
+    -------
+    tuple[ndarray, ndarray]
+        (x, y) line segment arrays separated by NaN.
+    """
+    x_vert, y_vert = resolve_coords(
+        ds, ds.verticesOnCell, source="Vertex", fallback="Ignore"
+    )
+    x_cell, y_cell = (
+        np.asarray(ds.xCell)[:, None],
+        np.asarray(ds.yCell)[:, None],
+    )
+
+    # Drop padding for cells with fewer than maxEdges
+    valid = np.asarray(ds.verticesOnCell) >= 0
+    x_spokes = np.stack(
+        [np.broadcast_to(x_cell, x_vert.shape)[valid], x_vert[valid]], axis=-1
+    )
+    y_spokes = np.stack(
+        [np.broadcast_to(y_cell, y_vert.shape)[valid], y_vert[valid]], axis=-1
+    )
+
+    x_bnd, y_bnd = compute_boundary_wireframe(ds)
+
+    x = np.concat([x_spokes, x_bnd], axis=0)
+    y = np.concat([y_spokes, y_bnd], axis=0)
+
+    return np.insert(x, 2, np.nan, axis=1), np.insert(y, 2, np.nan, axis=1)
 
 
 def compute_vertex_patches(ds: Dataset) -> ndarray:
@@ -185,3 +244,100 @@ def compute_vertex_patches(ds: Dataset) -> ndarray:
     )
 
     return nodes
+
+
+def compute_vertex_wireframe(ds: Dataset) -> tuple[ndarray, ndarray]:
+    """Construct line segments connecting neighboring cell centers across edges.
+
+    On boundaries, segments connect cell centers to edge midpoints, and the
+    outer edges close the perimter of the dual cells.
+
+    Parameters
+    ----------
+    ds : Dataset
+        Zero-indexed MPAS mesh dataset.
+
+    Returns
+    -------
+    tuple[ndarray, ndarray]
+        (x, y) line segment arrays separated by NaN.
+    """
+    x_dual, y_dual = resolve_coords(
+        ds,
+        ds.cellsOnEdge,
+        source="Cell",
+        fallback="Edge",
+    )
+
+    x_bnd, y_bnd = compute_boundary_wireframe(ds)
+
+    x = np.concat([x_dual, x_bnd], axis=0)
+    y = np.concat([y_dual, y_bnd], axis=0)
+
+    return np.insert(x, 2, np.nan, axis=1), np.insert(y, 2, np.nan, axis=1)
+
+
+def compute_boundary_wireframe(ds: Dataset) -> tuple[ndarray, ndarray]:
+    """Construct line segments for the outer boundary split at edge midpoints.
+
+    Splitting edges at midpoints ensures edge positions are included for
+    wireframe markers.
+
+    Parameters
+    ----------
+    ds : Dataset
+        Zero-indexed MPAS mesh dataset.
+
+    Returns
+    -------
+    tuple[ndarray, ndarray]
+        (x, y) boundary segment coordinates, shape ``(2 * nBoundaryEdges, 2)``.
+    """
+    bnd_mask = np.any(np.asarray(ds.cellsOnEdge) < 0, axis=1)
+
+    x_vert, y_vert = resolve_coords(
+        ds, ds.verticesOnEdge[bnd_mask], source="Vertex", fallback=None
+    )
+    x_edge, y_edge = (
+        np.tile(np.asarray(ds.xEdge)[bnd_mask][:, None], (1, 2)),
+        np.tile(np.asarray(ds.yEdge)[bnd_mask][:, None], (1, 2)),
+    )
+
+    # Interleave to form two half-edges (vertex -> edge, edge -> vertex)
+    return (
+        np.insert(x_vert, [1, 1], x_edge, axis=1).reshape(-1, 2),
+        np.insert(y_vert, [1, 1], y_edge, axis=1).reshape(-1, 2),
+    )
+
+
+def compute_node_coords(ds, location: point_types):
+    """Return unique (x, y) coordinates of nodes defining the wireframe.
+
+    Parameters
+    ----------
+    ds : Dataset
+        Zero-indexed MPAS mesh dataset.
+
+    location : {"Cell", "Edge", "Vertex"}
+        Location to extract wireframe node coordinates from.
+
+    Returns
+    -------
+    tuple[ndarray, ndarray]
+        (x, y) coordinates for wireframe nodes.
+    """
+
+    match location:
+        case "Cell":
+            return np.asarray(ds.xVertex), np.asarray(ds.yVertex)
+        case "Edge":
+            return (
+                np.asarray(np.concat([ds.xCell, ds.xVertex])),
+                np.asarray(np.concat([ds.yCell, ds.yVertex])),
+            )
+        case "Vertex":
+            x_bnd, y_bnd = compute_boundary_wireframe(ds)
+            return (
+                np.asarray(np.concat([ds.xCell, x_bnd.ravel()])),
+                np.asarray(np.concat([ds.yCell, y_bnd.ravel()])),
+            )

@@ -484,6 +484,39 @@ class Descriptor:
 
         return patches
 
+    @cached_property
+    def cell_wireframe(self) -> tuple[ndarray, ndarray]:
+        """Line segments outlining primal mesh (i.e. cell patches).
+
+        Returns
+        -------
+        tuple[ndarray, ndarray]
+            (x, y) line segment arrays separated by NaN.
+        """
+        return _geometries.compute_cell_wireframe(self.ds)
+
+    @cached_property
+    def edge_wireframe(self) -> tuple[ndarray, ndarray]:
+        """Line segments outlining edge quadrilaterals (i.e. edge patches).
+
+        Returns
+        -------
+        tuple[ndarray, ndarray]
+            (x, y) line segment arrays separated by NaN.
+        """
+        return _geometries.compute_edge_wireframe(self.ds)
+
+    @cached_property
+    def vertex_wireframe(self) -> tuple[ndarray, ndarray]:
+        """Line segments outlining the dual mesh (i.e. vertex patches).
+
+        Returns
+        -------
+        tuple[ndarray, ndarray]
+            (x, y) line segment arrays separated by NaN.
+        """
+        return _geometries.compute_vertex_wireframe(self.ds)
+
     def _transform_coordinates(self, projection, transform):
         """Blindly transform coordinate arrays"""
 
