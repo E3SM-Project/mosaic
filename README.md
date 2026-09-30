@@ -4,16 +4,14 @@
 
 ______________________________________________________________________
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15420083.svg)](https://doi.org/10.5281/zenodo.15420083)
+[![DOI](https://zenodo.org/badge/817022588.svg)](https://zenodo.org/badge/latestdoi/817022588)
 
 `mosaic` enables visualization of unstructured [MPAS](https://mpas-dev.github.io/)
 mesh data on the native grid through `matplotlib`.
 
 ## Documentation
 
-The latest `mosaic` documentation can be found here:
-
-https://docs.e3sm.org/mosaic/
+The latest `mosaic` documentation can be found here: https://docs.e3sm.org/mosaic/
 
 ## Requests for help
 
