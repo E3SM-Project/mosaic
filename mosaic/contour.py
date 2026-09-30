@@ -4,6 +4,7 @@ from collections.abc import Iterator
 
 import matplotlib._docstring
 import matplotlib.path as mpath
+import networkx as nx
 import numpy as np
 import shapely
 from matplotlib.contour import ContourSet
@@ -244,8 +245,8 @@ class MPASContourSet(ContourSet):
 class MPASContourGenerator:
     def __init__(self, descriptor: Descriptor, z: ArrayLike):
         loc, array = descriptor._get_array_location(z)
-        if loc != "cell":
-            msg = f"Contour levels must be defined on cell centers, not {loc}"
+        if loc == "edge":
+            msg = "Contour levels can not be defined on edges"
             raise ValueError(msg)
 
         self.ds = descriptor.ds
@@ -307,6 +308,39 @@ class MPASContourGenerator:
         vertex_2 = ds.verticesOnEdge[edge_mask].isel(TWO=1).values
 
         return ContourGraph(vertex_1, vertex_2)
+
+    def _create_vertex_contour_graph(
+        self, mask: np.ndarray, filled: bool
+    ) -> ContourGraph:
+        """ """
+        ds = self.ds
+
+        padded_mask = np.r_[False, False, mask]
+        # mark mask as False for all cells outside domain
+        vertices_on_edge_mask = np.asarray(padded_mask[ds.verticesOnEdge + 2])
+
+        # boolean mask for edges along contour
+        edge_mask = np.logical_xor.reduce(vertices_on_edge_mask, axis=1)
+
+        if filled:
+            # filled contours should not follow mesh boundaries
+            msg = "Not there yet"
+            raise ValueError(msg)
+
+        # get the vertices
+        cell_1 = ds.cellsOnEdge[edge_mask].isel(TWO=0).values
+        cell_2 = ds.cellsOnEdge[edge_mask].isel(TWO=1).values
+
+        # create a graph from the boundary edges
+        graph = nx.Graph()
+        graph.add_edges_from(
+            zip(cell_1[cell_2 != -1], cell_2[cell_2 != -1], strict=True)
+        )
+
+        self.boundary_edges = ds.nEdges[edge_mask][cell_2 == -1]
+        self.boundary_cells = cell_1[cell_2 == -1]
+
+        return graph
 
     def _split_and_order_graph(self, graph: ContourGraph) -> list[np.ndarray]:
         """ """
