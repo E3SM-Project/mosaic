@@ -15,7 +15,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "cartopy<=0.24.0",
+    "cartopy>=0.26.0",
     "cmocean",
     "h5netcdf",
     "netcdf4",
