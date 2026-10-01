@@ -13,6 +13,7 @@ from numpy.typing import ArrayLike
 from xarray.core.dataset import Dataset
 
 import mosaic.utils
+from mosaic import _geometries
 
 renaming_dict = {
     "lonCell": "xCell",
@@ -404,7 +405,7 @@ class Descriptor:
         ``nEdgesOnCell`` for the given cell) by repeating the first node of the
         patch. Nodes are ordered counter clockwise around the cell center.
         """
-        patches = _compute_cell_patches(self.ds)
+        patches = _geometries.compute_cell_patches(self.ds)
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
@@ -433,7 +434,7 @@ class Descriptor:
         centers usually used to construct the patch will be missing, so the
         corresponding node will be collapsed to the edge coordinate.
         """
-        patches = _compute_edge_patches(self.ds)
+        patches = _geometries.compute_edge_patches(self.ds)
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
@@ -469,7 +470,7 @@ class Descriptor:
         missing the corresponding node will be collapsed to the patches vertex
         position.
         """
-        patches = _compute_vertex_patches(self.ds)
+        patches = _geometries.compute_vertex_patches(self.ds)
 
         # do not try to mirror patches for spherical meshes (yet...)
         if not self.is_spherical:
@@ -482,6 +483,39 @@ class Descriptor:
                 self._vertex_mirrored_idxs = mirrored_idxs
 
         return patches
+
+    @cached_property
+    def cell_wireframe(self) -> tuple[ndarray, ndarray]:
+        """Line segments outlining primal mesh (i.e. cell patches).
+
+        Returns
+        -------
+        tuple[ndarray, ndarray]
+            (x, y) line segment arrays separated by NaN.
+        """
+        return _geometries.compute_cell_wireframe(self.ds)
+
+    @cached_property
+    def edge_wireframe(self) -> tuple[ndarray, ndarray]:
+        """Line segments outlining edge quadrilaterals (i.e. edge patches).
+
+        Returns
+        -------
+        tuple[ndarray, ndarray]
+            (x, y) line segment arrays separated by NaN.
+        """
+        return _geometries.compute_edge_wireframe(self.ds)
+
+    @cached_property
+    def vertex_wireframe(self) -> tuple[ndarray, ndarray]:
+        """Line segments outlining the dual mesh (i.e. vertex patches).
+
+        Returns
+        -------
+        tuple[ndarray, ndarray]
+            (x, y) line segment arrays separated by NaN.
+        """
+        return _geometries.compute_vertex_wireframe(self.ds)
 
     def _transform_coordinates(self, projection, transform):
         """Blindly transform coordinate arrays"""
@@ -718,105 +752,6 @@ class Descriptor:
         raise ValueError(msg)
 
 
-def _compute_cell_patches(ds: Dataset) -> ndarray:
-    """Create cell patches (i.e. Primary cells) for an MPAS mesh."""
-    # get the maximum number of edges on a cell
-    maxEdges = ds.sizes["maxEdges"]
-    # connectivity arrays have already been zero indexed
-    verticesOnCell = ds.verticesOnCell
-    # get a mask of the active vertices
-    mask = verticesOnCell < 0
-
-    # tile the first vertices index
-    firstVertex = np.tile(verticesOnCell[:, 0], (maxEdges, 1)).T
-    # set masked vertices to the first vertex of the cell
-    verticesOnCell = np.where(mask, firstVertex, verticesOnCell)
-
-    # reshape/expand the vertices coordinate arrays
-    x_nodes = ds.xVertex.values[verticesOnCell]
-    y_nodes = ds.yVertex.values[verticesOnCell]
-
-    return np.stack((x_nodes, y_nodes), axis=-1)
-
-
-def _compute_edge_patches(ds: Dataset) -> ndarray:
-    """Create edge patches for an MPAS mesh."""
-
-    # connectivity arrays have already been zero indexed
-    cellsOnEdge = ds.cellsOnEdge
-    verticesOnEdge = ds.verticesOnEdge
-    # condition should only be true once per row or else wouldn't be an edge
-    cellMask = cellsOnEdge < 0
-
-    # get subset of cell coordinate arrays corresponding to edge patches
-    xCell = ds.xCell.values[cellsOnEdge]
-    yCell = ds.yCell.values[cellsOnEdge]
-    # get subset of vertex coordinate arrays corresponding to edge patches
-    xVertex = ds.xVertex.values[verticesOnEdge]
-    yVertex = ds.yVertex.values[verticesOnEdge]
-
-    # if only one cell on edge (i.e. along a culled boundary), then collapse
-    # the node corresponding to the missing cell back the edge location
-    if np.any(cellMask):
-        xCell = np.where(cellMask, ds.xEdge.values[:, np.newaxis], xCell)
-        yCell = np.where(cellMask, ds.yEdge.values[:, np.newaxis], yCell)
-
-    x_nodes = np.stack(
-        (xCell[:, 0], xVertex[:, 0], xCell[:, 1], xVertex[:, 1]), axis=-1
-    )
-
-    y_nodes = np.stack(
-        (yCell[:, 0], yVertex[:, 0], yCell[:, 1], yVertex[:, 1]), axis=-1
-    )
-
-    return np.stack((x_nodes, y_nodes), axis=-1)
-
-
-def _compute_vertex_patches(ds: Dataset) -> ndarray:
-    """Create vertex patches (i.e. Dual Cells) for an MPAS mesh."""
-    nVertices = ds.sizes["nVertices"]
-    vertexDegree = ds.sizes["vertexDegree"]
-
-    nodes = np.zeros((nVertices, vertexDegree * 2, 2))
-    # connectivity arrays have already been zero indexed
-    cellsOnVertex = ds.cellsOnVertex.values
-    edgesOnVertex = ds.edgesOnVertex.values
-    # get a mask of active nodes
-    cellMask = cellsOnVertex < 0
-    edgeMask = edgesOnVertex < 0
-
-    # get the coordinates needed to patch construction
-    xCell = ds.xCell.values
-    yCell = ds.yCell.values
-    xEdge = ds.xEdge.values
-    yEdge = ds.yEdge.values
-    # convert vertex coordinates to column vectors for broadcasting below
-    xVertex = ds.xVertex.values[:, np.newaxis]
-    yVertex = ds.yVertex.values[:, np.newaxis]
-
-    # if edge is missing collapse edge node to vertex, else leave at edge
-    nodes[:, ::2, 0] = np.where(edgeMask, xVertex, xEdge[edgesOnVertex])
-    nodes[:, ::2, 1] = np.where(edgeMask, yVertex, yEdge[edgesOnVertex])
-
-    # if cell is missing collapse cell node to vertex, else leave at cell
-    nodes[:, 1::2, 0] = np.where(cellMask, xVertex, xCell[cellsOnVertex])
-    nodes[:, 1::2, 1] = np.where(cellMask, yVertex, yCell[cellsOnVertex])
-
-    # -------------------------------------------------------------------------
-    # NOTE: The condition below will only be true for meshes run through the
-    #       MPAS mesh converter after culling. A bug in the converter alters
-    #       the ordering of edges, causing problems for vertex patches
-    #
-    # If final cell and edge nodes are missing collapse both back to first edge
-    # Ensures patches encompasses the full kite area and are properly closed.
-    # -------------------------------------------------------------------------
-    condition = (cellMask & edgeMask)[:, -1:]
-    nodes[:, 4:, 0] = np.where(condition, nodes[:, 0:1, 0], nodes[:, 4:, 0])
-    nodes[:, 4:, 1] = np.where(condition, nodes[:, 0:1, 1], nodes[:, 4:, 1])
-
-    return nodes
-
-
 def _compute_cull_mask(ds: xr.Dataset, projection: CRS) -> ndarray[bool]:
     """
     Calculate boolean mask of cells to be culled for a given projection
@@ -846,7 +781,7 @@ def _compute_cull_mask(ds: xr.Dataset, projection: CRS) -> ndarray[bool]:
     ext_domain = projection.domain
     shapely.prepare(ext_domain)
 
-    cell_patches = _compute_cell_patches(ds)
+    cell_patches = _geometries.compute_cell_patches(ds)
 
     # start with no cells to be culled
     cull_mask = np.zeros(ds.sizes["nCells"], dtype=bool)

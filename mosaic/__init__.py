@@ -5,6 +5,7 @@ from mosaic.coastlines import coastlines
 from mosaic.contour import contour, contourf
 from mosaic.descriptor import Descriptor
 from mosaic.polypcolor import polypcolor
+from mosaic.wireframe import wireframe
 
 __all__ = [
     "Descriptor",
@@ -13,4 +14,5 @@ __all__ = [
     "contourf",
     "datasets",
     "polypcolor",
+    "wireframe",
 ]
