@@ -336,14 +336,20 @@ def compute_node_coords(
             return np.asarray(ds.xVertex), np.asarray(ds.yVertex)
         case "Edge":
             return (
-                np.asarray(np.concat([ds.xCell, ds.xVertex])),
-                np.asarray(np.concat([ds.yCell, ds.yVertex])),
+                np.concat([ds.xCell, ds.xVertex]),
+                np.concat([ds.yCell, ds.yVertex]),
             )
         case "Vertex":
-            x_bnd, y_bnd = compute_boundary_wireframe(ds)
+            bnd_edges = np.any(np.asarray(ds.cellsOnEdge) < 0, axis=1)
+            bnd_verts = np.unique(np.asarray(ds.verticesOnEdge)[bnd_edges])
+            bnd_verts = bnd_verts[bnd_verts >= 0]
             return (
-                np.asarray(np.concat([ds.xCell, x_bnd.ravel()])),
-                np.asarray(np.concat([ds.yCell, y_bnd.ravel()])),
+                np.concat(
+                    [ds.xCell, ds.xEdge[bnd_edges], ds.xVertex[bnd_verts]]
+                ),
+                np.concat(
+                    [ds.yCell, ds.yEdge[bnd_edges], ds.yVertex[bnd_verts]]
+                ),
             )
         case _:
             assert_never(location)

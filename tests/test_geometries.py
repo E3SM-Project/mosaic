@@ -201,6 +201,22 @@ def test_node_containment(synthetic_mesh, location):
 
 
 # -----------------------------------------------------------------------
+# Node uniqueness: coordinates returned by compute_node_coords must be
+# unique so markers are not plotted multiple times at the same location
+# (which causes opacity artifacts when alpha < 1).
+# -----------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("location", ["Cell", "Edge", "Vertex"])
+def test_node_coords_are_unique(location):
+    ds = _zero_indexed("QU.240km")
+    x, y = _geometries.compute_node_coords(ds, location)
+    coords = np.column_stack([x, y])
+
+    assert len(coords) == len(np.unique(coords, axis=0))
+
+
+# -----------------------------------------------------------------------
 # Boundary / topology counts
 # -----------------------------------------------------------------------
 
