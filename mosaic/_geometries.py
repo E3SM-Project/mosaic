@@ -7,14 +7,14 @@ from numpy import ndarray
 from numpy.typing import ArrayLike
 from xarray.core.dataset import Dataset
 
-point_types = Literal["Cell", "Edge", "Vertex"]
+from mosaic._typing import PointType
 
 
 def resolve_coords(
     ds: Dataset,
     connectivity: ArrayLike,
-    source: point_types,
-    fallback: point_types | Literal["First", "Ignore"] | None = None,
+    source: PointType,
+    fallback: PointType | Literal["First", "Ignore"] | None = None,
 ) -> tuple[ndarray, ndarray]:
     """Resolve (x, y) coords for connectivity array with prescribed fallback.
 
@@ -310,7 +310,9 @@ def compute_boundary_wireframe(ds: Dataset) -> tuple[ndarray, ndarray]:
     )
 
 
-def compute_node_coords(ds, location: point_types):
+def compute_node_coords(
+    ds: Dataset, location: PointType
+) -> tuple[ndarray, ndarray]:
     """Return unique (x, y) coordinates of nodes defining the wireframe.
 
     Parameters

@@ -1,21 +1,18 @@
 from __future__ import annotations
 
-from typing import Literal
-
 from matplotlib import cbook
 from matplotlib import lines as mlines
 from matplotlib.axes import Axes
 
 from mosaic import _geometries
+from mosaic._typing import PointType
 from mosaic.descriptor import Descriptor
-
-point_types = Literal["Cell", "Edge", "Vertex"]
 
 
 def wireframe(
     ax: Axes,
     descriptor: Descriptor,
-    location: point_types = "Cell",
+    location: PointType = "Cell",
     **kwargs,
 ) -> list[mlines.Line2D]:
     """Draw a wireframe (an outline of the mesh topology) on the given axes.
