@@ -7,6 +7,7 @@ from matplotlib.axes import Axes
 from mosaic import _geometries
 from mosaic._typing import PointType
 from mosaic.descriptor import Descriptor
+from mosaic.utils import _normalize_point_type
 
 
 def wireframe(
@@ -46,6 +47,7 @@ def wireframe(
         raise NotImplementedError(err)
 
     kw = cbook.normalize_kwargs(kwargs, mlines.Line2D)
+    location = _normalize_point_type(location)
 
     # Plot lines and markers separately to avoid duplicate markers on shared vertices
     linestyle = kw.get("linestyle", "-")

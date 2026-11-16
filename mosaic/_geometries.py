@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal, get_args
+from typing import Literal, assert_never
 
 import numpy as np
 from numpy import ndarray
@@ -8,6 +8,7 @@ from numpy.typing import ArrayLike
 from xarray.core.dataset import Dataset
 
 from mosaic._typing import PointType
+from mosaic.utils import _normalize_point_type
 
 
 def resolve_coords(
@@ -329,6 +330,7 @@ def compute_node_coords(
         (x, y) coordinates for wireframe nodes.
     """
 
+    location = _normalize_point_type(location)
     match location:
         case "Cell":
             return np.asarray(ds.xVertex), np.asarray(ds.yVertex)
@@ -344,8 +346,4 @@ def compute_node_coords(
                 np.asarray(np.concat([ds.yCell, y_bnd.ravel()])),
             )
         case _:
-            err_msg = (  # type: ignore[unreachable]
-                f"Invalid location '{location}'. Must be one of "
-                f"{get_args(PointType)}."
-            )
-            raise ValueError(err_msg)
+            assert_never(location)
