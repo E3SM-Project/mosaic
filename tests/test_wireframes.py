@@ -27,6 +27,21 @@ class TestWireframeRaises:
         finally:
             plt.close(fig)
 
+    def test_invalid_location_raises(self):
+        ds = mosaic.datasets.open_dataset("QU.240km")
+        descriptor = mosaic.Descriptor(
+            ds, ccrs.Orthographic(), ccrs.Geodetic()
+        )
+
+        fig, ax = plt.subplots(
+            subplot_kw={"projection": descriptor.projection}
+        )
+        try:
+            with pytest.raises(ValueError, match="Invalid location"):
+                mosaic.wireframe(ax, descriptor, location="invalid")
+        finally:
+            plt.close(fig)
+
 
 class TestWireframeKwargs:
     ds = mosaic.datasets.open_dataset("QU.240km")
@@ -52,6 +67,17 @@ class TestWireframeKwargs:
 
         expected_x, expected_y = getattr(
             self.descriptor, f"{location.lower()}_wireframe"
+        )
+        np.testing.assert_array_equal(lines_call.args[0], expected_x.ravel())
+        np.testing.assert_array_equal(lines_call.args[1], expected_y.ravel())
+
+    @pytest.mark.parametrize("location", ["cell", "CELL", "cells", "vertices"])
+    def test_location_normalization(self, location):
+        lines_call, _markers_call = self._plot_calls(location, marker="o")
+        norm_location = mosaic.utils._normalize_point_type(location)
+
+        expected_x, expected_y = getattr(
+            self.descriptor, f"{norm_location.lower()}_wireframe"
         )
         np.testing.assert_array_equal(lines_call.args[0], expected_x.ravel())
         np.testing.assert_array_equal(lines_call.args[1], expected_y.ravel())
