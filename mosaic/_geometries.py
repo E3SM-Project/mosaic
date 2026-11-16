@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, get_args
 
 import numpy as np
 from numpy import ndarray
@@ -343,3 +343,9 @@ def compute_node_coords(
                 np.asarray(np.concat([ds.xCell, x_bnd.ravel()])),
                 np.asarray(np.concat([ds.yCell, y_bnd.ravel()])),
             )
+        case _:
+            err_msg = (  # type: ignore[unreachable]
+                f"Invalid location '{location}'. Must be one of "
+                f"{get_args(PointType)}."
+            )
+            raise ValueError(err_msg)
