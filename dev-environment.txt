@@ -4,7 +4,7 @@ cmocean
 h5netcdf
 netcdf4
 matplotlib-base
-numpy
+numpy >=2.0,< 3.0
 pooch
 pyproj
 scipy

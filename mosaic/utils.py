@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from typing import get_args
+
 import numpy as np
 import shapely
 import xarray as xr
 from cartopy.crs import CRS
 from numpy.typing import ArrayLike
+
+from mosaic._typing import PointType
 
 __all__ = ["cull_mesh", "get_invalid_patches"]
 
@@ -245,3 +249,31 @@ def get_invalid_patches(patches: np.ndarray) -> None | np.ndarray:
         return None
 
     return np.flatnonzero(~valid)
+
+
+def _normalize_point_type(location: str) -> PointType:
+    """Catch common point type specification errors
+
+    Parameters
+    ----------
+    location : str
+        Ideally already one of "Cell", "Edge", or "Vertex".
+
+    Returns
+    -------
+    location : PointType ["Cell", "Edge", "Vertex"]
+        Normalized location string.
+    """
+    match location.capitalize():
+        case "Cell" | "Cells":
+            return "Cell"
+        case "Edge" | "Edges":
+            return "Edge"
+        case "Vertex" | "Vertices":
+            return "Vertex"
+        case _:
+            err_msg = (
+                f"Invalid location '{location}'. Must be one of "
+                f"{get_args(PointType)}."
+            )
+            raise ValueError(err_msg)

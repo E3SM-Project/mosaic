@@ -119,6 +119,31 @@ def test_padding_violation_raises_and_reports_cell():
     assert str(i) in str(e.value)
 
 
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("cell", "Cell"),
+        ("CELL", "Cell"),
+        ("cells", "Cell"),
+        ("Cells", "Cell"),
+        ("edge", "Edge"),
+        ("edges", "Edge"),
+        ("Edges", "Edge"),
+        ("vertex", "Vertex"),
+        ("vertices", "Vertex"),
+        ("Vertices", "Vertex"),
+    ],
+)
+def test_normalize_point_type_valid(raw, expected):
+    assert mosaic.utils._normalize_point_type(raw) == expected
+
+
+@pytest.mark.parametrize("invalid", ["node", "points", ""])
+def test_normalize_point_type_invalid(invalid):
+    with pytest.raises(ValueError, match="Invalid location"):
+        mosaic.utils._normalize_point_type(invalid)
+
+
 # TODO: for a given polygon in lat/lon coorindates, iterate over all cartopy
 #       projection and ensure manual centroid and shapely match in projected
 #       coordinates
