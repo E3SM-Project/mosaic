@@ -24,13 +24,16 @@
    .. autosummary::
    
       ~Descriptor.cell_patches
+      ~Descriptor.cell_wireframe
       ~Descriptor.edge_patches
+      ~Descriptor.edge_wireframe
       ~Descriptor.latlon
       ~Descriptor.origin
       ~Descriptor.projection
       ~Descriptor.sizes
       ~Descriptor.transform
       ~Descriptor.vertex_patches
+      ~Descriptor.vertex_wireframe
       ~Descriptor.x_period
       ~Descriptor.y_period
       ~Descriptor.is_spherical

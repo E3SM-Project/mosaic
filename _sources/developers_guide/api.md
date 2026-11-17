@@ -19,6 +19,7 @@ Plotting
     coastlines
     contour
     contourf
+    wireframe
 
 Data Structures
 ---------------

@@ -23,6 +23,7 @@ user_guide/quick_start
 user_guide/spherical_mesh_support
 user_guide/periodic_mesh_support
 user_guide/contouring
+user_guide/wireframe
 ```
 
 ```{toctree}

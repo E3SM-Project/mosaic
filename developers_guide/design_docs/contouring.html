@@ -206,6 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../user_guide/spherical_mesh_support.html">Spherical Mesh Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user_guide/periodic_mesh_support.html">Planar Periodic Meshes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user_guide/contouring.html">Contouring on the MPAS Mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/wireframe.html">Wireframes</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="current nav bd-sidenav">
@@ -519,9 +520,7 @@ The goal is to provide contouring ability in <code class="docutils literal notra
 <p>We’ll begin with unfilled contours (i.e. <code class="docutils literal notranslate"><span class="pre">mosaic.contour</span></code>), as they are simpler task.</p>
 <p>Instead of such a simple gaussian field as we consider before, let’s work with something more complicated:
 <div class="math notranslate nohighlight">
-\[
-f(x, y) = A \sin \left(\frac{N \pi x}{L_{\rm x}}\right) \cos \left(\frac{N \pi y}{L_{\rm y}}\right)
-\]</div>
+\[f(x, y) = A \sin \left(\frac{N \pi x}{L_{\rm x}}\right) \cos \left(\frac{N \pi y}{L_{\rm y}}\right)\]</div>
 
 where:</p>
 <ul class="simple">

@@ -53,7 +53,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="API Reference" href="api.html" />
-    <link rel="prev" title="Contouring on the MPAS Mesh" href="../user_guide/contouring.html" />
+    <link rel="prev" title="Wireframes" href="../user_guide/wireframe.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -205,6 +205,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../user_guide/spherical_mesh_support.html">Spherical Mesh Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../user_guide/periodic_mesh_support.html">Planar Periodic Meshes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../user_guide/contouring.html">Contouring on the MPAS Mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/wireframe.html">Wireframes</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developers Guide:</span></p>
 <ul class="current nav bd-sidenav">
@@ -385,8 +386,8 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-installation">Developer Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-styling-and-linting">Code Styling and Linting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dev-install-guide">Developer Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dev-code-styling">Code Styling and Linting</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running Tests</a></li>
 </ul>
             </nav>
@@ -401,8 +402,8 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="quick-start-for-developers">
 <h1>Quick Start for Developers<a class="headerlink" href="#quick-start-for-developers" title="Link to this heading">#</a></h1>
-<section id="developer-installation">
-<span id="dev-install-guide"></span><h2>Developer Installation<a class="headerlink" href="#developer-installation" title="Link to this heading">#</a></h2>
+<section id="dev-install-guide">
+<span id="developer-installation"></span><h2>Developer Installation<a class="headerlink" href="#dev-install-guide" title="Link to this heading">#</a></h2>
 <p>Assuming you have a working <code class="docutils literal notranslate"><span class="pre">conda</span></code> installation, you can install the latest development version of <code class="docutils literal notranslate"><span class="pre">mosaic</span></code> by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="n">add</span> <span class="n">channels</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span>
 <span class="n">conda</span> <span class="n">config</span> <span class="o">--</span><span class="nb">set</span> <span class="n">channel_priority</span> <span class="n">strict</span>
@@ -418,8 +419,8 @@
 </pre></div>
 </div>
 </section>
-<section id="code-styling-and-linting">
-<span id="dev-code-styling"></span><h2>Code Styling and Linting<a class="headerlink" href="#code-styling-and-linting" title="Link to this heading">#</a></h2>
+<section id="dev-code-styling">
+<span id="code-styling-and-linting"></span><h2>Code Styling and Linting<a class="headerlink" href="#dev-code-styling" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">mosaic</span></code> uses <a class="reference external" href="https://pre-commit.com/"><code class="docutils literal notranslate"><span class="pre">pre-commit</span></code></a> to enforce code style and
 quality. After setting up your environment, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
@@ -459,12 +460,12 @@ f-strings,</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../user_guide/contouring.html"
+       href="../user_guide/wireframe.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Contouring on the MPAS Mesh</p>
+        <p class="prev-next-title">Wireframes</p>
       </div>
     </a>
     <a class="right-next"
@@ -494,8 +495,8 @@ f-strings,</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-installation">Developer Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-styling-and-linting">Code Styling and Linting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dev-install-guide">Developer Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dev-code-styling">Code Styling and Linting</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running Tests</a></li>
 </ul>
   </nav></div>
